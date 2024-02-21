@@ -1,2 +1,2 @@
-# mtspin-mcu-firmware
-Microcontroller firmware for MTspin; a motorized rotating display stand.
+# MTspin-mcu-firmware
+Microcontroller firmware for MTspin; a motorised rotating display stand.

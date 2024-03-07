@@ -1,0 +1,50 @@
+name: Build, test and release
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  information:
+    name: Information
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Display information
+        run: |
+          echo "Job activated by ${{ github.event_name }} event for ${{ github.actor }}."
+          echo "Repository - ${{ github.repository }}."
+          echo "Branch - ${{ github.ref }}"
+          echo "Server - ${{ runner.os }}."
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    env:
+      # Environment variables
+      BUILD_DIR: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Non-shallow clone - fetch all history for all tags and branches - may be of use later in pipeline.
+      - name: List files in repository
+        run: |
+          ls ${{ github.workspace }}
+      - name: Install and setup dependencies
+        run: |
+          sudo apt-get update
+          sudo bash -x scripts/setup_for_linux.sh
+      - name: Compile
+        run: sudo bash -x scripts/build_for_linux.sh
+      #- name: Archive package
+        #uses: actions/upload-artifact@v4
+        #with:
+          #name: ${{ github.repository }}
+          #path: |
+            #${{ env.BUILD_DIR }}/*.hex               
+      - run: echo "Job status - ${{ job.status }}"

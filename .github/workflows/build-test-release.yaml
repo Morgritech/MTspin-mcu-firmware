@@ -23,7 +23,7 @@ jobs:
       - name: Install and setup dependencies
         run: |
           sudo apt-get update
-          sudo bash -x . scripts/setup_for_linux.sh
+          sudo bash -x scripts/setup_for_linux.sh
       - name: Compile
         run: |
           sudo bash -x scripts/build_for_linux.sh

@@ -21,8 +21,12 @@ popd
 if [ -z "$ARDUINO_CLI_DIR" ]; then
   ARDUINO_CLI_DIR=~/bin
   PATH=$PATH:$ARDUINO_CLI_DIR
-  echo $ARDUINO_CLI_DIR >> $GITHUB_PATH
   arduino-cli version
+fi
+
+if [ ! -z "$GITHUB_WORKSPACE" ]; then
+  echo We are in a Github runner.
+  echo "$ARDUINO_CLI_DIR" >> $GITHUB_PATH
 fi
 
 # Specify the directories to files listing the required arduino cores and libraries.

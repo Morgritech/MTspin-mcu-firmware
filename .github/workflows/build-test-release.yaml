@@ -24,6 +24,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo bash -x scripts/setup_for_linux.sh
+          echo "Github path: ${{ github.path }}"
       - name: Compile
         run: |
           sudo bash -x scripts/build_for_linux.sh

@@ -38,7 +38,7 @@ To build the project on Windows, run:
 scripts\build_for_windows.cmd
 ```
 
-### Build on Linux
+## Build on Linux
 
 To build the project on Linux, run:
 

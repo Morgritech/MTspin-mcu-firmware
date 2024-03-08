@@ -21,6 +21,7 @@ popd
 if [ -z "$ARDUINO_CLI_DIR" ]; then
   ARDUINO_CLI_DIR=~/bin
   PATH=$PATH:$ARDUINO_CLI_DIR
+  echo $ARDUINO_CLI_DIR >> $GITHUB_PATH
   arduino-cli version
 fi
 

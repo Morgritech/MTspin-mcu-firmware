@@ -20,6 +20,7 @@ if defined ARDUINO_CLI_DIR (
 )
 set ARDUINO_CLI_DIR=%ProgramFiles%\Arduino CLI
 set PATH=%PATH%;%ARDUINO_CLI_DIR%
+echo %ARDUINO_CLI_DIR% >> %GITHUB_PATH%
 arduino-cli version
 
 :arduino_cli_dir_added

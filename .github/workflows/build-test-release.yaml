@@ -20,14 +20,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Non-shallow clone - fetch all history for all tags and branches - may be of use later in pipeline.
-      - name: Install and setup dependencies
+      - name: Install dependencies and compile
+        shell: bash
         run: |
           sudo apt-get update
-          sudo bash -x scripts/setup_for_linux.sh
-          echo "Github path: ${{ github.path }}"
-      - name: Compile
-        run: |
-          sudo bash -x scripts/build_for_linux.sh
+          sudo scripts/setup_for_linux.sh -x
+          sudo scripts/build_for_linux.sh -x
+          echo "List all files in the directory:"
           ls -R
       #- name: Save/upload package
         #uses: actions/upload-artifact@v4

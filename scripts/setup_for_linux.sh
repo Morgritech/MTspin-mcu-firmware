@@ -24,11 +24,6 @@ if [ -z "$ARDUINO_CLI_DIR" ]; then
   arduino-cli version
 fi
 
-if [ ! -z "$GITHUB_WORKSPACE" ]; then
-  echo We are in a Github runner.
-  echo "$ARDUINO_CLI_DIR" >> $GITHUB_PATH
-fi
-
 # Specify the directories to files listing the required arduino cores and libraries.
 CORES=arduino_cores.txt
 LIBS=arduino_libs.txt

@@ -27,6 +27,7 @@ jobs:
       - name: Compile
         run: |
           sudo bash -x scripts/build_for_linux.sh
+          ls -R
       #- name: Save/upload package
         #uses: actions/upload-artifact@v4
         #with:

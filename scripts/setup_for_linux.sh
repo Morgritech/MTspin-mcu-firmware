@@ -44,6 +44,7 @@ unset IFS
 
 if [ -z "$GITHUB_WORKSPACE" ]; then
   echo We are NOT in a Github runner.
+  echo $GITHUB_WORKSPACE
   source scripts/build_for_linux.sh
 else
   echo We are in a Github runner.

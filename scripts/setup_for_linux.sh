@@ -19,11 +19,8 @@ popd
 # If not already added; 
 # add "home/<username>/bin" to linux environment path (this and child scripts) so arduino-cli be executed directly.
 if [ -z "$ARDUINO_CLI_DIR" ]; then
-  echo "Path not set"
   ARDUINO_CLI_DIR=~/bin
-  echo adding $ARDUINO_CLI_DIR to path
   PATH=$PATH:$ARDUINO_CLI_DIR
-  echo new path: $PATH
   arduino-cli version
 fi
 
@@ -32,7 +29,7 @@ CORES=arduino_cores.txt
 LIBS=arduino_libs.txt
 
 # Install arduino platforms/cores.
-#arduino-cli core update-index
+arduino-cli core update-index
 IFS=$'\n' # Use new line char as the line break delimiter (incase there are spaces or tabs).
 # Carriage return '\r' must also be removed in-case file was created in Windows.
 for CORE in $(cat $CORES) ; do

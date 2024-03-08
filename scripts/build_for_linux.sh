@@ -13,6 +13,8 @@ for BOARD in $(cat "$BOARDS") ; do
     BUILD_SUBDIR="${BOARD//:/-}"
     # Compile clean (no cache) and use command line args if passed to the script.
     # Carriage return '\r' must be removed in-case file was created in Windows.
-    arduino-cli compile -b ${BOARD%$'\r'} $SKETCH_DIR --clean --build-path $BUILD_DIR/$BUILD_SUBDIR $@
+    arduino-cli compile -b ${BOARD%$'\r'} $SKETCH_DIR --clean --build-path $BUILD_DIR/$BUILD_SUBDIR ${@:2}
 done
 unset IFS
+
+echo command line args in build: 

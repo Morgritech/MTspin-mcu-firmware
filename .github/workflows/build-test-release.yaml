@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo scripts/setup_for_linux.sh -both
+          sudo scripts/setup-build-linux.sh -both
           echo "List all files in the directory:"
           ls -R
       #- name: Save/upload package

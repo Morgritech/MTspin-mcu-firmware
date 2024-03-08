@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit immediately if a command exits with a non-zero status.
-# set -e 
+set -e 
 
 # Check sudo
 #if [ "$EUID" -ne 0 ]
@@ -16,7 +16,7 @@ CMD_BOTH="-both"
 
 if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
 
-  # Install and setup dependencies
+  echo Install and setup dependencies
 
   pushd $PWD
   cd ~ # Ensure we are in the "home/<username>" directory.
@@ -31,11 +31,12 @@ if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
     arduino-cli version
   fi
 
+  echo Install arduino platforms/cores
+
   # Specify the directories to files listing the required arduino cores and libraries.
   CORES=arduino_cores.txt
   LIBS=arduino_libs.txt
 
-  # Install arduino platforms/cores.
   arduino-cli core update-index
   IFS=$'\n' # Read one line at a time (No spaces or tabs as delimiters).
   # Carriage return '\r' must also be removed in-case file was created in Windows.
@@ -43,7 +44,8 @@ if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
     arduino-cli core install ${CORE%$'\r'}
   done
 
-  # Install arduino libraries.
+  echo Install arduino libraries
+
   for LIB in $(cat $LIBS) ; do
     arduino-cli lib install ${LIB%$'\r'}
   done
@@ -52,7 +54,7 @@ fi
 
 if [ "$1" == "$CMD_BUILD" ] || [ "$1" == "$CMD_BOTH" ]; then
 
-  # Compile the project.
+  echo Compile the project
 
   # Specify the sketch directory.
   SKETCH_DIR=src #./src

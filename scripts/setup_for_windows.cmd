@@ -30,6 +30,7 @@ set LIBS=arduino_libs.txt
 
 rem Install arduino platforms/cores.
 arduino-cli core update-index
+rem Read one line at a time (No spaces or tabs as delimiters).
 for /f "usebackq delims=" %%C in ("%CORES%") do (
     arduino-cli core install %%C
 )

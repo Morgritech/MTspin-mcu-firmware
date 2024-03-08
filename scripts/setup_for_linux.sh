@@ -30,7 +30,7 @@ LIBS=arduino_libs.txt
 
 # Install arduino platforms/cores.
 arduino-cli core update-index
-IFS=$'\n' # Use new line char as the line break delimiter (incase there are spaces or tabs).
+IFS=$'\n' # Read one line at a time (No spaces or tabs as delimiters).
 # Carriage return '\r' must also be removed in-case file was created in Windows.
 for CORE in $(cat $CORES) ; do
   arduino-cli core install ${CORE%$'\r'}

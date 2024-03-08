@@ -26,7 +26,7 @@ jobs:
           sudo bash scripts/setup_for_linux.sh
       - name: Compile
         run: |
-          sudo bash source scripts/build_for_linux.sh
+          sudo bash scripts/build_for_linux.sh
       #- name: Save/upload package
         #uses: actions/upload-artifact@v4
         #with:

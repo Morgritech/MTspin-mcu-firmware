@@ -41,3 +41,11 @@ for LIB in $(cat $LIBS) ; do
   arduino-cli lib install ${LIB%$'\r'}
 done
 unset IFS
+
+if [ -z "$GITHUB_WORKSPACE" ]; then
+  echo We are NOT in a Github runner.
+  source scripts/build_for_linux.sh
+else
+  echo We are in a Github runner.
+  source scripts/build_for_linux.sh
+fi

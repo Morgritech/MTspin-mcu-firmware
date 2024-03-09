@@ -10,13 +10,14 @@ set -e
 #fi
 
 # Command line arguments
+SCRIPT_NAME=$(basename "$0")
 CMD_SETUP="-setup"
 CMD_BUILD="-build"
 CMD_BOTH="-both"
 
 if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
 
-  echo Install and setup dependencies
+  echo ...Installing and setup dependencies...
 
   pushd $PWD
   cd ~ # Ensure we are in the "home/<username>" directory.
@@ -31,7 +32,7 @@ if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
     arduino-cli version
   fi
 
-  echo Install arduino platforms/cores
+  echo ...Installing arduino platforms/cores...
 
   # Specify the directories to files listing the required arduino cores and libraries.
   CORES=arduino_cores.txt
@@ -44,7 +45,7 @@ if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
     arduino-cli core install ${CORE%$'\r'}
   done
 
-  echo Install arduino libraries
+  echo ...Installing arduino libraries...
 
   for LIB in $(cat $LIBS) ; do
     arduino-cli lib install ${LIB%$'\r'}
@@ -54,7 +55,7 @@ fi
 
 if [ "$1" == "$CMD_BUILD" ] || [ "$1" == "$CMD_BOTH" ]; then
 
-  echo Compile the project
+  echo ...Compiling the project...
 
   # Specify the sketch directory.
   SKETCH_DIR=src #./src
@@ -76,8 +77,11 @@ fi
 
 if [ "$1" != "$CMD_SETUP" ] && [ "$1" != "$CMD_BUILD" ] && [ "$1" != "$CMD_BOTH" ]; then
   echo \
-  "Invalid input! Options are:
+  "...Invalid input...
+  Available commands are::
   $CMD_SETUP  Setup the project. 
   $CMD_BUILD  Build the project. 
-  $CMD_BOTH   Setup and build the project."
+  $CMD_BOTH   Setup and build the project.
+  usage:
+  $SCRIPT_NAME <command> [optional arduino-cli compile flags...]"
 fi

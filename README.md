@@ -58,11 +58,11 @@ source scripts/setup-build-linux.sh -both
 
 Setup and build scripts can be found in the "scripts" directory.
 Note:
-The [optional arduino-cli compile flags...] in the usage depictions can be found at: 
+The `[optional arduino-cli compile flags...]` in the usage depictions can be found at: 
 
 <https://arduino.github.io/arduino-cli>
 
-These flags will only work when a build is performed i.e. with the -build or -both commands.
+These flags will only work when a build is performed i.e. with the `-build` or `-both` commands.
 
 ### Script usage on Windows
 
@@ -76,7 +76,7 @@ scripts\<script_name>.cmd <command> [optional arduino-cli compile flags...]
 scripts/<script_name>.sh <command> [optional arduino-cli compile flags...]
 ```
 
-If using the -setup or -both commands, you should source the script, to allow arduino-cli commands to be directly executable in the terminal.
+If using the `-setup` or `-both` commands, you should source the script, to allow arduino-cli commands to be directly executable in the terminal.
 
 ``` shell
 . scripts/<script_name>.sh <command> [optional arduino-cli compile flags...]

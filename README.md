@@ -1,6 +1,7 @@
 # MTspin-mcu-firmware
 
 [![Build, test and release](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-test-release.yaml/badge.svg)](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-test-release.yaml)
+
 Microcontroller firmware for MTspin; a motorised rotating display stand.
 
 ## Setup and build

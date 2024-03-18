@@ -3,7 +3,7 @@
 rem User prompt.
 echo "++Please run in Command Prompt (CMD). Ignore if already running in CMD++"
 
-rem rem Check admin privildges.
+rem rem Check admin privileges.
 rem net session >nul 2>&1
 rem if NOT %errorLevel% == 0 (
 rem     echo "Please run as admin."
@@ -24,7 +24,7 @@ if NOT "%~1" == "%CMD_SETUP%" (
 
 echo ...Installing and setting up dependencies...
 
-winget install arduinosa.cli
+winget install -e ArduinoSA.CLI
 rem If not already added;
 rem add "C:\Program Files\Arduino CLI" to windows environment path (current session) so arduino-cli be executed directly.
 if defined ARDUINO_CLI_DIR (

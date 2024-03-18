@@ -4,6 +4,20 @@
 
 Microcontroller firmware for MTspin; a motorised rotating display stand.
 
+## Introduction
+
+### Microcontroller
+
+Arduino UNO is the primary target for this project.
+
+### Programming language
+
+The primary language for this project is the [Arduino programming language](https://www.arduino.cc/reference) (a subset of C/C++).
+
+### Build system and continuous integration/delivery (CI/CD)
+
+This project uses [Arduino CLI](https://arduino.github.io/arduino-cli) to compile and upload the embedded code, and [CMake](https://cmake.org) to build and run the unit tests. Setup/build scripts for Linux and Windows have been created to automate the process as much as possible. [GitHub Actions](https://docs.github.com/en/actions) is used as the CI/CD platform, and the workflow also makes use of the Linux setup/build script.
+
 ## Setup and build
 
 ### Setup on Windows
@@ -58,7 +72,7 @@ source scripts/setup-build-linux.sh -both
 
 Setup and build scripts can be found in the "scripts" directory.
 Note:
-The `[optional arduino-cli compile flags...]` in the usage depictions can be found at: 
+The `[optional arduino-cli compile flags...]` in the usage depictions can be found at:
 
 <https://arduino.github.io/arduino-cli>
 

@@ -1,0 +1,104 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "linux-gcc-compiler-setup",
+            "description": "Set GCC compilers for linux: C = /usr/bin/gcc, CXX = /usr/bin/g++.",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "/usr/bin/gcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+            }
+        },
+        {
+            "name": "windows-mingw-compiler-setup",
+            "description": "Set GCC compilers for windows: C = C:/msys64/mingw64/bin/gcc.exe, CXX = C:/msys64/mingw64/bin/g++.exe",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "C:/msys64/mingw64/bin/g++.exe"
+            }
+        },
+        {
+            "name": "output-directory-setup",
+            "description": "Set build and install directories.",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "linux-configuration",
+            "description": "Configure for Linux using Ninja",
+            "hidden": true,
+            "generator": "Ninja",
+            "inherits": [
+                "linux-gcc-compiler-setup",
+                "output-directory-setup"
+            ],
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
+        },
+        {
+            "name": "windows-configuration",
+            "description": "Configure for Windows using Mingw",
+            "hidden": true,
+            "generator": "MinGW Makefiles",
+            "inherits": [
+                "windows-mingw-compiler-setup",
+                "output-directory-setup"
+            ],
+            "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
+        },
+        {
+            "name": "ci-ninja-x86_64-linux-debug",
+            "displayName": "Ninja Linux Debug",
+            "description": "Configure for Linux and set debug configuration.",
+            "inherits": [
+                "linux-configuration"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }        
+        },
+        {
+            "name": "ci-mingw-x86_64-w64-windows-debug",
+            "displayName": "Mingw64 Windows Debug",
+            "description": "Build for Windows using Mingw and set debug configuration.",
+            "inherits": [
+                "windows-configuration"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "linux-debug",
+            "configurePreset": "ci-ninja-x86_64-linux-debug"
+        },
+        {
+            "name": "windows-debug",
+            "configurePreset": "ci-mingw-x86_64-w64-windows-debug"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "linux-debug",
+            "steps": [
+                { "type": "configure", "name": "ci-ninja-x86_64-linux-debug" },
+                { "type": "build", "name": "linux-debug" }
+            ]
+        },
+        {
+            "name": "windows-debug",
+            "steps": [
+                { "type": "configure", "name": "ci-mingw-x86_64-w64-windows-debug" },
+                { "type": "build", "name": "windows-debug" }
+            ]
+        }
+    ]
+}

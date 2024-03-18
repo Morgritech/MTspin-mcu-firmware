@@ -1,4 +1,4 @@
-//PRE-PROCESSOR DIRECTIVES/INCLUDE GAURDS
+//PRE-PROCESSOR DIRECTIVES/INCLUDE GUARDS
 //=======================================================================================================================================
 
 #ifndef TestLib_h

@@ -1,3 +1,5 @@
+<img src="images/mtspin%20red%20and%20white%20full%20size%20png%20transparent.png" width="200" alt="MTspin logo"/>
+
 # MTspin-mcu-firmware
 
 [![Build, test and release](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-test-release.yaml/badge.svg)](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-test-release.yaml)

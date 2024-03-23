@@ -7,8 +7,12 @@
     },
     "configurePresets": [
         {
-            "name": "linux-gcc-compiler-setup",
-            "description": "Set GCC compilers for linux: C = /usr/bin/gcc, CXX = /usr/bin/g++.",
+            "name": "output-directory",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}"
+        },
+        {
+            "name": "linux-compiler-gcc",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "/usr/bin/gcc",
@@ -16,8 +20,7 @@
             }
         },
         {
-            "name": "windows-mingw-compiler-setup",
-            "description": "Set GCC compilers for windows: C = C:/msys64/mingw64/bin/gcc.exe, CXX = C:/msys64/mingw64/bin/g++.exe",
+            "name": "windows-compiler-gcc",
             "hidden": true,
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "C:/msys64/mingw64/bin/gcc.exe",
@@ -25,50 +28,52 @@
             }
         },
         {
-            "name": "output-directory-setup",
-            "description": "Set build and install directories.",
+            "name": "linux-generator-ninja",
             "hidden": true,
-            "binaryDir": "${sourceDir}/build/${presetName}"
+            "generator": "Ninja"
         },
         {
-            "name": "linux-configuration",
-            "description": "Configure for Linux using Ninja",
+            "name": "windows-generator-mingw",
             "hidden": true,
-            "generator": "Ninja",
+            "generator": "MinGW Makefiles"
+        },
+        {
+            "name": "linux-only-gcc-ninja",
+            "hidden": true,
             "inherits": [
-                "linux-gcc-compiler-setup",
-                "output-directory-setup"
+                "output-directory",
+                "linux-compiler-gcc",
+                "linux-generator-ninja"
             ],
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" }
         },
         {
-            "name": "windows-configuration",
-            "description": "Configure for Windows using Mingw",
+            "name": "windows-only-gcc-mingw",
             "hidden": true,
-            "generator": "MinGW Makefiles",
             "inherits": [
-                "windows-mingw-compiler-setup",
-                "output-directory-setup"
+                "output-directory-setup",              
+                "windows-compiler-gcc",
+                "windows-generator-mingw"
             ],
             "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" }
         },
         {
-            "name": "ci-ninja-x86_64-linux-debug",
-            "displayName": "Ninja Linux Debug",
-            "description": "Configure for Linux and set debug configuration.",
+            "name": "ci-linux-x86_64-ninja-debug",
+            "displayName": "Linux x86_64 Ninja Debug",
+            "description": "Default debug configuration for Linux using Ninja generator.",
             "inherits": [
-                "linux-configuration"
+                "linux-only-gcc-ninja"
             ],
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }        
         },
         {
-            "name": "ci-mingw-x86_64-w64-windows-debug",
-            "displayName": "Mingw64 Windows Debug",
-            "description": "Build for Windows using Mingw and set debug configuration.",
+            "name": "ci-windows-x86_64-w64-mingw-debug",
+            "displayName": "Windows x86_64-w64 MinGW Debug",
+            "description": "Default debug configuration for Windows using MinGW generator.",
             "inherits": [
-                "windows-configuration"
+                "windows-only-gcc-mingw"
             ],
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
@@ -77,27 +82,27 @@
     ],
     "buildPresets": [
         {
-            "name": "linux-debug",
-            "configurePreset": "ci-ninja-x86_64-linux-debug"
+            "name": "ci-linux-x86_64-ninja-debug",
+            "configurePreset": "ci-linux-x86_64-ninja-debug"
         },
         {
-            "name": "windows-debug",
-            "configurePreset": "ci-mingw-x86_64-w64-windows-debug"
+            "name": "ci-windows-x86_64-w64-mingw-debug",
+            "configurePreset": "ci-windows-x86_64-w64-mingw-debug"
         }
     ],
     "workflowPresets": [
         {
             "name": "linux-debug",
             "steps": [
-                { "type": "configure", "name": "ci-ninja-x86_64-linux-debug" },
-                { "type": "build", "name": "linux-debug" }
+                { "type": "configure", "name": "ci-linux-x86_64-ninja-debug" },
+                { "type": "build", "name": "ci-linux-x86_64-ninja-debug" }
             ]
         },
         {
             "name": "windows-debug",
             "steps": [
-                { "type": "configure", "name": "ci-mingw-x86_64-w64-windows-debug" },
-                { "type": "build", "name": "windows-debug" }
+                { "type": "configure", "name": "ci-windows-x86_64-w64-mingw-debug" },
+                { "type": "build", "name": "ci-windows-x86_64-w64-mingw-debug" }
             ]
         }
     ]

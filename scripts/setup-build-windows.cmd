@@ -1,7 +1,8 @@
 @echo off
 
 rem User prompt.
-echo "++Please run in Command Prompt (CMD). Ignore if already running in CMD++"
+echo ...Please run in Command Prompt (CMD)... 
+echo ...Ignore if already running in CMD...
 
 rem rem Check admin privileges.
 rem net session >nul 2>&1
@@ -24,17 +25,22 @@ if NOT "%~1" == "%CMD_SETUP%" (
 
 echo ...Installing and setting up dependencies...
 
-winget install -e ArduinoSA.CLI
+winget install --accept-package-agreements -e ArduinoSA.CLI
+winget install --accept-package-agreements -e Kitware.CMake
+winget install --accept-package-agreements -e DimitriVanHeesch.Doxygen
+winget install --accept-package-agreements -e Graphviz.Graphviz
 rem If not already added;
-rem add "C:\Program Files\Arduino CLI" to windows environment path (current session) so arduino-cli be executed directly.
-if defined ARDUINO_CLI_DIR (
-    GOTO arduino_cli_dir_added rem "set PATH" fails due to unknown reasons when used inside of an "if-else" block.
+rem add executables directories to windows environment path (current session) so they be executed directly.
+if defined IS_PATH_UPDATED (
+    GOTO path_updated rem "set PATH" fails due to unknown reasons when used inside of an "if-else" block.
 )
+set IS_PATH_UPDATED=true
+rem C:\Program Files\Arduino CLI
 set ARDUINO_CLI_DIR=%ProgramFiles%\Arduino CLI
 set PATH=%PATH%;%ARDUINO_CLI_DIR%
 arduino-cli version
 
-:arduino_cli_dir_added
+:path_updated
 
 echo ...Installing arduino platforms/cores...
 

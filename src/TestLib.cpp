@@ -1,28 +1,18 @@
-//HEADER FILE
-//=======================================================================================================================================
+/// @brief Library for testing.
+/// @file TestLib.cpp
 
-//GLOBAL VARIABLES & CONSTANTS
-//=======================================================================================================================================
+#include "TestLib.h"
 
-namespace TestLib
-{
+/// @brief The TestLib namespace 
+namespace mt::TestLib{
 
-const float pi = 3.14159265359;
-
-//FUNCTION IMPLEMENTATIONS
-//=======================================================================================================================================
-
-//Trigonometry
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Function definitions
+    
+// Trigonometry
 
 int testDoubleNumber(int number){
-//---------------------------------------------------------------------------------------------------------------------------------------
 
-//Double the input.
-//Input is an arbitrary integer number.
-//Output is a number that is double the input value.
-
-return (2*number);
+    return (2*number);
 }
 
-} //End of namespace TestLib
+} // namespace mt::TestLib

@@ -1,28 +1,29 @@
-//PRE-PROCESSOR DIRECTIVES/INCLUDE GUARDS
-//=======================================================================================================================================
+/// @brief Library for testing.
+/// @file TestLib.h
 
 #ifndef TestLib_h
 #define TestLib_h
 
 #include "Arduino.h"
 
-//LIBRARIES
-//=======================================================================================================================================
-
-//GLOBAL VARIABLES & CONSTANTS
-//=======================================================================================================================================
-
-namespace TestLib
+/// @brief The TestLib namespace 
+namespace mt::TestLib
 {
+  
+//**Better to use "inline constexpr" for these but requires C++17**;
 
-//FUNCTION PROTOTYPE DEFINITIONS
-//=======================================================================================================================================
+// Global variables & constants
 
-//Test
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/// pi
+constexpr float pi = 3.14159265359;
 
+// Function declarations
+
+/// @brief Double a number.
+/// @param number (int) The number to double.
+/// @return 2 x number (int)
 int testDoubleNumber(int number);
 
-} //End of namespace TestLib
+} // namespace mt::TestLib
 
-#endif
+#endif // TestLib_h

@@ -7,6 +7,13 @@
     },
     "configurePresets": [
         {
+            "name": "general",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
             "name": "output-directory",
             "hidden": true,
             "binaryDir": "${sourceDir}/build/${presetName}"
@@ -41,6 +48,7 @@
             "name": "linux-only-gcc-ninja",
             "hidden": true,
             "inherits": [
+                "general",
                 "output-directory",
                 "linux-compiler-gcc",
                 "linux-generator-ninja"
@@ -51,7 +59,8 @@
             "name": "windows-only-gcc-mingw",
             "hidden": true,
             "inherits": [
-                "output-directory-setup",              
+                "general",
+                "output-directory",              
                 "windows-compiler-gcc",
                 "windows-generator-mingw"
             ],
@@ -60,7 +69,7 @@
         {
             "name": "ci-linux-x86_64-ninja-debug",
             "displayName": "Linux x86_64 Ninja Debug",
-            "description": "Default debug configuration for Linux using Ninja generator.",
+            "description": "Default debug config for Linux using Ninja generator.",
             "inherits": [
                 "linux-only-gcc-ninja"
             ],
@@ -71,7 +80,7 @@
         {
             "name": "ci-windows-x86_64-w64-mingw-debug",
             "displayName": "Windows x86_64-w64 MinGW Debug",
-            "description": "Default debug configuration for Windows using MinGW generator.",
+            "description": "Default debug config for Windows using MinGW generator.",
             "inherits": [
                 "windows-only-gcc-mingw"
             ],
@@ -81,6 +90,23 @@
         }
     ],
     "buildPresets": [
+        {
+            "name": "custom_targets",
+            "hidden": true,
+            "targets": [
+                "doxygen"
+            ]
+        },
+        {
+            "name": "ci-linux-x86_64-ninja-debug",
+            "configurePreset": "ci-linux-x86_64-ninja-debug"
+        },
+        {
+            "name": "ci-windows-x86_64-w64-mingw-debug",
+            "configurePreset": "ci-windows-x86_64-w64-mingw-debug"
+        }
+    ],
+    "testPresets": [
         {
             "name": "ci-linux-x86_64-ninja-debug",
             "configurePreset": "ci-linux-x86_64-ninja-debug"
@@ -95,14 +121,16 @@
             "name": "linux-debug",
             "steps": [
                 { "type": "configure", "name": "ci-linux-x86_64-ninja-debug" },
-                { "type": "build", "name": "ci-linux-x86_64-ninja-debug" }
+                { "type": "build", "name": "ci-linux-x86_64-ninja-debug" },
+                { "type": "test", "name": "ci-linux-x86_64-ninja-debug" }
             ]
         },
         {
             "name": "windows-debug",
             "steps": [
                 { "type": "configure", "name": "ci-windows-x86_64-w64-mingw-debug" },
-                { "type": "build", "name": "ci-windows-x86_64-w64-mingw-debug" }
+                { "type": "build", "name": "ci-windows-x86_64-w64-mingw-debug" },
+                { "type": "test", "name": "ci-windows-x86_64-w64-mingw-debug" }
             ]
         }
     ]

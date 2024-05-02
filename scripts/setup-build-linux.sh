@@ -21,12 +21,15 @@ if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
 
   pushd $PWD
   cd ~ # Ensure we are in the "home/<username>" directory.
-  sudo apt-get --no-install-recommends install -y curl
+  sudo snap install cmake --classic
+  sudo apt-get --no-install-recommends install -y curl doxygen graphviz #default-jre
   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
   popd
   # If not already added; 
-  # add "home/<username>/bin" to linux environment path (this and child scripts) so arduino-cli be executed directly.
-  if [ -z "$ARDUINO_CLI_DIR" ]; then
+  # add executables directories to linux environment path (this and child scripts) so they can be executed directly.
+  if [ -z "IS_PATH_UPDATED" ]; then
+    IS_PATH_UPDATED=true
+    # home/<username>/bin
     ARDUINO_CLI_DIR=~/bin
     PATH=$PATH:$ARDUINO_CLI_DIR
     arduino-cli version

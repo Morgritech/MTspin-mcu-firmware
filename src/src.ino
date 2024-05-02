@@ -1,5 +1,5 @@
-//Pre-processor Directives/Include Guards
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/// @brief Main sketch containing the setup() and loop() functions.
+/// @file src.ino
 
 #ifndef mSerial
 #define mSerial Serial //"Serial" for programming port, "SerialUSB" for native port (Due and Zero only).
@@ -10,19 +10,13 @@
 
 FTDebouncer pinDebouncer;
 
-//Function Implementations
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 int baudRate = 9600;
 
 int minStartupTime = 1000;
 
-//Setup Function
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/// @brief The main application entry point for initialisation tasks.
 
-//---------------------------------------------------------------------------------------------------------------------------------------
-void setup()
-{
+void setup(){
 
   mSerial.begin(baudRate); //Begin serial.
 
@@ -33,18 +27,15 @@ void setup()
 
   delay(minStartupTime); //Delay for the startup/boot time required by motor controllers.
 
-  mSerial.println(TestLib::testDoubleNumber(2));
+  mSerial.println(mt::TestLib::testDoubleNumber(2));
 
   //DEBUGGING.
   mSerial.println(F("...\n...Setup End...\n..."));
 }
 
-//Loop Function
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/// @brief The continuously running function for repetitive tasks.
+void loop(){
 
-//---------------------------------------------------------------------------------------------------------------------------------------
-void loop()
-{
   //DEBUGGING.
   mSerial.println(F("...\n...Loop Start...\n..."));
 

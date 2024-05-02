@@ -12,7 +12,12 @@ include(FetchContent)
 # ---- Dependencies ----
 
 # Google Test
-include(scripts/cmake/get_gtest.cmake)
+include(scripts/cmake/get-gtest.cmake)
+include(scripts/cmake/get-plantuml.cmake)
+include(scripts/cmake/get-doxygen-awesome-css.cmake)
+include(scripts/cmake/create-version-file.cmake)
+include(scripts/cmake/target-doxygen.cmake)
+
 
 # ---- Enable CMake’s test runner ----
 

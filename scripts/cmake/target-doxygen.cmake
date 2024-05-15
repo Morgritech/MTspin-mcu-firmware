@@ -18,4 +18,6 @@ add_custom_command(
         CMAKE_PATCH_VERSION=${FIRMWARE_PATCH_VERSION}
         ${DOXYGEN_EXECUTABLE}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Building Doxygen documentation"
+    VERBATIM
 )

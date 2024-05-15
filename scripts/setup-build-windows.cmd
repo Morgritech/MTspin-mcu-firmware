@@ -29,6 +29,7 @@ winget install --accept-package-agreements -e ArduinoSA.CLI
 winget install --accept-package-agreements -e Kitware.CMake
 winget install --accept-package-agreements -e DimitriVanHeesch.Doxygen
 winget install --accept-package-agreements -e Graphviz.Graphviz
+winget install --accept-package-agreements -e AlDanial.Cloc
 rem If not already added;
 rem add executables directories to windows environment path (current session) so they be executed directly.
 if defined IS_PATH_UPDATED (

@@ -22,7 +22,7 @@ if [ "$1" == "$CMD_SETUP" ] || [ "$1" == "$CMD_BOTH" ]; then
   pushd $PWD
   cd ~ # Ensure we are in the "home/<username>" directory.
   sudo snap install cmake --classic
-  sudo apt-get --no-install-recommends install -y curl doxygen graphviz #default-jre
+  sudo apt-get --no-install-recommends install -y curl doxygen graphviz cloc #default-jre
   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
   popd
   # If not already added; 

@@ -94,7 +94,8 @@
             "name": "custom_targets",
             "hidden": true,
             "targets": [
-                "doxygen"
+                "doxygen",
+                "sloc"
             ]
         },
         {

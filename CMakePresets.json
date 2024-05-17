@@ -91,10 +91,26 @@
     ],
     "buildPresets": [
         {
-            "name": "custom_targets",
+            "name": "custom-targets-general",
             "hidden": true,
             "targets": [
-                "doxygen",
+                "doxygen"
+            ]
+        },
+        {
+            "name": "custom-targets-debug",
+            "hidden": true,
+            "inherits": [
+                "custom-targets-general"
+            ]
+        },
+        {
+            "name": "custom-targets-release",
+            "hidden": true,
+            "inherits": [
+                "custom-targets-general"
+            ],
+            "targets": [
                 "sloc"
             ]
         },

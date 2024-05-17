@@ -1,8 +1,6 @@
 find_package(Doxygen)
 
-if (DOXYGEN_EXECUTABLE)
-    message(STATUS "Found doxygen: ${DOXYGEN_EXECUTABLE}")
-else()
+if(NOT DOXYGEN_EXECUTABLE)
     message(FATAL_ERROR "doxygen not found")
 endif()
 

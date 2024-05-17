@@ -1,5 +1,5 @@
-add_custom_target(sloc ALL)
-#add_custom_target(sloc)
+#add_custom_target(sloc ALL)
+add_custom_target(sloc)
 
 add_custom_command(
     TARGET sloc

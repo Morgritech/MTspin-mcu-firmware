@@ -21,6 +21,7 @@ file(STRINGS ${ARDUINO_CORES_FILE} CORES)
 foreach(CORE IN LISTS CORES)
     execute_process(
         COMMAND ${ARDUINO_CLI_EXECUTABLE} core install ${CORE}
+        COMMAND_ERROR_IS_FATAL ANY
     )
 endforeach()
 
@@ -35,6 +36,7 @@ file(STRINGS ${ARDUINO_LIBS_FILE} LIBS)
 foreach(LIB IN LISTS LIBS)
     execute_process(
         COMMAND ${ARDUINO_CLI_EXECUTABLE} lib install ${LIB}
+        COMMAND_ERROR_IS_FATAL ANY
     )
 endforeach()
 
@@ -51,6 +53,7 @@ file(STRINGS ${ARDUINO_BOARDS_FILE} BOARDS)
 foreach(BOARD IN LISTS BOARDS)
     string(REPLACE ":" "-" ARDUINO_BUILD_SUBDIR ${BOARD})
     execute_process(
-        COMMAND ${ARDUINO_CLI_EXECUTABLE} compile -b ${BOARD} ${ARDUINO_SKETCH_DIR} --clean --build-path ${ARDUINO_BUILD_DIR}/${ARDUINO_BUILD_SUBDIR} #--build-property ${ARDUINO_EXTRA_BUILD_PROPERTIES}
+        COMMAND ${ARDUINO_CLI_EXECUTABLE} compile -b ${BOARD} ${ARDUINO_SKETCH_DIR} --clean --build-path ${ARDUINO_BUILD_DIR}/${ARDUINO_BUILD_SUBDIR}
+        COMMAND_ERROR_IS_FATAL ANY
     )
 endforeach()

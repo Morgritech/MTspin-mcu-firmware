@@ -20,13 +20,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Non-shallow clone - fetch all history for all tags and branches - may be of use later in pipeline.
-      - name: Install dependencies and compile
+      - name: Install and setup project dependencies
         shell: bash
         run: |
           sudo apt-get update
-          sudo scripts/setup-build-linux.sh -both
+          sudo scripts/setup-linux.sh
           echo "List all files in the directory:"
           ls -R
+      - name: Run CMake configure
+        run: |
+          cmake --preset ci-linux-x86_64-ninja-debug
       #- name: Save/upload package
         #uses: actions/upload-artifact@v4
         #with:

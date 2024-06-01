@@ -27,9 +27,9 @@ jobs:
           sudo scripts/setup-linux.sh
           echo "List all files in the directory:"
           ls -R
-      - name: Run CMake configure
-        run: |
-          cmake --preset ci-linux-x86_64-ninja-debug
+      #- name: Run CMake configure
+        #run: |
+          #cmake --preset ci-linux-x86_64-ninja-debug
       #- name: Save/upload package
         #uses: actions/upload-artifact@v4
         #with:

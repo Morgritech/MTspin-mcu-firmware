@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo scripts/setup-linux.sh
+          sudo bash scripts/setup-linux.sh
           echo "List all files in the directory:"
           ls -R
       #- name: Run CMake configure

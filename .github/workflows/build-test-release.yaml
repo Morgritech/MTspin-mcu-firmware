@@ -29,7 +29,7 @@ jobs:
           sudo bash -x scripts/setup-linux.sh
       - name: Run CMake configure
         run: |
-          #cmake --preset ci-linux-x86_64-ninja-debug
+          cmake --preset ci-linux-x86_64-ninja-debug
       #- name: Save/upload package
         #uses: actions/upload-artifact@v4
         #with:

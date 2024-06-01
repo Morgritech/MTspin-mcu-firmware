@@ -20,7 +20,7 @@ Unit tests are developed using the [GoogleTest](http://google.github.io/googlete
 
 ### Build system and continuous integration/delivery (CI/CD)
 
-This project uses [CMake](https://cmake.org) to build and run the project. Under the hood, [Arduino CLI](https://arduino.github.io/arduino-cli) is used to compile and upload the embedded code. Setup scripts for Windows and Linux have been created to automate the process of installing system dependencies, except for a C++ programming toolchain (required for building the unit tests), which must be manually installed. CMake and Arduino CLI are used to automate the process of obtaining other project dependencies.
+This project uses [CMake](https://cmake.org) to build and run the project. Under the hood, [Arduino CLI](https://arduino.github.io/arduino-cli) is used to compile and upload the embedded code. Setup scripts for Windows and Linux have been created to automate the process of installing system dependencies, except for a C++ programming toolchain on Windows (required for building the unit tests), which must be manually installed. CMake and Arduino CLI are used to automate the process of obtaining other project dependencies.
 
 [GitHub Actions](https://docs.github.com/en/actions) is used as the CI/CD platform, and the workflow also makes use of the Linux setup script.
 

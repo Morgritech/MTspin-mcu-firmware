@@ -7,12 +7,12 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
-    name: Build
+  build-test-release:
+    name: Build, test and release
     runs-on: ubuntu-latest
 
     env:
-      # Environment variables
+      # Environment variables.
       BUILD_DIR: build
 
     steps:
@@ -24,15 +24,29 @@ jobs:
         run: |
           ls -R
       - name: Install and setup project dependencies
+        # Install system dependencies.
         run: |
           sudo apt-get update
           sudo bash -x scripts/setup-linux.sh
       - name: Run CMake configure
+        # Compile arduino code, and configure unit tests and project documentation.
         run: |
           cmake --preset ci-linux-x86_64-unix-debug
-      #- name: Save/upload package
+      #- name: Run Cmake build
+        # Build unit tests and project documentation.
+        #run: |
+          #cmake --build --preset ci-linux-x86_64-unix-debug
+      #- name: Run Ctest for unit tests
+        # Run unit tests.
+        #run: |
+          #ctest -VV --preset ci-linux-x86_64-unix-debug
+      #- name: Archive package
         #uses: actions/upload-artifact@v4
         #with:
           #name: ${{ github.repository }}
           #path: |
             #${{ env.BUILD_DIR }}/* # All folders inside the build folder.
+
+# TO DO
+# A separate job to deploy the doxygen docs to github pages
+# either within this workflow or a new workflow so it can be set to run manually if needed.

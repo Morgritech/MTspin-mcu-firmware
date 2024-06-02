@@ -78,6 +78,17 @@
             }        
         },
         {
+            "name": "ci-linux-x86_64-unix-release",
+            "displayName": "Linux x86_64 Unix Release",
+            "description": "Default release config for Linux using Unix generator.",
+            "inherits": [
+                "linux-only-gcc-unix"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
             "name": "ci-windows-x86_64-w64-mingw-debug",
             "displayName": "Windows x86_64-w64 MinGW Debug",
             "description": "Default debug config for Windows using MinGW generator.",
@@ -87,31 +98,26 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug"
             }
+        },
+        {
+            "name": "ci-windows-x86_64-w64-mingw-release",
+            "displayName": "Windows x86_64-w64 MinGW Release",
+            "description": "Default release config for Windows using MinGW generator.",
+            "inherits": [
+                "windows-only-gcc-mingw"
+            ],
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
         }
     ],
     "buildPresets": [
         {
-            "name": "custom-targets-general",
-            "hidden": true,
-            "targets": [
-                "doxygen"
-            ]
-        },
-        {
-            "name": "custom-targets-debug",
-            "hidden": true,
-            "inherits": [
-                "custom-targets-general"
-            ]
-        },
-        {
             "name": "custom-targets-release",
             "hidden": true,
-            "inherits": [
-                "custom-targets-general"
-            ],
             "targets": [
-                "sloc"
+                "sloc",
+                "doxygen"
             ]
         },
         {
@@ -119,8 +125,22 @@
             "configurePreset": "ci-linux-x86_64-unix-debug"
         },
         {
+            "name": "ci-linux-x86_64-unix-release",
+            "configurePreset": "ci-linux-x86_64-unix-release",
+            "inherits": [
+                "custom-targets-release"
+            ]
+        },
+        {
             "name": "ci-windows-x86_64-w64-mingw-debug",
             "configurePreset": "ci-windows-x86_64-w64-mingw-debug"
+        },
+        {
+            "name": "ci-windows-x86_64-w64-mingw-release",
+            "configurePreset": "ci-windows-x86_64-w64-mingw-release",
+            "inherits": [
+                "custom-targets-release"
+            ]
         }
     ],
     "testPresets": [
@@ -129,8 +149,16 @@
             "configurePreset": "ci-linux-x86_64-unix-debug"
         },
         {
+            "name": "ci-linux-x86_64-unix-release",
+            "configurePreset": "ci-linux-x86_64-unix-release"
+        },
+        {
             "name": "ci-windows-x86_64-w64-mingw-debug",
             "configurePreset": "ci-windows-x86_64-w64-mingw-debug"
+        },
+        {
+            "name": "ci-windows-x86_64-w64-mingw-release",
+            "configurePreset": "ci-windows-x86_64-w64-mingw-release"
         }
     ],
     "workflowPresets": [
@@ -143,11 +171,27 @@
             ]
         },
         {
+            "name": "linux-release",
+            "steps": [
+                { "type": "configure", "name": "ci-linux-x86_64-unix-release" },
+                { "type": "build", "name": "ci-linux-x86_64-unix-release" },
+                { "type": "test", "name": "ci-linux-x86_64-unix-release" }
+            ]
+        },
+        {
             "name": "windows-debug",
             "steps": [
                 { "type": "configure", "name": "ci-windows-x86_64-w64-mingw-debug" },
                 { "type": "build", "name": "ci-windows-x86_64-w64-mingw-debug" },
                 { "type": "test", "name": "ci-windows-x86_64-w64-mingw-debug" }
+            ]
+        },
+       {
+            "name": "windows-release",
+            "steps": [
+                { "type": "configure", "name": "ci-windows-x86_64-w64-mingw-release" },
+                { "type": "build", "name": "ci-windows-x86_64-w64-mingw-release" },
+                { "type": "test", "name": "ci-windows-x86_64-w64-mingw-release" }
             ]
         }
     ]

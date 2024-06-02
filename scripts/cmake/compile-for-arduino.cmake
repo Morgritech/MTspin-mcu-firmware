@@ -52,8 +52,10 @@ file(STRINGS ${ARDUINO_BOARDS_FILE} BOARDS)
 
 foreach(BOARD IN LISTS BOARDS)
     string(REPLACE ":" "-" ARDUINO_BUILD_SUBDIR ${BOARD})
+    set(ARDUINO_BUILD_OUTPUT_DIR ${ARDUINO_BUILD_DIR}/ci-${ARDUINO_BUILD_SUBDIR})
     execute_process(
-        COMMAND ${ARDUINO_CLI_EXECUTABLE} compile -b ${BOARD} ${ARDUINO_SKETCH_DIR} --clean --build-path ${ARDUINO_BUILD_DIR}/${ARDUINO_BUILD_SUBDIR}
+        COMMAND ${ARDUINO_CLI_EXECUTABLE} compile -b ${BOARD} ${ARDUINO_SKETCH_DIR} --clean --build-path ${ARDUINO_BUILD_OUTPUT_DIR}
         COMMAND_ERROR_IS_FATAL ANY
     )
+    message(STATUS "...Arduino build files have been written to: " ${ARDUINO_BUILD_OUTPUT_DIR} " ...")
 endforeach()

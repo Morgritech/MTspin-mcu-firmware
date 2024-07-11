@@ -9,14 +9,17 @@
 #ifndef BUTTON_MANAGER_H_
 #define BUTTON_MANAGER_H_
 
+#include "Arduino.h"
+
+#include "button.h"
+
 namespace mtspin {
 
 /// @brief The button class.
 class ButtonManager {
     public:
-    /// @brief Construct a Button Manager object for a single button. 
-    /// @param gpio_pin The GPIO pin assigned to the button.
-    ButtonManager(uint8_t gpio_pin);
+    /// @brief Construct a Button Manager object. 
+    ButtonManager();
 
     /// @brief Destroy the Button Manager object.
     ~ButtonManager();

@@ -6,7 +6,7 @@
 /// @brief Main sketch containing the setup() and loop() functions.
 /// @file src.ino
 
-#include "hardware_config.h"
+#include "src_hardware_config.h"
 
 #include "FTDebouncer.h"
 #include "TestLib.h"
@@ -29,15 +29,15 @@ void setup(){
 
   // Initialise input pins
 
-  pinMode(direction_button_pin, INPUT);
-  pinMode(speed_button_pin, INPUT);
-  pinMode(angle_button_pin, INPUT);  
+  pinMode(kDirectionButtonPin, INPUT);
+  pinMode(kSpeedButtonPin, INPUT);
+  pinMode(kAngleButtonPin, INPUT);  
 
   // Initialise output pins
 
-  pinMode(pul_motor_driver_pin, OUTPUT);
-  pinMode(dir_motor_driver_pin, OUTPUT);
-  pinMode(ena_motor_driver_pin, OUTPUT);
+  pinMode(kPulMotorDriverPin, OUTPUT);
+  pinMode(kDirMotorDriverPin, OUTPUT);
+  pinMode(kEnaMotorDriverPin, OUTPUT);
 
   delay(minStartupTime); //Delay for the startup/boot time required by motor controllers.
 

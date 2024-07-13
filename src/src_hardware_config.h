@@ -4,11 +4,11 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @brief Common hardware configuration settings, including serial port and pin definitions.
-/// @file hardware_config.h
+/// @file src_hardware_config.h
 
 // Serial port
 
-#define mtSerial Serial // "Serial" for programming port, "SerialUSB" for native port (Due and Zero only).
+#define MTSPIN_SERIAL Serial // "Serial" for programming port, "SerialUSB" for native port (Due and Zero only).
 
 //GPIO Pins
 

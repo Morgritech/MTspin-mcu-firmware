@@ -4,27 +4,31 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @brief Class to manage hardware button presses.
-/// @file button_manager.h
+/// @file control_system.h
 
-#ifndef BUTTON_MANAGER_H_
-#define BUTTON_MANAGER_H_
+#ifndef CONTROL_SYSTEM_H_
+#define CONTROL_SYSTEM_H_
 
 #include "Arduino.h"
 
-#include "button.h"
+#include "momentary_button.h"
 
 namespace mtspin {
 
 /// @brief The button class.
-class ButtonManager {
+class ControlSystem {
     public:
-    /// @brief Construct a Button Manager object. 
-    ButtonManager();
+    /// @brief Construct a Control System object. 
+    ControlSystem(MomentaryButton* buttons, uint8_t no_of_buttons);
 
     /// @brief Destroy the Button Manager object.
-    ~ButtonManager();
+    ~ControlSystem();
 
+    void CheckAndProcessButtons();
 
+    private:
+
+    MomentaryButton* buttons_;
 
 };
 
@@ -32,4 +36,4 @@ class ButtonManager {
 
 } // namespace mtspin
 
-#endif // BUTTON_MANAGER_H_
+#endif // CONTROL_SYSTEM_H_

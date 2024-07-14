@@ -4,11 +4,25 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @brief Common hardware configuration settings, including serial port and pin definitions.
-/// @file src_hardware_config.h
+/// @file hardware_config.h
+
+#ifndef HARDWARE_CONFIG_H_
+#define HARDWARE_CONFIG_H_
 
 // Serial port
-
 #define MTSPIN_SERIAL Serial // "Serial" for programming port, "SerialUSB" for native port (Due and Zero only).
+
+// Simple logging
+
+#define MTSPIN_DEBUG_LOG // Comment out to disable debug log messages.
+
+#ifdef MTSPIN_DEBUG_LOG
+  #define MTSPIN_SERIAL_LOG(a) (MTSPIN_SERIAL.print(a))
+  #define MTSPIN_SERIAL_LOGLN(a) (MTSPIN_SERIAL.println(a))
+#else
+  #define MTSPIN_SERIAL_LOG(a)
+  #define MTSPIN_SERIAL_LOGLN(a)
+#endif
 
 //GPIO Pins
 
@@ -31,3 +45,5 @@ const uint8_t kEnaMotorDriverPin = 5; // Motor enable/ENA/EN output pin.
 //Uno, Nano, Mini, other 328-based   2, 3
 //Mega, Mega2560, MegaADK            2, 3, 18, 19, 20, 21
 //Due                                all digital pins
+
+#endif // HARDWARE_CONFIG_H_

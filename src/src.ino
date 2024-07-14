@@ -6,12 +6,17 @@
 /// @brief Main sketch containing the setup() and loop() functions.
 /// @file src.ino
 
-#include "src_hardware_config.h"
+#include "hardware_config.h"
+
+#include "control_system.h"
 
 #include "FTDebouncer.h"
 #include "TestLib.h"
 
 FTDebouncer pinDebouncer;
+
+/// @brief The control system instance.
+mtspin::ControlSystem control_system;
 
 int baudRate = 9600;
 
@@ -20,12 +25,12 @@ int minStartupTime = 1000;
 /// @brief The main application entry point for initialisation tasks.
 void setup(){
 
-  mtSerial.begin(baudRate); //Begin serial.
+  MTSPIN_SERIAL.begin(baudRate); // Begin serial.
 
-  while (!mtSerial); //Wait until a serial connection is made (This is mainly for the arduino due, other boards do this automatically).
+  while (!MTSPIN_SERIAL); // Wait until a serial connection is made (This is mainly for the arduino due, other boards do this automatically).
 
   //DEBUGGING.
-  mtSerial.println(F("...\n...Setup Start...\n..."));
+  MTSPIN_SERIAL_LOGLN(F("...\n...Setup Start...\n..."));
 
   // Initialise input pins
 
@@ -39,23 +44,23 @@ void setup(){
   pinMode(kDirMotorDriverPin, OUTPUT);
   pinMode(kEnaMotorDriverPin, OUTPUT);
 
-  delay(minStartupTime); //Delay for the startup/boot time required by motor controllers.
+  delay(minStartupTime); // Delay for the startup/boot time required by motor controllers.
 
-  mtSerial.println(mt::TestLib::testDoubleNumber(2));
+  MTSPIN_SERIAL.println(mt::TestLib::testDoubleNumber(2));
 
-  //DEBUGGING.
-  mtSerial.println(F("...\n...Setup End...\n..."));
+  MTSPIN_SERIAL_LOGLN(F("...\n...Setup End...\n..."));
 }
 
 /// @brief The continuously running function for repetitive tasks.
 void loop(){
 
-  //DEBUGGING.
-  mtSerial.println(F("...\n...Loop Start...\n..."));
+  MTSPIN_SERIAL_LOGLN(F("...\n...Loop Start...\n..."));
 
   //TESTING.
-  delay(500);
+  //delay(500);
 
-  //DEBUGGING.
-  mtSerial.println(F("...\n...Loop End...\n..."));
+  // Start the control system.
+  control_system.CheckAndProcess();
+
+  MTSPIN_SERIAL_LOGLN(F("...\n...Loop End...\n..."));
 }

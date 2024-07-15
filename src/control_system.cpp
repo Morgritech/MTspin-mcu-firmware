@@ -27,8 +27,8 @@ void ControlSystem::CheckAndProcess() const {
   uint8_t speed_button_press_count = 0;
   uint8_t angle_button_press_count = 0;
   MomentaryButton::PressType direction_button_press_type = direction_button_.IsPressed(direction_button_press_count);
-  MomentaryButton::PressType speed_button_press_type = direction_button_.IsPressed(speed_button_press_count);
-  MomentaryButton::PressType angle_button_press_type = direction_button_.IsPressed(angle_button_press_count);
+  //MomentaryButton::PressType speed_button_press_type = direction_button_.IsPressed(speed_button_press_count);
+  //MomentaryButton::PressType angle_button_press_type = direction_button_.IsPressed(angle_button_press_count);
 
   // Process button presses.
   if (direction_button_press_count >= 1) {
@@ -56,7 +56,7 @@ void ControlSystem::CheckAndProcess() const {
   }
 
   if (direction_button_press_type == MomentaryButton::PressType::kLongPress) {
-    MTSPIN_SERIAL_LOGLN(F("INFO: DIRECTION BUTTON LONG PRESS"));
+    MTSPIN_SERIAL_LOGLN(F("INFO: SPEED BUTTON LONG PRESS"));
   }
 
 }

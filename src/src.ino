@@ -36,7 +36,7 @@ void setup(){
 
   pinMode(kDirectionButtonPin, INPUT);
   pinMode(kSpeedButtonPin, INPUT);
-  pinMode(kAngleButtonPin, INPUT);  
+  pinMode(kAngleButtonPin, INPUT);
 
   // Initialise output pins
 
@@ -54,7 +54,7 @@ void setup(){
 /// @brief The continuously running function for repetitive tasks.
 void loop(){
 
-  MTSPIN_SERIAL_LOGLN(F("...\n...Loop Start...\n..."));
+//  MTSPIN_SERIAL_LOGLN(F("...\n...Loop Start...\n..."));
 
   //TESTING.
   //delay(500);
@@ -62,5 +62,9 @@ void loop(){
   // Start the control system.
   control_system.CheckAndProcess();
 
-  MTSPIN_SERIAL_LOGLN(F("...\n...Loop End...\n..."));
+  //if (digitalRead(2) == HIGH) {
+  //  MTSPIN_SERIAL_LOGLN(F("BUTTON PRESSED"));
+  //}
+
+//  MTSPIN_SERIAL_LOGLN(F("...\n...Loop End...\n..."));
 }

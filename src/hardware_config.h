@@ -9,6 +9,8 @@
 #ifndef HARDWARE_CONFIG_H_
 #define HARDWARE_CONFIG_H_
 
+#include <Arduino.h>
+
 // Serial port
 #define MTSPIN_SERIAL Serial // "Serial" for programming port, "SerialUSB" for native port (Due and Zero only).
 
@@ -28,15 +30,15 @@
 
 //Buttons
 
-const uint8_t kDirectionButtonPin = 0; // Motor direction button input pin.
-const uint8_t kSpeedButtonPin = 1; // Motor speed button input pin.
-const uint8_t kAngleButtonPin = 2; // Motor angle button input pin.
+const uint8_t kDirectionButtonPin = 2; // Motor direction button input pin.
+const uint8_t kSpeedButtonPin = 3; // Motor speed button input pin.
+const uint8_t kAngleButtonPin = 4; // Motor angle button input pin.
 
 //Motor Driver
 
-const uint8_t kPulMotorDriverPin = 3; // Motor pulse/PUL/CLK/STP output pin.
-const uint8_t kDirMotorDriverPin = 4; // Motor direction/DIR/CW output pin.
-const uint8_t kEnaMotorDriverPin = 5; // Motor enable/ENA/EN output pin.
+const uint8_t kPulMotorDriverPin = 11; // Motor pulse/PUL/CLK/STP output pin.
+const uint8_t kDirMotorDriverPin = 12; // Motor direction/DIR/CW output pin.
+const uint8_t kEnaMotorDriverPin = 13; // Motor enable/ENA/EN output pin.
 
 
 //Notes

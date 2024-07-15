@@ -8,6 +8,8 @@
 
 #ifndef MOMENTARY_BUTTON_H_
 #define MOMENTARY_BUTTON_H_
+
+#include <Arduino.h>
 namespace mtspin {
 
 /// @brief The Button class.

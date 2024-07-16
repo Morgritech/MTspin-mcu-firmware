@@ -33,7 +33,7 @@ MomentaryButton::PressType MomentaryButton::IsPressed(uint8_t& press_count_outpu
   PressType press_type = PressType::kNoPress;
   press_count_output = 0;
 
-  debouncing = CheckAndDebounceButton();
+  debouncing = DebounceButton();
   if (waiting_for_release == true && debouncing == DebounceStatus::kNotStarted) {
     // Button has been released after a long press.
     waiting_for_press = true;
@@ -105,28 +105,49 @@ MomentaryButton::PressType MomentaryButton::IsPressed(uint8_t& press_count_outpu
   return press_type;
 }
 
-MomentaryButton::DebounceStatus MomentaryButton::CheckAndDebounceButton() const {
+MomentaryButton::ButtonState MomentaryButton::DetectButtonStateChange() const {
+  static DebounceStatus debounce_status = DebounceStatus::kNotStarted;
+  static bool debouncing_a_press = false;
+
+  ButtonState button_state = ButtonState::kNoChange;
+
+  if (debounce_status == DebounceStatus::kNotStarted && debouncing_a_press == false) {
+    // No button press yet and/or finished debouncing button release.
+    PinState pin_state = static_cast<PinState>(digitalRead(gpio_pin_));
+    if (pin_state != unpressed_pin_state_) {
+      // Button has been pressed.
+      button_state = ButtonState::kPressed;
+      debouncing_a_press = true;
+      debounce_status = DebounceButton();
+    }
+  }
+  else if (debounce_status == DebounceStatus::kNotStarted && debouncing_a_press == true) {
+    // Finished debouncing a button press.
+    PinState pin_state = static_cast<PinState>(digitalRead(gpio_pin_));
+    if (pin_state == unpressed_pin_state_) {
+      // Button has been released.
+      button_state = ButtonState::kReleased;
+      debouncing_a_press = false;
+      debounce_status = DebounceButton();
+    }
+  }
+  else if (debounce_status == DebounceStatus::kOngoing) {
+    debounce_status = DebounceButton();
+  }
+
+  return button_state;
+}
+
+MomentaryButton::DebounceStatus MomentaryButton::DebounceButton() const {
   static DebounceStatus status = DebounceStatus::kNotStarted;
-  static PinState previous_pin_state = unpressed_pin_state_;
-  static uint32_t previous_debounce_time = millis(); // (ms).
+  static uint32_t reference_debounce_time = millis(); // (ms).
 
-  PinState pin_state = static_cast<PinState>(digitalRead(gpio_pin_));
-  previous_pin_state = pin_state;
-
-  if (status == DebounceStatus::kNotStarted && pin_state != unpressed_pin_state_) {
-    // Button has been pressed and not yet debounced.
+  if (status == DebounceStatus::kNotStarted) {
     status = DebounceStatus::kOngoing;
   }
-  else if (status == DebounceStatus::kOngoing) {
-    if (pin_state != previous_pin_state) {
-      // A bounce has occurred.
-      previous_debounce_time = millis(); // Reset the bounce timer (ms).
-  
-      //DEBUGGING.
-      //mSerial.println(F("debouncing"));
-    }
-    else if ((millis() - previous_debounce_time) > debounce_period_) {
-      // The required period of time with no bounce has elapsed (no more bouncing expected).
+  if (status == DebounceStatus::kOngoing) {
+    if ((millis() - reference_debounce_time) > debounce_period_) {
+      // Finished debouncing.
       status = DebounceStatus::kNotStarted;
   
       //DEBUGGING.

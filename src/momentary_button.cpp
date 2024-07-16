@@ -48,6 +48,7 @@ MomentaryButton::PressType MomentaryButton::IsPressed(uint8_t& press_count_outpu
     if (pin_state != unpressed_pin_state_) {
       // Button is being held.
       waiting_for_long_press = true;
+      waiting_for_press = false;
     }
     else {
       // Waiting for a button to be pressed.

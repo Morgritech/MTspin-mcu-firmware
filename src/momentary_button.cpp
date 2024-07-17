@@ -21,90 +21,6 @@ MomentaryButton::MomentaryButton(uint8_t gpio_pin, PinState unpressed_pin_state,
 
 MomentaryButton::~MomentaryButton() {}
 
-MomentaryButton::PressType MomentaryButton::IsPressed(uint8_t& press_count_output) const {
-  static uint8_t press_counter = 0; // To count the number of button presses.
-  static bool long_press = false;
-  static bool waiting_for_long_press = false;
-  static bool waiting_for_press = true;
-  static bool waiting_for_release = false;
-  static DebounceStatus debouncing = DebounceStatus::kNotStarted;
-  static uint32_t previous_button_press_time = millis(); // (ms).
-
-  PressType press_type = PressType::kNoPress;
-  press_count_output = 0;
-
-  debouncing = DebounceButton();
-  if (waiting_for_release == true && debouncing == DebounceStatus::kNotStarted) {
-    // Button has been released after a long press.
-    waiting_for_press = true;
-  }
-  else if (waiting_for_press == true && debouncing == DebounceStatus::kOngoing) {
-    // Button has been pressed.
-    press_counter++;
-    waiting_for_press = false;
-  }
-  else if (waiting_for_press == false && debouncing == DebounceStatus::kNotStarted) {
-    PinState pin_state = static_cast<PinState>(digitalRead(gpio_pin_));
-    if (pin_state != unpressed_pin_state_) {
-      // Button is being held.
-      waiting_for_long_press = true;
-      waiting_for_press = false;
-    }
-    else {
-      // Waiting for a button to be pressed.
-      waiting_for_press = true;
-      waiting_for_long_press = false;
-    }
-    previous_button_press_time = millis(); // Reset the button press timer.
-  }
-  else if (waiting_for_long_press == true) {
-    PinState pin_state = static_cast<PinState>(digitalRead(gpio_pin_));
-    if (pin_state != unpressed_pin_state_ && (millis() - previous_button_press_time) > long_press_period_) {
-      // The required period of time for a long press has elapsed.
-      long_press = true;
-      waiting_for_release = true;
-      waiting_for_long_press = false;
-    }
-    else if (pin_state == unpressed_pin_state_) {
-      // Button has been released before long press occurred.
-      waiting_for_long_press = false;
-      waiting_for_press = true;
-    }
-  }
-  else if (waiting_for_press == true) {
-    if ((millis() - previous_button_press_time) > multiple_press_period_) {
-      // The allowed period of time for multiple button presses has elapsed.
-      press_count_output = press_counter;
-      press_counter = 0;
-      
-      //DEBUGGING.
-      //mSerial.print(F("button presses: ")); mSerial.println(buttonPresses); 
-    }
-  }
-
-  switch (press_count_output){
-    case 0: {
-      PressType press_type = PressType::kNoPress;
-      break;
-    }
-    case 1: {
-      if (long_press == true) {
-        PressType press_type = PressType::kLongPress;
-        long_press = false;
-      }
-      else {
-        PressType press_type = PressType::kSinglePress;
-      }
-      break;
-    }
-    default: { // press_count > 1
-      PressType press_type = PressType::kMultiplePress;
-      break;
-    }
-  }
-  return press_type;
-}
-
 MomentaryButton::ButtonState MomentaryButton::DetectButtonStateChange() const {
   static DebounceStatus debounce_status = DebounceStatus::kNotStarted;
   static bool debouncing_a_press = false;
@@ -138,6 +54,33 @@ MomentaryButton::ButtonState MomentaryButton::DetectButtonStateChange() const {
   return button_state;
 }
 
+MomentaryButton::PressType MomentaryButton::DetectButtonPressType() const {
+  static uint32_t reference_button_press_time = millis(); // (ms).
+
+  PressType press_type = PressType::kNotApplicable;
+
+  if (DetectButtonStateChange() == ButtonState::kPressed) {
+    reference_button_press_time = millis();
+  }
+
+  if (DetectButtonStateChange() == ButtonState::kReleased) {
+    uint32_t button_press_period = millis() - reference_button_press_time;
+    if (button_press_period >= long_press_period_) {
+      press_type = PressType::kLongPress;
+    }
+    else {
+      press_type = PressType::kShortPress;
+    }
+  }
+  
+  return press_type;
+}
+
+uint8_t MomentaryButton::CountButtonPresses() const {
+  static uint8_t press_count = 0; // The number of button presses.
+  return 0;
+}
+
 MomentaryButton::DebounceStatus MomentaryButton::DebounceButton() const {
   static DebounceStatus status = DebounceStatus::kNotStarted;
   static uint32_t reference_debounce_time = millis(); // (ms).
@@ -145,15 +88,14 @@ MomentaryButton::DebounceStatus MomentaryButton::DebounceButton() const {
   if (status == DebounceStatus::kNotStarted) {
     status = DebounceStatus::kOngoing;
   }
+
   if (status == DebounceStatus::kOngoing) {
     if ((millis() - reference_debounce_time) > debounce_period_) {
       // Finished debouncing.
       status = DebounceStatus::kNotStarted;
-  
-      //DEBUGGING.
-      //mSerial.println(F("finished debouncing"));
     }
   }
+
   return status;
 }
 

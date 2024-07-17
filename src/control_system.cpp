@@ -56,12 +56,16 @@ void ControlSystem::CheckAndProcess() const {
     //MTSPIN_SERIAL_LOGLN(F("INFO: DIRECTION BUTTON TRIPLE PRESS"));
   }
 
+  static int counter = 0;
   if (direction_button_state == MomentaryButton::ButtonState::kPressed) {
-    MTSPIN_SERIAL_LOGLN(F("INFO: DIRECTION BUTTON PRESSED"));
+    counter++;
+    MTSPIN_SERIAL_LOG(F("INFO: DIRECTION BUTTON PRESSED: "));
+    MTSPIN_SERIAL_LOGLN(counter);
   }
 
   if (direction_button_state == MomentaryButton::ButtonState::kReleased) {
-    MTSPIN_SERIAL_LOGLN(F("INFO: DIRECTION BUTTON RELEASED"));
+    MTSPIN_SERIAL_LOG(F("INFO: DIRECTION BUTTON RELEASED: "));
+    MTSPIN_SERIAL_LOGLN(counter);
   }
 
 }

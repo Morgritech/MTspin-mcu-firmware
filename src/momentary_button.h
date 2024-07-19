@@ -51,21 +51,21 @@ class MomentaryButton {
 
   /// @brief Check if the button has changed state, and what state it has changed to.
   /// @return The button state at the time of checking (released, pressed, or no change).
-  ButtonState DetectButtonStateChange() const;
+  ButtonState DetectStateChange() const;
 
   /// @brief Check if a button has been pressed, and what type of press occurred.
   /// @return The type of button press at the time of checking (not applicable (i.e., unpressed or between states), short press, or long press).
-  PressType DetectButtonPressType() const;
+  PressType DetectPressType() const;
 
   /// @brief Count the number of (short) button presses.
   /// @return The number of (short) button presses.
-  uint8_t MomentaryButton::CountButtonPresses() const;
+  uint8_t MomentaryButton::CountPresses() const;
 
  private:
 
   /// @brief Disregard input noise when the button is pressed/released.
   /// @return The status of the debounce operation (not started or ongoing).
-  DebounceStatus DebounceButton() const;
+  DebounceStatus Debounce() const;
 
   uint8_t gpio_pin_;
 

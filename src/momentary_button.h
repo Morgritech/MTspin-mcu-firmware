@@ -63,7 +63,7 @@ class MomentaryButton {
 
  private:
 
-  /// @brief Filter out input noise when the button is pressed/released.
+  /// @brief Debounce (filter out input noise) when the button is pressed/released.
   /// @return The status of the debounce operation.
   DebounceStatus Debounce() const;
 

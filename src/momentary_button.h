@@ -44,7 +44,7 @@ class MomentaryButton {
   /// @param debounce_period The period of time (ms) allowed for pin debouncing.
   /// @param multiple_press_period The period of time (ms) allowed between multiple button presses.
   /// @param long_press_period The period of time (ms) allowed for a long button press (press and hold).
-  MomentaryButton(uint8_t gpio_pin, PinState unpressed_pin_state = PinState::kLow, uint16_t debounce_period = 300, uint16_t multiple_press_period = 500, uint16_t long_press_period = 1000);
+  MomentaryButton(uint8_t gpio_pin, PinState unpressed_pin_state = PinState::kLow, uint16_t debounce_period = 70, uint16_t multiple_press_period = 500, uint16_t long_press_period = 1000);
 
   /// @brief Destroy the Button object.
   ~MomentaryButton();
@@ -54,7 +54,7 @@ class MomentaryButton {
   ButtonState DetectStateChange() const;
 
   /// @brief Check if a button has been pressed, and what type of press occurred.
-  /// @return The type of button press at the time of checking (not applicable (i.e., unpressed or between states), short press, or long press).
+  /// @return The type of button press at the time of checking.
   PressType DetectPressType() const;
 
   /// @brief Count the number of (short) button presses.
@@ -63,8 +63,8 @@ class MomentaryButton {
 
  private:
 
-  /// @brief Disregard input noise when the button is pressed/released.
-  /// @return The status of the debounce operation (not started or ongoing).
+  /// @brief Filter out input noise when the button is pressed/released.
+  /// @return The status of the debounce operation.
   DebounceStatus Debounce() const;
 
   uint8_t gpio_pin_;

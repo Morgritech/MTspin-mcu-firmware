@@ -3,8 +3,8 @@
 // Licensed under GNU General Public License v3.0 (GPLv3) License.
 // See the LICENSE file in the project root for full license details.
 
-/// @brief Main sketch containing the setup() and loop() functions.
 /// @file src.ino
+/// @brief Main sketch containing the setup() and loop() functions.
 
 #include "hardware_config.h"
 

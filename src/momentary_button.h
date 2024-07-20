@@ -3,47 +3,48 @@
 // Licensed under GNU General Public License v3.0 (GPLv3) License.
 // See the LICENSE file in the project root for full license details.
 
-/// @brief Class to manage hardware buttons.
 /// @file momentary_button.h
+/// @brief Class to manage hardware buttons.
 
 #ifndef MOMENTARY_BUTTON_H_
 #define MOMENTARY_BUTTON_H_
 
 #include <Arduino.h>
-namespace mtspin {
 
-/// @brief The Button class.
+#include "pin_debouncer.h"
+
+namespace mt {
+
+/// @brief The Momentary Button class.
 class MomentaryButton {
  public:
 
+  /// @brief Enum of button press types.
   enum class PressType {
     kNotApplicable = 0,
     kShortPress,
     kLongPress,
   };
 
+  /// @brief Enum of GPIO pin states.
   enum class PinState {
     kLow = 0,
     kHigh,
   };
 
+  /// @brief Enum of button states.
   enum class ButtonState {
     kReleased = 0,
     kPressed,
     kNoChange,
   };
 
-  enum class DebounceStatus {
-    kNotStarted = 0,
-    kOngoing,
-  };
-
   /// @brief Construct a Button object.
-  /// @param gpio_pin The GPIO pin to assign to the button.
+  /// @param gpio_pin The GPIO input pin assigned to the button.
   /// @param unpressed_pin_state The pin state when the button is not pressed.
   /// @param debounce_period The period of time (ms) allowed for pin debouncing.
   /// @param multiple_press_period The period of time (ms) allowed between multiple button presses.
-  /// @param long_press_period The period of time (ms) allowed for a long button press (press and hold).
+  /// @param long_press_period The period of time (ms) required for a long button press (press and hold).
   MomentaryButton(uint8_t gpio_pin, PinState unpressed_pin_state = PinState::kLow, uint16_t debounce_period = 70, uint16_t multiple_press_period = 500, uint16_t long_press_period = 1000);
 
   /// @brief Destroy the Button object.
@@ -63,21 +64,18 @@ class MomentaryButton {
 
  private:
 
-  /// @brief Debounce (filter out input noise) when the button is pressed/released.
-  /// @return The status of the debounce operation.
-  DebounceStatus Debounce() const;
-
+  /// @brief The GPIO input pin assigned to the button.
   uint8_t gpio_pin_;
-
+  /// @brief The pin state when the button is not pressed.
   PinState unpressed_pin_state_;
-
-  uint16_t debounce_period_;
-
+  /// @brief The period of time (ms) allowed for pin debouncing.
   uint16_t multiple_press_period_;
-
+  /// @brief The period of time (ms) required for a long button press (press and hold).
   uint16_t long_press_period_;
+  /// @brief A pin debouncer object to handle button debouncing.
+  PinDebouncer button_debouncer_;
 };
 
-} // namespace mtspin
+} // namespace mt
 
 #endif // MOMENTARY_BUTTON_H_

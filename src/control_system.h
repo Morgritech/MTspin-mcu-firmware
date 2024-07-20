@@ -3,15 +3,15 @@
 // Licensed under GNU General Public License v3.0 (GPLv3) License.
 // See the LICENSE file in the project root for full license details.
 
-/// @brief Class that links hardware (buttons) and serial inputs to their respective outputs/actions.
 /// @file control_system.h
+/// @brief Class that links hardware (buttons) and serial inputs to their respective outputs/actions.
 
 #ifndef CONTROL_SYSTEM_H_
 #define CONTROL_SYSTEM_H_
 
-#include "hardware_config.h"
-
 #include "momentary_button.h"
+
+#include "hardware_config.h"
 namespace mtspin {
 
 /// @brief The button class.
@@ -31,9 +31,9 @@ class ControlSystem {
 
   /// @{
   /// @brief Buttons to control the motor driver.
-  MomentaryButton direction_button_; ///< Button to control motor direction.
-  MomentaryButton speed_button_; ///< Button to control motor speed.
-  MomentaryButton angle_button_; ///< Button to control motor rotation angles.
+  mt::MomentaryButton direction_button_; ///< Button to control motor direction.
+  mt::MomentaryButton speed_button_; ///< Button to control motor speed.
+  mt::MomentaryButton angle_button_; ///< Button to control motor rotation angles.
   /// @}
 };
 

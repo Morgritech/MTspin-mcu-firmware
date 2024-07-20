@@ -3,20 +3,21 @@
 // Licensed under GNU General Public License v3.0 (GPLv3) License.
 // See the LICENSE file in the project root for full license details.
 
-/// @brief Class that links hardware (buttons) and serial inputs to their respective outputs/actions.
 /// @file control_system.cpp
+/// @brief Class that links hardware (buttons) and serial inputs to their respective outputs/actions.
 
 #include "control_system.h"
 
 #include <Arduino.h>
 
 #include "hardware_config.h"
+
 namespace mtspin {
 
 ControlSystem::ControlSystem()
-    : direction_button_(kDirectionButtonPin, MomentaryButton::PinState::kLow, 70, 500, 1000),
-      speed_button_(kSpeedButtonPin, MomentaryButton::PinState::kLow, 70, 500, 1000),
-      angle_button_(kAngleButtonPin, MomentaryButton::PinState::kLow, 70, 500, 1000) {
+    : direction_button_(kDirectionButtonPin, mt::MomentaryButton::PinState::kLow, 70, 500, 1000),
+      speed_button_(kSpeedButtonPin, mt::MomentaryButton::PinState::kLow, 70, 500, 1000),
+      angle_button_(kAngleButtonPin, mt::MomentaryButton::PinState::kLow, 70, 500, 1000) {
 }
 
 ControlSystem::~ControlSystem() {}

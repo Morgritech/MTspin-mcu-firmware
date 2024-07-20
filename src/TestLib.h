@@ -1,5 +1,5 @@
+/// @file TestLib.cpp
 /// @brief Library for testing.
-/// @file TestLib.h
 
 #ifndef TestLib_h
 #define TestLib_h

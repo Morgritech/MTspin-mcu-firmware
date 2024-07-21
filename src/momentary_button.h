@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file momentary_button.h
-/// @brief Class to manage hardware buttons.
+/// @brief Class to manage momentary push buttons.
 
 #ifndef MOMENTARY_BUTTON_H_
 #define MOMENTARY_BUTTON_H_

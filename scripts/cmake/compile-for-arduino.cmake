@@ -31,6 +31,10 @@ message(STATUS "...Installing arduino libraries...")
 
 set(ARDUINO_LIBS_FILE ${CMAKE_SOURCE_DIR}/arduino-libs.txt)
 
+execute_process(
+    COMMAND ${ARDUINO_CLI_EXECUTABLE} lib update-index
+)
+
 file(STRINGS ${ARDUINO_LIBS_FILE} LIBS)
 
 foreach(LIB IN LISTS LIBS)

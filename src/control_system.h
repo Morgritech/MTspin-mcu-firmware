@@ -9,9 +9,10 @@
 #ifndef CONTROL_SYSTEM_H_
 #define CONTROL_SYSTEM_H_
 
+#include "hardware_config.h"
+
 #include "momentary_button.h"
 
-#include "hardware_config.h"
 namespace mtspin {
 
 /// @brief The button class.

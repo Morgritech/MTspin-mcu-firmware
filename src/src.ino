@@ -10,10 +10,7 @@
 
 #include "control_system.h"
 
-#include "FTDebouncer.h"
 #include "TestLib.h"
-
-FTDebouncer pinDebouncer;
 
 /// @brief The Control System instance.
 mtspin::ControlSystem control_system;

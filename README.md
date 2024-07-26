@@ -54,5 +54,5 @@ scripts/setup-linux.sh
 To build the project (Windows or Linux), run:
 
 ``` shell
-TBC
+TBC..
 ```

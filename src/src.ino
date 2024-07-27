@@ -10,7 +10,6 @@
 
 #include "configuration.h"
 #include "control_system.h"
-#include "TestLib.h"
 
 /// @brief The Control System instance.
 mtspin::ControlSystem control_system;

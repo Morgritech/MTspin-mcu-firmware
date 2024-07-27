@@ -4,20 +4,21 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file control_system.cpp
-/// @brief Class that links hardware (buttons) and serial inputs to their respective outputs/actions.
+/// @brief Class that links sensor inputs (buttons, serial, etc.) to actuator outputs (steppers, etc.).
 
 #include "control_system.h"
 
 #include <Arduino.h>
+#include <ArduinoLog.h>
 
-#include "hardware_config.h"
+#include "configuration.h"
 
 namespace mtspin {
 
 ControlSystem::ControlSystem()
-    : direction_button_(kDirectionButtonPin, mt::MomentaryButton::PinState::kLow, 70, 500, 1000),
-      speed_button_(kSpeedButtonPin, mt::MomentaryButton::PinState::kLow, 70, 500, 1000),
-      angle_button_(kAngleButtonPin, mt::MomentaryButton::PinState::kLow, 70, 500, 1000) {
+    : direction_button_(configuration::kDirectionButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000),
+      speed_button_(configuration::kSpeedButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000),
+      angle_button_(configuration::kAngleButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000) {
 }
 
 ControlSystem::~ControlSystem() {}
@@ -29,32 +30,28 @@ void ControlSystem::CheckAndProcess() const {
   static int state_counter = 0;
   if (direction_button_state == MomentaryButton::ButtonState::kPressed) {
     state_counter++;
-    MTSPIN_SERIAL_LOG(F("INFO: DIRECTION BUTTON PRESSED: "));
-    MTSPIN_SERIAL_LOGLN(state_counter);
+    Log.noticeln(F("DIRECTION BUTTON PRESSED: %d"), state_counter);
   }
 
   if (direction_button_state == MomentaryButton::ButtonState::kReleased) {
-    MTSPIN_SERIAL_LOG(F("INFO: DIRECTION BUTTON RELEASED: "));
-    MTSPIN_SERIAL_LOGLN(state_counter);
+    Log.noticeln(F("DIRECTION BUTTON RELEASED: %d"), state_counter);
   }
   //*/
   /* TESTING BUTTON PRESS TYPE.
   MomentaryButton::PressType direction_button_press_type = direction_button_.DetectPressType();
   if (direction_button_press_type == MomentaryButton::PressType::kShortPress) {
-    MTSPIN_SERIAL_LOGLN(F("INFO: DIRECTION SHORT PRESS"));
+    Log.noticeln(F("DIRECTION SHORT PRESS"));
   }
   
   if (direction_button_press_type == MomentaryButton::PressType::kLongPress) {
-    MTSPIN_SERIAL_LOGLN(F("INFO: DIRECTION LONG PRESS"));
+    Log.noticeln(F("DIRECTION LONG PRESS"));
   }
   //*/
   //* TESTING BUTTON PRESS COUNT.
   uint8_t direction_button_press_count = direction_button_.CountPresses();
   if (direction_button_press_count > 0)
   {
-    MTSPIN_SERIAL_LOG(F("INFO: DIRECTION PRESSED "));
-    MTSPIN_SERIAL_LOG(direction_button_press_count);
-    MTSPIN_SERIAL_LOGLN(F(" TIMES"));
+    Log.noticeln(F("DIRECTION PRESSED %d TIMES"), direction_button_press_count);
   }
   //*/
 

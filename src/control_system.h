@@ -4,18 +4,16 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file control_system.h
-/// @brief Class that links hardware (buttons) and serial inputs to their respective outputs/actions.
+/// @brief Class that links sensor inputs (buttons, serial, etc.) to actuator outputs (steppers, etc.).
 
 #ifndef CONTROL_SYSTEM_H_
 #define CONTROL_SYSTEM_H_
 
-#include "hardware_config.h"
-
-#include "momentary_button.h"
+#include <momentary_button.h>
 
 namespace mtspin {
 
-/// @brief The button class.
+/// @brief The Control System class.
 class ControlSystem {
  public:
   

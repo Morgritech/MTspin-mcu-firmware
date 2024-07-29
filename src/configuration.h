@@ -42,9 +42,9 @@ inline constexpr uint8_t kAngleButtonPin = 4; ///< Input pin for the button cont
 
 /// @{
 /// @brief Stepper driver output pins.
-inline constexpr uint8_t kPulMotorDriverPin = 11; ///< Output pin for the stepper driver pulse/PUL/CLK/STP interface.
-inline constexpr uint8_t kDirMotorDriverPin = 12; ///< Output pin for the stepper driver direction/DIR/CW interface.
-inline constexpr uint8_t kEnaMotorDriverPin = 13; ///< Output pin for the stepper driver enable/ENA/EN interface.
+inline constexpr uint8_t kPulMotorDriverPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
+inline constexpr uint8_t kDirMotorDriverPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
+inline constexpr uint8_t kEnaMotorDriverPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
 /// @}
 
 // Serial

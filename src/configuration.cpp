@@ -36,7 +36,7 @@ void BeginHardware() {
   pinMode(kEnaMotorDriverPin, OUTPUT);
 
   // Delay for the startup time required by stepper driver.
-  delay(kMinStartupTime);
+  delay(kMinStartupTime_ms);
 }
 
 } // namespace configuration

@@ -60,7 +60,7 @@ inline constexpr int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;
 // Hardware properties/characteristics
 
 /// @brief Minimum startup/boot time in milliseconds (ms) for the stepper driver.
-inline constexpr uint16_t kMinStartupTime = 1000;
+inline constexpr uint16_t kMinStartupTime_ms = 1000;
 
 } // namespace configuration
 

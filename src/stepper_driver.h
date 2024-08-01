@@ -49,19 +49,21 @@ class StepperDriver {
   /// @brief Pulse the PUL/STP/CLK pin to move the motor by the minimum step based on the micro-stepping mode.
   void MoveByMicroStep() const; ///< This must be called periodically.
 
+  /// @brief The gear ratio if the motor is coupled with a gearbox in the drive system.
+  /// @param gear_ratio The gear ratio.
   void set_gear_ratio(float gear_ratio);
 
-  /// @brief Set the minimum low-level time (us) for the PUL pin.
-  /// @param pul_low_time_us The minimum low-level time (us) for a pulse.
-  void set_pul_low_time_us(float pul_low_time_us);
+  /// @brief Set the minimum time (us) for a low or high-level pulse of the PUL pin.
+  /// @param pul_delay_us The minimum PUL low or high-level delay (us).
+  void set_pul_delay_us(float pul_delay_us);
 
   /// @brief Set the minimum time (us) to delay after changing direction via the DIR pin.
-  /// @param dir_change_time_us The minimum direction change time (us).
-  void set_dir_change_time_us(float dir_change_time_us);
+  /// @param dir_delay_us The minimum DIR change delay (us).
+  void set_dir_delay_us(float dir_delay_us);
 
   /// @brief Set the minimum time (us) to delay after changing the power state via the ENA pin.
-  /// @param ena_change_time_us The minimum enable change time (us).
-  void set_ena_change_time_us(float ena_change_time_us);
+  /// @param ena_delay_us The minimum ENA change delay (us).
+  void set_ena_delay_us(float ena_delay_us);
 
   /// @brief Set the ENA/EN (enable) pin to enable or disable the motor.
   /// @param power_state The power state.
@@ -98,9 +100,9 @@ class StepperDriver {
   /// @{
   /// @brief Stepper driver properties.
   uint8_t step_mode_; ///< Micro-stepping/step mode.
-  float pul_low_time_us_ = 2.5; ///< Minimum low-level time (us) for the PUL pin.
-  float dir_change_time_us_ = 5; ///< Minimum time (us) to delay after changing direction via the DIR pin.
-  float ena_change_time_us_ = 5; ///< Minimum time (us) to delay after changing the power state via the ENA pin.
+  float pul_delay_us_ = 2.5; ///< Minimum time (us) to delay after a low or high-level pulse of the PUL pin.
+  float dir_delay_us_ = 5; ///< Minimum time (us) to delay after changing direction via the DIR pin.
+  float ena_delay_us_ = 5; ///< Minimum time (us) to delay after changing the power state via the ENA pin.
   /// @}
 
   /// @{

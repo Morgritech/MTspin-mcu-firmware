@@ -27,6 +27,34 @@ class StepperDriver {
     kPositive = 1,
   };
 
+  /// @brief Enum of the types of motion.
+  enum class MotionType {
+    kAbsolute = 0,
+    kRelative,
+  };
+
+  /// @brief Enum of angular units.
+  enum class AngleUnits {
+    kMicroSteps = 0,
+    kDegrees,
+    kRadians,
+    kRevolutions,
+  };
+
+  /// @brief Enum of rotational speed unit.
+  enum class SpeedUnits {
+    kStepsPerSecond = 0,
+    kDegreesPerSecond,
+    kRadiansPerSecond,
+    kRevolutionsPerMinute,
+  };
+
+  /// @brief Enum of motion status.
+  enum class MotionStatus {
+    kIdle = 0,
+    kOngoing,
+  };
+
   /// @brief Construct a Stepper Driver object. 
   /// @param pul_pin PUL/STP/CLK (pulse/step/clock) pin.
   /// @param dir_pin DIR/CW (direction) pin.
@@ -38,16 +66,21 @@ class StepperDriver {
   /// @brief Destroy the Stepper Driver object.
   ~StepperDriver();
 
-  /// @brief Set the target number of degrees to move relative to the current angular position.
-  /// @param relative_degrees_to_move The relative number of degrees.
-  void SetRelativeDegreesToMove(float relative_degrees_to_move);
+  /// @brief Set the target speed at which to move the motor.
+  /// @param speed The target speed.
+  /// @param speed_units The units of the specified speed.
+  void SetSpeed(float speed, SpeedUnits speed_units = SpeedUnits::kRevolutionsPerMinute);
 
-  /// @brief Set the target number of degrees to move relative to the zero/home angular position.
-  /// @param absolute_degrees_to_move The absolute number of degrees.
-  void SetAbsoluteDegreesToMove(float absolute_degrees_to_move);
+  /// @brief Move to a target angle with respect; to the current angular position (relative), OR; to the zero/home angular position (absolute).
+  /// @param angle The target angle.
+  /// @param angle_units The units of the specified angle.
+  /// @param motion_type The type of motion.
+  /// @return The status of the motion operation.
+  MotionStatus MoveByAngle(float angle, AngleUnits angle_units = AngleUnits::kDegrees,
+                           MotionType motion_type = MotionType::kRelative); ///< This must be called periodically.
 
-  /// @brief Pulse the PUL/STP/CLK pin to move the motor by the minimum step based on the micro-stepping mode.
-  void MoveByMicroStep() const; ///< This must be called periodically.
+  /// @brief Move the motor indefinitely (jogging).
+  void MoveByJogging(); ///< This must be called periodically.
 
   /// @brief The gear ratio if the motor is coupled with a gearbox in the drive system.
   /// @param gear_ratio The gear ratio.
@@ -69,6 +102,11 @@ class StepperDriver {
   /// @param power_state The power state.
   void set_power_state(PowerState power_state);
 
+ private:
+
+  /// @brief Pulse the PUL/STP/CLK pin to move the motor by the minimum step based on the micro-stepping mode.
+  void MoveByMicroStep() const; ///< This must be called periodically.
+
   /// @brief Set the DIR/CW (direction) pin to select the motor motion direction.
   /// @param motion_direction The motor motion direction.
   void set_motion_direction(MotionDirection motion_direction);
@@ -80,8 +118,6 @@ class StepperDriver {
   /// @brief Set the target number of steps to move relative to the current angular position.
   /// @param relative_steps_to_move The relative number of steps.
   void set_relative_steps_to_move(uint64_t relative_steps_to_move);
-
- private:
 
   /// @{
   /// @brief Output pins.

@@ -21,12 +21,6 @@ class StepperDriver {
     kEnabled,
   };
 
-  /// @brief Enum of motor motion directions based on the DIR/CW pin.
-  enum class MotionDirection {
-    kNegative = -1,
-    kPositive = 1,
-  };
-
   /// @brief Enum of the types of motion.
   enum class MotionType {
     kAbsolute = 0,
@@ -35,7 +29,7 @@ class StepperDriver {
 
   /// @brief Enum of angular units.
   enum class AngleUnits {
-    kMicroSteps = 0,
+    kMicrosteps = 0,
     kDegrees,
     kRadians,
     kRevolutions,
@@ -43,7 +37,7 @@ class StepperDriver {
 
   /// @brief Enum of rotational speed unit.
   enum class SpeedUnits {
-    kStepsPerSecond = 0,
+    kMicrostepsPerSecond = 0,
     kDegreesPerSecond,
     kRadiansPerSecond,
     kRevolutionsPerMinute,
@@ -61,7 +55,9 @@ class StepperDriver {
   /// @param ena_pin ENA/EN (enable) pin.
   /// @param full_step_angle_degrees Motor full step angle in degrees.
   /// @param step_mode Micro-stepping/step mode (1 = full step, 2 = half step, 4 = quarter step, etc.).
-  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, float full_step_angle_degrees, uint8_t step_mode);
+  /// @param gear_ratio Gear ratio for motors coupled with a gearbox in the drive system.
+  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, float full_step_angle_degrees, uint8_t step_mode,
+                double gear_ratio = 1);
 
   /// @brief Destroy the Stepper Driver object.
   ~StepperDriver();
@@ -71,8 +67,8 @@ class StepperDriver {
   /// @param speed_units The units of the specified speed.
   void SetSpeed(float speed, SpeedUnits speed_units = SpeedUnits::kRevolutionsPerMinute);
 
-  /// @brief Move to a target angle with respect; to the current angular position (relative), OR; to the zero/home angular position (absolute).
-  /// @param angle The target angle.
+  /// @brief Move to a target angle with respect to the; current angular position (relative), OR; zero/home angular position (absolute).
+  /// @param angle The target angle (positive or negative).
   /// @param angle_units The units of the specified angle.
   /// @param motion_type The type of motion.
   /// @return The status of the motion operation.
@@ -81,10 +77,6 @@ class StepperDriver {
 
   /// @brief Move the motor indefinitely (jogging).
   void MoveByJogging(); ///< This must be called periodically.
-
-  /// @brief The gear ratio if the motor is coupled with a gearbox in the drive system.
-  /// @param gear_ratio The gear ratio.
-  void set_gear_ratio(float gear_ratio);
 
   /// @brief Set the minimum time (us) for a low or high-level pulse of the PUL pin.
   /// @param pul_delay_us The minimum PUL low or high-level delay (us).
@@ -104,6 +96,15 @@ class StepperDriver {
 
  private:
 
+  /// @brief Enum of motor motion directions based on the DIR/CW pin.
+  enum class MotionDirection {
+    kNegative = -1,
+    kPositive = 1,
+  };
+
+  /// @brief The value of pi for math calculations.
+  static const double kPi = 3.14159265358979323846;
+
   /// @brief Pulse the PUL/STP/CLK pin to move the motor by the minimum step based on the micro-stepping mode.
   void MoveByMicroStep() const; ///< This must be called periodically.
 
@@ -111,13 +112,9 @@ class StepperDriver {
   /// @param motion_direction The motor motion direction.
   void set_motion_direction(MotionDirection motion_direction);
 
-  /// @brief Set the target speed based on the step period T in microseconds (us) between steps. 
-  /// @param step_period The step period T (us).
-  void set_step_period_us(float step_period_us);
-
-  /// @brief Set the target number of steps to move relative to the current angular position.
-  /// @param relative_steps_to_move The relative number of steps.
-  void set_relative_steps_to_move(uint64_t relative_steps_to_move);
+  /// @brief Set the target number of microsteps to move relative to the current angular position.
+  /// @param relative_microsteps_to_move The relative number of microsteps.
+  void set_relative_microsteps_to_move(uint64_t relative_microsteps_to_move);
 
   /// @{
   /// @brief Output pins.
@@ -129,24 +126,24 @@ class StepperDriver {
   /// @{
   /// @brief Motor drive system properties.
   float full_step_angle_degrees_; ///< Motor full step angle in degrees.
-  float gear_ratio_ = 1; ///< Gear ratio for motors coupled with a gearbox in the drive system.
-  float resultant_step_angle_degrees_; ///< Resultant step angle = full step angle in degrees / (gear ratio x step mode)
+  double gear_ratio_; ///< Gear ratio for motors coupled with a gearbox in the drive system.
+  double resultant_step_angle_degrees_; ///< Resultant step angle = full step angle in degrees / (gear ratio x step mode)
   /// @}
 
   /// @{
   /// @brief Stepper driver properties.
   uint8_t step_mode_; ///< Micro-stepping/step mode.
-  float pul_delay_us_ = 2.5; ///< Minimum time (us) to delay after a low or high-level pulse of the PUL pin.
-  float dir_delay_us_ = 5; ///< Minimum time (us) to delay after changing direction via the DIR pin.
-  float ena_delay_us_ = 5; ///< Minimum time (us) to delay after changing the power state via the ENA pin.
+  float pul_delay_us_ = 2.5F; ///< Minimum time (us) to delay after a low or high-level pulse of the PUL pin.
+  float dir_delay_us_ = 5.0F; ///< Minimum time (us) to delay after changing direction via the DIR pin.
+  float ena_delay_us_ = 5.0F; ///< Minimum time (us) to delay after changing the power state via the ENA pin.
   /// @}
 
   /// @{
   /// @brief Motor states and targets.
   PowerState power_state_ = PowerState::kEnabled; ///< Power state based on the ENA/EN pin.
   MotionDirection motion_direction_; ///< Motor motion direction based on the DIR/CW pin.
-  float step_period_us_ = 10000; ///< Target speed based on the step period T (us) between steps.
-  uint64_t relative_steps_to_move_ = 0; ///< Target number of steps to move the motor relative to the current angular position.
+  double microstep_period_us_ = 0.0; ///< Target speed based on the microstep period T (us) between microsteps.
+  uint64_t relative_microsteps_to_move_ = 0; ///< Target number of microsteps to move the motor relative to the current angular position.
   /// @}
 };
 

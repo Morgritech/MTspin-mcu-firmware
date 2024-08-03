@@ -17,22 +17,8 @@ class StepperDriver {
 
   /// @brief Enum of power states based on the ENA/EN pin.
   enum class PowerState {
-    kDisabled = 0,
-    kEnabled,
-  };
-
-  /// @brief Enum of the types of motion.
-  enum class MotionType {
-    kAbsolute = 0,
-    kRelative,
-  };
-
-  /// @brief Enum of angular units.
-  enum class AngleUnits {
-    kMicrosteps = 0,
-    kDegrees,
-    kRadians,
-    kRevolutions,
+    kEnabled = 0,
+    kDisabled,
   };
 
   /// @brief Enum of rotational speed unit.
@@ -43,10 +29,30 @@ class StepperDriver {
     kRevolutionsPerMinute,
   };
 
+  /// @brief Enum of angular units.
+  enum class AngleUnits {
+    kMicrosteps = 0,
+    kDegrees,
+    kRadians,
+    kRevolutions,
+  };
+
+  /// @brief Enum of the types of motion.
+  enum class MotionType {
+    kAbsolute = 0,
+    kRelative,
+  };
+
   /// @brief Enum of motion status.
   enum class MotionStatus {
     kIdle = 0,
     kOngoing,
+  };
+
+  /// @brief Enum of motor motion directions based on the DIR/CW pin.
+  enum class MotionDirection {
+    kNegative = -1,
+    kPositive = 1,
   };
 
   /// @brief Construct a Stepper Driver object. 
@@ -67,16 +73,24 @@ class StepperDriver {
   /// @param speed_units The units of the specified speed.
   void SetSpeed(float speed, SpeedUnits speed_units = SpeedUnits::kRevolutionsPerMinute);
 
+  /// @brief Calculate the rela
+  /// @param angle 
+  /// @param angle_units 
+  /// @param motion_type 
+  /// @return 
+  uint64_t CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units = AngleUnits::kDegrees,
+                           MotionType motion_type = MotionType::kRelative);
+
   /// @brief Move to a target angle with respect to the; current angular position (relative), OR; zero/home angular position (absolute).
   /// @param angle The target angle (positive or negative).
   /// @param angle_units The units of the specified angle.
   /// @param motion_type The type of motion.
   /// @return The status of the motion operation.
   MotionStatus MoveByAngle(float angle, AngleUnits angle_units = AngleUnits::kDegrees,
-                           MotionType motion_type = MotionType::kRelative); ///< This must be called periodically.
+                           MotionType motion_type = MotionType::kRelative) const; ///< This must be called periodically.
 
   /// @brief Move the motor indefinitely (jogging).
-  void MoveByJogging(); ///< This must be called periodically.
+  void MoveByJogging(MotionDirection direction) const; ///< This must be called periodically.
 
   /// @brief Set the minimum time (us) for a low or high-level pulse of the PUL pin.
   /// @param pul_delay_us The minimum PUL low or high-level delay (us).
@@ -96,25 +110,14 @@ class StepperDriver {
 
  private:
 
-  /// @brief Enum of motor motion directions based on the DIR/CW pin.
-  enum class MotionDirection {
-    kNegative = -1,
-    kPositive = 1,
-  };
-
   /// @brief The value of pi for math calculations.
   static const double kPi = 3.14159265358979323846;
 
   /// @brief Pulse the PUL/STP/CLK pin to move the motor by the minimum step based on the micro-stepping mode.
-  void MoveByMicroStep() const; ///< This must be called periodically.
+  void MoveByMicroStep(); ///< This must be called periodically.
 
-  /// @brief Set the DIR/CW (direction) pin to select the motor motion direction.
-  /// @param motion_direction The motor motion direction.
-  void set_motion_direction(MotionDirection motion_direction);
-
-  /// @brief Set the target number of microsteps to move relative to the current angular position.
-  /// @param relative_microsteps_to_move The relative number of microsteps.
-  void set_relative_microsteps_to_move(uint64_t relative_microsteps_to_move);
+  /// @brief Move the motor at constant speed.
+  void MoveAtConstantSpeed() const; ///< This must be called periodically.
 
   /// @{
   /// @brief Output pins.
@@ -141,9 +144,10 @@ class StepperDriver {
   /// @{
   /// @brief Motor states and targets.
   PowerState power_state_ = PowerState::kEnabled; ///< Power state based on the ENA/EN pin.
-  MotionDirection motion_direction_; ///< Motor motion direction based on the DIR/CW pin.
   double microstep_period_us_ = 0.0; ///< Target speed based on the microstep period T (us) between microsteps.
+  uint64_t angular_position_microsteps; ///< The current angular position (microsteps).
   uint64_t relative_microsteps_to_move_ = 0; ///< Target number of microsteps to move the motor relative to the current angular position.
+  int8_t angular_position_updater_microsteps; ///< Value (microsteps) to increment/decrement the current angular position depending on motor motion direction based on the DIR/CW pin.
   /// @}
 };
 

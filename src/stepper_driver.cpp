@@ -49,6 +49,46 @@ void StepperDriver::SetSpeed(float speed, SpeedUnits speed_units) {
   microstep_period_us_ = 1000000.0 / (speed_microsteps_per_second); // (us).
 }
 
+uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units,
+                                                                 MotionType motion_type) {
+  // TODO(JM): Implementation.
+}
 
+StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) const {
+  // TODO(JM): Implementation.
+  //if power state is enabled => calculate steps (use the function), etc.
+}
+
+void StepperDriver::MoveByJogging(MotionDirection direction) const {
+  // TODO(JM): Implementation.
+}
+
+void StepperDriver::set_pul_delay_us(float pul_delay_us) {
+  pul_delay_us_ = pul_delay_us;
+}
+
+void StepperDriver::set_dir_delay_us(float dir_delay_us) {
+  dir_delay_us_ = dir_delay_us;
+}
+
+void StepperDriver::set_ena_delay_us(float ena_delay_us) {
+  ena_delay_us_ = ena_delay_us;
+}
+
+void StepperDriver::set_power_state(PowerState power_state) {
+  digitalWrite(ena_pin_, static_cast<uint8_t>(power_state));
+  power_state_ = power_state;
+  delayMicroseconds(ena_delay_us_);
+}
+
+void StepperDriver::MoveByMicroStep() {
+  // TODO(JM): Implementation.
+  // move, update steps left to move if not 0, and update current position.
+}
+
+void StepperDriver::MoveAtConstantSpeed() const {
+  // TODO(JM): Implementation.
+  // check time, move if it's time.
+}
 
 } // namespace mt

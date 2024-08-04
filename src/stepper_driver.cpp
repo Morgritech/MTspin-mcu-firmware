@@ -20,12 +20,12 @@ StepperDriver::StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, 
   full_step_angle_degrees_ = full_step_angle_degrees;
   step_mode_ = step_mode;
   gear_ratio_ = gear_ratio;
-  resultant_step_angle_degrees_ = full_step_angle_degrees_ / (gear_ratio_ * step_mode_);
+  microstep_angle_degrees_ = full_step_angle_degrees_ / (gear_ratio_ * step_mode_);
 }
 
 StepperDriver::~StepperDriver() {}
 
-void StepperDriver::SetSpeed(float speed, SpeedUnits speed_units) {
+void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
   double speed_microsteps_per_second = 0.0;
   switch (speed_units) {
     case SpeedUnits::kMicrostepsPerSecond: {
@@ -33,15 +33,15 @@ void StepperDriver::SetSpeed(float speed, SpeedUnits speed_units) {
       break;
     }
     case SpeedUnits::kDegreesPerSecond: {
-      speed_microsteps_per_second = speed / resultant_step_angle_degrees_;
+      speed_microsteps_per_second = speed / microstep_angle_degrees_;
       break;
     }
     case SpeedUnits::kRadiansPerSecond: {
-      speed_microsteps_per_second = (180.0 * speed) / (kPi * resultant_step_angle_degrees_);
+      speed_microsteps_per_second = (180.0 * speed) / (kPi * microstep_angle_degrees_);
       break;
     }
     case SpeedUnits::kRevolutionsPerMinute: {
-      speed_microsteps_per_second = (6.0 * speed) / resultant_step_angle_degrees_;
+      speed_microsteps_per_second = (6.0 * speed) / microstep_angle_degrees_;
       break;
     }
   }
@@ -54,13 +54,55 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
   // TODO(JM): Implementation.
 }
 
-StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) const {
+StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
   //if power state is enabled => calculate steps (use the function), etc.
 }
 
-void StepperDriver::MoveByJogging(MotionDirection direction) const {
-  // TODO(JM): Implementation.
+void StepperDriver::MoveByJogging(MotionDirection direction) {
+  static MotionDirection set_direction = MotionDirection::kNeutral;
+
+  if (set_direction != direction) {
+    // Direction has changed.
+    set_direction = direction;
+
+    if (direction == MotionDirection::kNegative) {
+      digitalWrite(dir_pin_, LOW); 
+    }
+    else if (direction == MotionDirection::kPositive) {
+      digitalWrite(dir_pin_, HIGH); 
+    }
+
+    delayMicroseconds(dir_delay_us_); 
+  }
+
+  if (direction == MotionDirection::kNeutral) {
+    return;
+  }
+  
+  MoveByMicrostepAtMicrostepPeriod();
+}
+
+double StepperDriver::GetAngularPosition(AngleUnits angle_units) const {
+  double angular_position = 0.0;
+  switch (angle_units) {
+    case AngleUnits::kMicrosteps: {
+      angular_position = static_cast<double>(angular_position_microsteps_);
+      break;
+    }
+    case AngleUnits::kDegrees: {
+      angular_position = angular_position_microsteps_ * microstep_angle_degrees_;
+      break;
+    }
+    case AngleUnits::kRadians: {
+      angular_position = (angular_position_microsteps_ * kPi * microstep_angle_degrees_) / 180.0;
+      break;
+    }
+    case AngleUnits::kRevolutions: {
+      angular_position = (angular_position_microsteps_ * microstep_angle_degrees_) / 360.0;
+      break;
+    }
+  }
 }
 
 void StepperDriver::set_pul_delay_us(float pul_delay_us) {
@@ -81,14 +123,27 @@ void StepperDriver::set_power_state(PowerState power_state) {
   delayMicroseconds(ena_delay_us_);
 }
 
-void StepperDriver::MoveByMicroStep() {
-  // TODO(JM): Implementation.
-  // move, update steps left to move if not 0, and update current position.
+void StepperDriver::MoveByMicrostep() {
+  digitalWrite(pul_pin_, LOW);
+  delayMicroseconds(pul_delay_us_);
+  digitalWrite(pul_pin_, HIGH);
+  delayMicroseconds(pul_delay_us_);
+
+  if (relative_microsteps_to_move_ != 0) {
+    // Move by angle (not by jogging) is in operation.
+    relative_microsteps_to_move_--;
+  }
+
+  angular_position_microsteps_ = angular_position_microsteps_ + angular_position_updater_microsteps_;
 }
 
-void StepperDriver::MoveAtConstantSpeed() const {
-  // TODO(JM): Implementation.
-  // check time, move if it's time.
+void StepperDriver::MoveByMicrostepAtMicrostepPeriod() {
+  static uint64_t reference_microstep_time_us = micros();
+
+  if ((micros() - reference_microstep_time_us) >= microstep_period_us_) {
+    MoveByMicrostep();
+    reference_microstep_time_us = micros();
+  }
 }
 
 } // namespace mt

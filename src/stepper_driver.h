@@ -49,6 +49,7 @@ class StepperDriver {
   /// @brief Enum of motion status.
   enum class MotionStatus {
     kIdle = 0,
+    kPaused,
     kOngoing,
   };
 

@@ -51,7 +51,8 @@ void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
 }
 
 uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units,
-                                                                 MotionType motion_type) {
+                                                                 MotionType motion_type,
+                                                                 CalculationOption calculation_option) {
   double angle_microsteps = 0.0;
 
   switch (angle_units) {
@@ -77,26 +78,32 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 
   switch (motion_type) {
     case MotionType::kAbsolute: {
+      // Microsteps required to move to given angular position.
       relative_angle_microsteps = round(angle_microsteps) - angular_position_microsteps_;
       break;
     }
     case MotionType::kRelative: {
+      // Microsteps required to move by given angular amount.
       relative_angle_microsteps = angle_microsteps;
+      break;
     }
   }
-	
-	if (relative_angle_microsteps < 0) {
-    // Negative motion direction.
-    angular_position_updater_microsteps_ = -1;
-    digitalWrite(dir_pin_, LOW);
-  }
-	else if (relative_angle_microsteps > 0) {
-    // Positive motion direction.
-    angular_position_updater_microsteps_ = 1;
-    digitalWrite(dir_pin_, HIGH);
+
+  if (calculation_option == CalculationOption::kSetupMotion) {
+    if (relative_angle_microsteps < 0) {
+      // Negative motion direction.
+      angular_position_updater_microsteps_ = -1;
+      digitalWrite(dir_pin_, LOW);
+    }
+    else if (relative_angle_microsteps > 0) {
+      // Positive motion direction.
+      angular_position_updater_microsteps_ = 1;
+      digitalWrite(dir_pin_, HIGH);
+    }
+
+    delayMicroseconds(dir_delay_us_);
   }
 
-	delayMicroseconds(dir_delay_us_);
 	return abs(relative_angle_microsteps);
 }
 
@@ -116,7 +123,46 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
     return motion_status;
   }
 
-  relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type);
+  switch (motion_type) {
+      case MotionType::kStopAndReset: {
+        relative_microsteps_to_move_ = 0;
+        motion_status = MotionStatus::kIdle;
+        break;
+      }
+      case MotionType::kPause: {
+        motion_status = MotionStatus::kPaused;
+        break;
+      }
+      case MotionType::kResume: {
+        if (motion_status == MotionStatus::kPaused && relative_microsteps_to_move_ != 0) {
+          motion_status = MotionStatus::kAccelerate;
+        }
+        else {
+          // Can only resume if motion was previously paused and there are steps left to move.
+          motion_status = MotionStatus::kIdle;
+        }
+        
+        break;
+      }
+      case MotionType::kAbsolute: {
+        [[fallthrough]];
+      }
+      case MotionType::kRelative: {
+        // TODO (JM): How to determine when the function is being called for the first time.
+        relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
+                                                                                CalculationOption::kSetupMotion);
+        break;
+      }
+  }
+
+  switch (motion_status) {
+    case MotionStatus::kIdle: {
+      [[fallthrough]];
+    }
+    case MotionStatus::kPaused: {
+      return motion_status;
+    }
+  }
 }
 
 void StepperDriver::MoveByJogging(MotionDirection direction) {

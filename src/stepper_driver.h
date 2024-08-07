@@ -37,6 +37,12 @@ class StepperDriver {
     kRevolutions,
   };
 
+  /// @brief Enum of calculation options.
+  enum class CalculationOption {
+    kCalculateOnly = 0,
+    kSetupMotion,
+  };
+
   /// @brief Enum of the types of motion/motion control.
   enum class MotionType {
     kStopAndReset = 0,
@@ -50,7 +56,9 @@ class StepperDriver {
   enum class MotionStatus {
     kIdle = 0,
     kPaused,
-    kOngoing,
+    kAccelerate,
+    kConstantSpeed,
+    kDecelerate,
   };
 
   /// @brief Enum of motor motion directions based on the DIR/CW pin.
@@ -84,7 +92,8 @@ class StepperDriver {
   /// @param motion_type The type of motion.
   /// @return The relative number of microsteps.
   uint64_t CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units = AngleUnits::kDegrees,
-                           MotionType motion_type = MotionType::kRelative);
+                           MotionType motion_type = MotionType::kRelative, 
+                           CalculationOption calculation_option = CalculationOption::kCalculateOnly);
 
   /// @brief Move to a target angle with respect to the; current angular position (relative), OR; zero/home angular position (absolute).
   /// @param angle The target angle (positive or negative).

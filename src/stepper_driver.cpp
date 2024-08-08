@@ -110,22 +110,17 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
   //calculate steps (use the function), etc.
+  static bool new_run = true; // Flag to indicate a fresh call to the function to setup a new move.
   static MotionStatus motion_status = MotionStatus::kIdle;
 
   if (power_state_ == PowerState::kDisabled) {
-    if (relative_microsteps_to_move_ == 0) {
-      motion_status = MotionStatus::kIdle;
-    }
-    else {
-      motion_status = MotionStatus::kPaused;
-    }
-    
-    return motion_status;
+    motion_type = MotionType::kStopAndReset;
   }
 
   switch (motion_type) {
       case MotionType::kStopAndReset: {
         relative_microsteps_to_move_ = 0;
+        new_run = true;
         motion_status = MotionStatus::kIdle;
         break;
       }
@@ -137,20 +132,20 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         if (motion_status == MotionStatus::kPaused && relative_microsteps_to_move_ != 0) {
           motion_status = MotionStatus::kAccelerate;
         }
-        else {
-          // Can only resume if motion was previously paused and there are steps left to move.
-          motion_status = MotionStatus::kIdle;
-        }
-        
+
         break;
       }
       case MotionType::kAbsolute: {
         [[fallthrough]];
       }
       case MotionType::kRelative: {
-        // TODO (JM): How to determine when the function is being called for the first time.
-        relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
+        if (new_run == true) {
+          relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
                                                                                 CalculationOption::kSetupMotion);
+          new_run = false;
+          motion_status = MotionStatus::kAccelerate;
+        }
+
         break;
       }
   }

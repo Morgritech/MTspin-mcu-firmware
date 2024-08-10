@@ -110,7 +110,7 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
   //calculate steps (use the function), etc.
-  static bool new_run = true; // Flag to indicate a fresh call to the function to setup a new move.
+  static bool new_acceleration = true; // Flag to indicate motion is starting from zero speed (idle or paused).
   static MotionStatus motion_status = MotionStatus::kIdle;
 
   if (power_state_ == PowerState::kDisabled) {
@@ -120,7 +120,6 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
   switch (motion_type) {
       case MotionType::kStopAndReset: {
         relative_microsteps_to_move_ = 0;
-        new_run = true;
         motion_status = MotionStatus::kIdle;
         break;
       }
@@ -129,20 +128,20 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         break;
       }
       case MotionType::kResume: {
-        if (motion_status == MotionStatus::kPaused && relative_microsteps_to_move_ != 0) {
-          motion_status = MotionStatus::kAccelerate;
-        }
-
-        break;
+        [[fallthrough]];
       }
       case MotionType::kAbsolute: {
         [[fallthrough]];
       }
       case MotionType::kRelative: {
-        if (new_run == true) {
+        if (motion_status == MotionStatus::kIdle) {
           relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
                                                                                 CalculationOption::kSetupMotion);
-          new_run = false;
+          new_acceleration = true;
+          motion_status = MotionStatus::kAccelerate;
+        }
+        else if (motion_status == MotionStatus::kPaused) {
+          new_acceleration = true;
           motion_status = MotionStatus::kAccelerate;
         }
 
@@ -152,12 +151,34 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
 
   switch (motion_status) {
     case MotionStatus::kIdle: {
-      [[fallthrough]];
+      break;
     }
     case MotionStatus::kPaused: {
-      return motion_status;
+      break;
+    }
+    case MotionStatus::kAccelerate: {
+      // TODO(JM): Implement acceleration.
+      motion_status = MotionStatus::kConstantSpeed; // TODO(JM): Add condition once acceleration is implemented.
+    }
+    case MotionStatus::kConstantSpeed: {
+      MoveByMicrostepAtMicrostepPeriod();
+      if (relative_microsteps_to_move_ == 0) { // TODO(JM): Condition to be changed once deceleration is implemented.
+        motion_status = MotionStatus::kDecelerate;
+      }
+
+      break;
+    }
+    case MotionStatus::kDecelerate: {
+      // TODO(JM): Implement deceleration.
+      if (relative_microsteps_to_move_ == 0) {
+        motion_status = MotionStatus::kIdle;
+      }
+
+      break;
     }
   }
+
+  return motion_status;
 }
 
 void StepperDriver::MoveByJogging(MotionDirection direction) {

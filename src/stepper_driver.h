@@ -135,7 +135,7 @@ class StepperDriver {
   /// @brief Pulse the PUL/STP/CLK pin to move the motor by the minimum step based on the micro-stepping mode.
   void MoveByMicrostep(); ///< This must be called periodically.
 
-  /// @brief Move the motor by the minimum step based on the micro-stepping mode, at speed based on the microstep period (us).
+  /// @brief Move the motor by the minimum step based on the micro-stepping mode, at constant speed based on the microstep period (us).
   void MoveByMicrostepAtMicrostepPeriod(); ///< This must be called periodically.
 
   /// @{

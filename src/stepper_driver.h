@@ -21,12 +21,20 @@ class StepperDriver {
     kDisabled,
   };
 
-  /// @brief Enum of rotational speed unit.
+  /// @brief Enum of angular speed unit.
   enum class SpeedUnits {
     kMicrostepsPerSecond = 0,
     kDegreesPerSecond,
     kRadiansPerSecond,
     kRevolutionsPerMinute,
+  };
+
+  /// @brief Enum of angular acceleration units.
+  enum class AccelerationUnits {
+    kMicrostepsPerSecondPerSecond = 0,
+    kDegreesPerSecondPerSecond,
+    kRadiansPerSecondPerSecond,
+    kRevolutionsPerMinutePerMinute,
   };
 
   /// @brief Enum of angular units.
@@ -73,10 +81,10 @@ class StepperDriver {
   /// @param dir_pin DIR/CW (direction) pin.
   /// @param ena_pin ENA/EN (enable) pin.
   /// @param full_step_angle_degrees Motor full step angle in degrees.
-  /// @param step_mode Micro-stepping/step mode (1 = full step, 2 = half step, 4 = quarter step, etc.).
+  /// @param step_mode Micro-stepping/step mode (1 = full step, 2 = half step (1/2), 4 = quarter step (1/4), etc.).
   /// @param gear_ratio Gear ratio for motors coupled with a gearbox in the drive system.
-  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, float full_step_angle_degrees, uint8_t step_mode,
-                double gear_ratio = 1);
+  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, float full_step_angle_degrees = 1.8,
+                uint8_t step_mode = 1, double gear_ratio = 1);
 
   /// @brief Destroy the Stepper Driver object.
   ~StepperDriver();
@@ -85,6 +93,12 @@ class StepperDriver {
   /// @param speed The target speed.
   /// @param speed_units The units of the specified speed.
   void SetSpeed(double speed, SpeedUnits speed_units = SpeedUnits::kRevolutionsPerMinute);
+
+  /// @brief Set the target acceleration/deceleration for the motor to accelerate to the target speed and decelerate to a stop.
+  /// @param acceleration The target acceleration/deceleration.
+  /// @param acceleration_units The units of the specified acceleration.
+  void SetAcceleration(double acceleration, 
+                       AccelerationUnits acceleration_units = AccelerationUnits::kRadiansPerSecondPerSecond);
 
   /// @brief Calculate the relative number of microsteps to move to a target angle with respect to the; current angular position (relative), OR; zero/home angular position (absolute).
   /// @param angle The target angle (positive or negative).
@@ -163,7 +177,8 @@ class StepperDriver {
   /// @{
   /// @brief Motor states and targets.
   PowerState power_state_ = PowerState::kEnabled; ///< Power state based on the ENA/EN pin.
-  double microstep_period_us_ = 0.0; ///< Target speed based on the microstep period (us) between microsteps.
+  double microstep_period_us_ = 10000.0; ///< Target speed based on the microstep period (us) between microsteps.
+  double speed_period_us_; ///< Target acceleration/deceleration based on the speed period (us) between increase/decrease of the microstep period.
   uint64_t angular_position_microsteps_ = 0; ///< The current angular position (microsteps).
   uint64_t relative_microsteps_to_move_ = 0; ///< Target number of microsteps to move the motor relative to the current angular position.
   int8_t angular_position_updater_microsteps_; ///< Value (microsteps) to increment/decrement the current angular position depending on motor motion direction based on the DIR/CW pin.

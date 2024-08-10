@@ -50,6 +50,30 @@ void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
   microstep_period_us_ = 1000000.0 / (speed_microsteps_per_second); // (us).
 }
 
+void StepperDriver::SetAcceleration(double acceleration, AccelerationUnits acceleration_units) {
+  // TODO(JM): Implementation.
+  double acceleration_microsteps_per_second_per_second = 0.0;
+
+  switch (acceleration_units) {
+    case AccelerationUnits::kMicrostepsPerSecondPerSecond: {
+      acceleration_microsteps_per_second_per_second = acceleration;
+      break;
+    }
+    case AccelerationUnits::kDegreesPerSecondPerSecond: {
+      acceleration_microsteps_per_second_per_second = acceleration / microstep_angle_degrees_;
+      break;
+    }
+    case AccelerationUnits::kRadiansPerSecondPerSecond: {
+      acceleration_microsteps_per_second_per_second = (180.0 * acceleration) / (kPi * microstep_angle_degrees_);
+      break;
+    }
+    case AccelerationUnits::kRevolutionsPerMinutePerMinute: {
+      acceleration_microsteps_per_second_per_second = (6.0 * acceleration) / microstep_angle_degrees_;
+      break;
+    }
+  }
+}
+
 uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units,
                                                                  MotionType motion_type,
                                                                  CalculationOption calculation_option) {
@@ -109,7 +133,6 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
-  //calculate steps (use the function), etc.
   static bool new_acceleration = true; // Flag to indicate motion is starting from zero speed (idle or paused).
   static MotionStatus motion_status = MotionStatus::kIdle;
 
@@ -159,6 +182,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
     case MotionStatus::kAccelerate: {
       // TODO(JM): Implement acceleration.
       motion_status = MotionStatus::kConstantSpeed; // TODO(JM): Add condition once acceleration is implemented.
+      break;
     }
     case MotionStatus::kConstantSpeed: {
       MoveByMicrostepAtMicrostepPeriod();

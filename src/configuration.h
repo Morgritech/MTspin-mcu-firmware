@@ -49,7 +49,7 @@ inline constexpr uint8_t kEnaMotorDriverPin = 13; ///< Output pin for the steppe
 
 // Serial
 
-/// @brief The serial communication speed for the Arduino board.
+/// @brief The serial communication speed.
 inline constexpr int kBaudRate = 9600;
 
 // Logging

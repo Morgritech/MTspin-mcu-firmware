@@ -51,7 +51,6 @@ void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
 }
 
 void StepperDriver::SetAcceleration(double acceleration, AccelerationUnits acceleration_units) {
-  // TODO(JM): Implementation.
   double acceleration_microsteps_per_second_per_second = 0.0;
 
   switch (acceleration_units) {
@@ -72,6 +71,8 @@ void StepperDriver::SetAcceleration(double acceleration, AccelerationUnits accel
       break;
     }
   }
+
+  speed_period_us_ = 1000000.0 / acceleration_microsteps_per_second_per_second; // (us).
 }
 
 uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units,

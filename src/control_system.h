@@ -11,6 +11,8 @@
 
 #include <momentary_button.h>
 
+#include "stepper_driver.h"
+
 namespace mtspin {
 
 /// @brief The Control System class.
@@ -34,6 +36,9 @@ class ControlSystem {
   mt::MomentaryButton speed_button_; ///< Button to control motor speed.
   mt::MomentaryButton angle_button_; ///< Button to control motor rotation angles.
   /// @}
+
+  /// @brief Stepper motor driver to control the stepper motor.
+  //mt::StepperDriver stepper_driver_;
 };
 
 } // namespace mtspin

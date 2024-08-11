@@ -63,7 +63,7 @@ inline constexpr int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;
 // Hardware properties/characteristics
 
 /// @brief Button properties
-mt::MomentaryButton::PinState direction_button_unpressed_pin_state_ = mt::MomentaryButton::PinState::kLow;
+//mt::MomentaryButton::PinState direction_button_unpressed_pin_state_ = mt::MomentaryButton::PinState::kLow;
 
 
 /// @brief Minimum startup/boot time in milliseconds (ms) for the stepper driver.

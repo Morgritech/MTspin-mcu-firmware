@@ -9,6 +9,8 @@
 #ifndef STEPPER_DRIVER_H_
 #define STEPPER_DRIVER_H_
 
+#include <Arduino.h>
+
 namespace mt {
 
 /// @brief The Stepper Driver class.

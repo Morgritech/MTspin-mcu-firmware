@@ -11,6 +11,9 @@
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
+#include <momentary_button.h>
+
+#include "stepper_driver.h"
 
 /// @brief Macro to define Serial port
 #ifndef MTSPIN_SERIAL
@@ -58,6 +61,10 @@ inline constexpr int kBaudRate = 9600;
 inline constexpr int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;
 
 // Hardware properties/characteristics
+
+/// @brief Button properties
+mt::MomentaryButton::PinState direction_button_unpressed_pin_state_ = mt::MomentaryButton::PinState::kLow;
+
 
 /// @brief Minimum startup/boot time in milliseconds (ms) for the stepper driver.
 inline constexpr uint16_t kMinStartupTime_ms = 1000;

@@ -11,6 +11,9 @@
 #include "configuration.h"
 #include "control_system.h"
 
+/// @brief The Configuration instance.
+mtspin::Configuration& configuration = mtspin::Configuration::GetInstance();
+
 /// @brief The Control System instance.
 mtspin::ControlSystem control_system;
 
@@ -18,7 +21,7 @@ mtspin::ControlSystem control_system;
 void setup() {
 
   // Initialise the hardware (Serial port, logging, pins, etc.).
-  mtspin::configuration::BeginHardware();
+  configuration.BeginHardware();
   
   Log.noticeln(F("\n...Setup complete...\n"));
 }

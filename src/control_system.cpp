@@ -19,6 +19,12 @@ ControlSystem::ControlSystem()
     : direction_button_(configuration::kDirectionButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000),
       speed_button_(configuration::kSpeedButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000),
       angle_button_(configuration::kAngleButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000) {
+  
+  //The configuration instance.
+  mtspin::Configuration& configuration = mtspin::Configuration::GetInstance();
+
+  //TODO(JM): Use this to initialise the buttons and stepper driver here instead of using the initialiser list above!
+
 }
 
 ControlSystem::~ControlSystem() {}

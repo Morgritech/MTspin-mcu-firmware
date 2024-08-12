@@ -12,9 +12,12 @@
 
 namespace mtspin {
 
-namespace configuration {
+Configuration& Configuration::GetInstance() {
+  static Configuration instance;
+  return instance;
+}
 
-void BeginHardware() {
+void Configuration::BeginHardware() const {
   // Initialise the serial port.
   MTSPIN_SERIAL.begin(kBaudRate);
 
@@ -39,6 +42,8 @@ void BeginHardware() {
   delay(kMinStartupTime_ms);
 }
 
-} // namespace configuration
+Configuration::Configuration() {}
+
+Configuration::~Configuration() {}
 
 } // namespace mtspin

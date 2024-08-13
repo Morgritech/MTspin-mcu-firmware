@@ -56,9 +56,9 @@ struct Configuration {
 
   /// @{
   /// @brief Stepper motor driver output pins.
-  const uint8_t kPulStepperDriverPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint8_t kDirStepperDriverPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
-  const uint8_t kEnaStepperDriverPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
+  const uint8_t kPulPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint8_t kDirPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
+  const uint8_t kEnaPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
   /// @}
 
   // Hardware properties/characteristics

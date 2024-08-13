@@ -31,9 +31,9 @@ ControlSystem::ControlSystem()
                     Configuration::GetInstance().kAngleButtonDebouncePeriod,
                     Configuration::GetInstance().kAngleButtonShortPressPeriod,
                     Configuration::GetInstance().kAngleButtonLongPressPeriod),
-      stepper_driver_(Configuration::GetInstance().kPulStepperDriverPin,
-                      Configuration::GetInstance().kDirStepperDriverPin,
-                      Configuration::GetInstance().kEnaStepperDriverPin,
+      stepper_driver_(Configuration::GetInstance().kPulPin,
+                      Configuration::GetInstance().kDirPin,
+                      Configuration::GetInstance().kEnaPin,
                       Configuration::GetInstance().kStepMode,
                       Configuration::GetInstance().kFullStepAngleDegrees,
                       Configuration::GetInstance().kGearRatio) {}

@@ -34,9 +34,9 @@ void Configuration::BeginHardware() const {
   pinMode(kAngleButtonPin, INPUT);
 
   // Initialise the output pins
-  pinMode(kPulMotorDriverPin, OUTPUT);
-  pinMode(kDirMotorDriverPin, OUTPUT);
-  pinMode(kEnaMotorDriverPin, OUTPUT);
+  pinMode(kPulStepperDriverPin, OUTPUT);
+  pinMode(kDirStepperDriverPin, OUTPUT);
+  pinMode(kEnaStepperDriverPin, OUTPUT);
 
   // Delay for the startup time required by stepper driver.
   delay(kMinStartupTime_ms);

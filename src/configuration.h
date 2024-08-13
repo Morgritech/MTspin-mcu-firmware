@@ -38,14 +38,14 @@ struct Configuration {
   /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
   void BeginHardware() const;
 
-  //GPIO pins
+  // GPIO pins
 
-  //Notes
+  // Notes
 
-  //Interrupt pins:
-  //Uno, Nano, Mini, other 328-based   2, 3
-  //Mega, Mega2560, MegaADK            2, 3, 18, 19, 20, 21
-  //Due                                all digital pins
+  // Interrupt pins:
+  // Uno, Nano, Mini, other 328-based   2, 3
+  // Mega, Mega2560, MegaADK            2, 3, 18, 19, 20, 21
+  // Due                                all digital pins
 
   /// @{
   /// @brief Button input pins.
@@ -55,30 +55,71 @@ struct Configuration {
   /// @}
 
   /// @{
-  /// @brief Stepper driver output pins.
-  const uint8_t kPulMotorDriverPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint8_t kDirMotorDriverPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
-  const uint8_t kEnaMotorDriverPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
+  /// @brief Stepper motor driver output pins.
+  const uint8_t kPulStepperDriverPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint8_t kDirStepperDriverPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
+  const uint8_t kEnaStepperDriverPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
   /// @}
 
-  // Serial
+  // Hardware properties/characteristics
+
+  // Serial properties
 
   /// @brief The serial communication speed.
   const int kBaudRate = 9600;
 
-  // Logging
+  // Button properties
 
-  /// @brief The default log level for debugging and system reporting.
-  const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;
+  /// @{
+  /// @brief Unpressed button pin states.
+  const mt::MomentaryButton::PinState kDirectionButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
+  const mt::MomentaryButton::PinState kSpeedButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
+  const mt::MomentaryButton::PinState kAngleButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
+  /// @}
 
-  // Hardware properties/characteristics
+  /// @{
+  /// @brief Debounce periods.
+  const uint16_t kDirectionButtonDebouncePeriod = 20;
+  const uint16_t kSpeedButtonDebouncePeriod = 20;
+  const uint16_t kAngleButtonDebouncePeriod = 20;
+  /// @}
 
-  /// @brief Button properties
-  //mt::MomentaryButton::PinState direction_button_unpressed_pin_state_ = mt::MomentaryButton::PinState::kLow;
+  /// @{
+  /// @brief Short press periods.
+  const uint16_t kDirectionButtonShortPressPeriod = 500;
+  const uint16_t kSpeedButtonShortPressPeriod = 500;
+  const uint16_t kAngleButtonShortPressPeriod = 500;
+  /// @}
 
+  /// @{
+  /// @brief Long press periods.
+  const uint16_t kDirectionButtonLongPressPeriod = 1000;
+  const uint16_t kSpeedButtonLongPressPeriod = 1000;
+  const uint16_t kAngleButtonLongPressPeriod = 1000;
+  /// @}
+
+  // Stepper motor properties
+
+  /// @brief 
+  const float kFullStepAngleDegrees = 1.8;
+
+  /// @brief 
+  const double kGearRatio = 1; 
+
+  // Stepper driver properties
+
+  /// @brief 
+  const uint8_t kStepMode = 1;
 
   /// @brief Minimum startup/boot time in milliseconds (ms) for the stepper driver.
   const uint16_t kMinStartupTime_ms = 1000;
+
+  // Other properties/characteristics
+
+  // Logging
+
+  /// @brief The default log level for debugging and system reporting.
+  const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;  
 
  private:
 

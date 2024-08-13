@@ -25,6 +25,9 @@ class ControlSystem {
   /// @brief Destroy the Control System object.
   ~ControlSystem();
 
+  /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
+  void Begin() const;
+
   /// @brief Check inputs and trigger outputs/actions.
   void CheckAndProcess() const;
 
@@ -38,7 +41,7 @@ class ControlSystem {
   /// @}
 
   /// @brief Stepper motor driver to control the stepper motor.
-  //mt::StepperDriver stepper_driver_;
+  mt::StepperDriver stepper_driver_;
 };
 
 } // namespace mtspin

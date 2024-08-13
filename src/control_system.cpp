@@ -16,18 +16,33 @@
 namespace mtspin {
 
 ControlSystem::ControlSystem()
-    : direction_button_(configuration::kDirectionButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000),
-      speed_button_(configuration::kSpeedButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000),
-      angle_button_(configuration::kAngleButtonPin, mt::MomentaryButton::PinState::kLow, 20, 500, 1000) {
-  
-  //The configuration instance.
-  mtspin::Configuration& configuration = mtspin::Configuration::GetInstance();
-
-  //TODO(JM): Use this to initialise the buttons and stepper driver here instead of using the initialiser list above!
-
-}
+    : direction_button_(Configuration::GetInstance().kDirectionButtonPin,
+                        Configuration::GetInstance().kDirectionButtonUnpressedPinState,
+                        Configuration::GetInstance().kDirectionButtonDebouncePeriod,
+                        Configuration::GetInstance().kDirectionButtonShortPressPeriod,
+                        Configuration::GetInstance().kDirectionButtonLongPressPeriod),
+      speed_button_(Configuration::GetInstance().kSpeedButtonPin,
+                    Configuration::GetInstance().kSpeedButtonUnpressedPinState,
+                    Configuration::GetInstance().kSpeedButtonDebouncePeriod,
+                    Configuration::GetInstance().kSpeedButtonShortPressPeriod,
+                    Configuration::GetInstance().kAngleButtonLongPressPeriod),
+      angle_button_(Configuration::GetInstance().kAngleButtonPin,
+                    Configuration::GetInstance().kAngleButtonUnpressedPinState,
+                    Configuration::GetInstance().kAngleButtonDebouncePeriod,
+                    Configuration::GetInstance().kAngleButtonShortPressPeriod,
+                    Configuration::GetInstance().kAngleButtonLongPressPeriod),
+      stepper_driver_(Configuration::GetInstance().kPulStepperDriverPin,
+                      Configuration::GetInstance().kDirStepperDriverPin,
+                      Configuration::GetInstance().kEnaStepperDriverPin,
+                      Configuration::GetInstance().kStepMode,
+                      Configuration::GetInstance().kFullStepAngleDegrees,
+                      Configuration::GetInstance().kGearRatio) {}
 
 ControlSystem::~ControlSystem() {}
+
+void ControlSystem::Begin() const {
+  mtspin::Configuration::GetInstance().BeginHardware();
+}
 
 void ControlSystem::CheckAndProcess() const {
   /* TESTING BUTTON STATE CHANGE.

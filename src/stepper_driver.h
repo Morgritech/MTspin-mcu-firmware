@@ -82,11 +82,11 @@ class StepperDriver {
   /// @param pul_pin PUL/STP/CLK (pulse/step/clock) pin.
   /// @param dir_pin DIR/CW (direction) pin.
   /// @param ena_pin ENA/EN (enable) pin.
+  /// @param step_mode Micro-stepping/step mode (1 = full step, 2 = half step (1/2), 4 = quarter step (1/4), etc.).  
   /// @param full_step_angle_degrees Motor full step angle in degrees.
-  /// @param step_mode Micro-stepping/step mode (1 = full step, 2 = half step (1/2), 4 = quarter step (1/4), etc.).
   /// @param gear_ratio Gear ratio for motors coupled with a gearbox in the drive system.
-  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, float full_step_angle_degrees = 1.8,
-                uint8_t step_mode = 1, double gear_ratio = 1);
+  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, uint8_t step_mode = 1,
+                float full_step_angle_degrees = 1.8, double gear_ratio = 1);
 
   /// @brief Destroy the Stepper Driver object.
   ~StepperDriver();

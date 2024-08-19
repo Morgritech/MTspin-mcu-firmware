@@ -111,8 +111,6 @@ class StepperDriver {
                            MotionType motion_type = MotionType::kRelative, 
                            CalculationOption calculation_option = CalculationOption::kCalculateOnly);
 
-  uint64_t StepperDriver::CalculateMicrostepsForAcceleration();
-
   /// @brief Move to a target angle with respect to the; current angular position (relative), OR; zero/home angular position (absolute).
   /// @param angle The target angle (positive or negative).
   /// @param angle_units The units of the specified angle.

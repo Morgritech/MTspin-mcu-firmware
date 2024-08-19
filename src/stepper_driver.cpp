@@ -142,13 +142,10 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 	return abs(relative_angle_microsteps);
 }
 
-uint64_t StepperDriver::CalculateMicrostepsForAcceleration() {
-  // TODO(JM): Implementation.
-}
-
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
-  static bool new_acceleration = true; // Flag to indicate motion is starting from zero speed (idle or paused).
+  static uint64_t microsteps_after_acceleration = 0; // Expected number of microsteps remaining after acceleration has occurred (microsteps).
+  static uint64_t microsteps_after_constant_speed = 0; // Expected number of microsteps remaining after constant speed motion gas occurred (microsteps).
   static MotionStatus motion_status = MotionStatus::kIdle;
 
   if (power_state_ == PowerState::kDisabled) {
@@ -162,6 +159,8 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
   switch (motion_type) {
       case MotionType::kStopAndReset: {
         relative_microsteps_to_move_ = 0;
+        microsteps_after_acceleration = 0;
+        microsteps_after_constant_speed = 0;
         motion_status = MotionStatus::kIdle;
         break;
       }
@@ -176,16 +175,15 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         [[fallthrough]];
       }
       case MotionType::kRelative: {
+        if (motion_status == MotionStatus::kIdle || motion_status == MotionStatus::kPaused) {
+          microsteps_after_acceleration = 0;
+          microsteps_after_constant_speed = 0;
+          motion_status = MotionStatus::kAccelerate;
+        }
+
         if (motion_status == MotionStatus::kIdle) {
           relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
                                                                                 CalculationOption::kSetupMotion);
-          new_acceleration = true;
-          motion_status = MotionStatus::kAccelerate;
-        }
-        else if (motion_status == MotionStatus::kPaused) {
-          new_acceleration = true;
-          motion_status = MotionStatus::kAccelerate;
-        }
 
         break;
       }
@@ -199,14 +197,61 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
       break;
     }
     case MotionStatus::kAccelerate: {
-      // TODO(JM): Implement acceleration. Don't forget to deal with set acceleration = 0.
-      motion_status = MotionStatus::kConstantSpeed; // TODO(JM): Add condition once acceleration is implemented.
+      if (speed_period_us_ == 0.0) {
+        // No acceleration/deceleration.
+        motion_status = MotionStatus::kConstantSpeed;
+      }
+      else if (microsteps_after_acceleration == 0) {
+        // Setup a new acceleration.
+        // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
+        uint64_t min_microsteps_for_acceleration = speed_period_us_ / (microstep_period_us_ * microstep_period_us_);
+        if (relative_microsteps_to_move_ <= min_microsteps_for_acceleration) {
+          // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps and then decelerate to 0.
+          microsteps_after_acceleration = relative_microsteps_to_move_ / 2;
+        }
+        else {
+          // Setup trapezoidal speed profile; motor will accelerate to set speed, move at constant speed, and then decelerate to 0.
+          microsteps_after_acceleration = relative_microsteps_to_move_ - (1.5 * min_microsteps_for_acceleration);
+          microsteps_after_constant_speed = min_microsteps_for_acceleration / 2;
+        }
+      }
+      else {
+        // Acceleration already in progress.
+        // TODO(JM): Call a function to accelerate. How do we save and restore the set speed?
+        if (relative_microsteps_to_move_ <= microsteps_after_acceleration) {
+          if (microsteps_after_constant_speed == 0) {
+            // Triangular speed profile.
+            motion_status = MotionStatus::kDecelerate;
+          }
+          else {
+            // Trapezoidal speed profile.
+            motion_status = MotionStatus::kConstantSpeed;
+          }
+        }
+        else {
+          MoveByMicrostepAtMicrostepPeriod();
+        }
+      }
+
       break;
     }
     case MotionStatus::kConstantSpeed: {
-      MoveByMicrostepAtMicrostepPeriod();
-      if (relative_microsteps_to_move_ == 0) { // TODO(JM): Condition to be changed once deceleration is implemented.
-        motion_status = MotionStatus::kDecelerate;
+      if (speed_period_us_ == 0.0) {
+        // No acceleration/deceleration.
+        if (relative_microsteps_to_move_ <= 0) {
+          motion_status = MotionStatus::kIdle;
+        }
+        else {
+          MoveByMicrostepAtMicrostepPeriod();
+        }        
+      }
+      else if (microsteps_after_constant_speed != 0) {
+        // Trapezoidal speed profile.
+        if (relative_microsteps_to_move_ <= microsteps_after_constant_speed) {
+          motion_status = MotionStatus::kDecelerate;
+        }
+        else {
+          MoveByMicrostepAtMicrostepPeriod();
       }
 
       break;

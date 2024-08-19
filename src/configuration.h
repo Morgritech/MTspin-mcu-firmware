@@ -22,7 +22,7 @@
 
 namespace mtspin {
 
-/// @brief The Configuration class using the singleton pattern i.e., only one single instance can exist.
+/// @brief The Configuration class using the singleton pattern i.e., only a single instance can exist.
 struct Configuration {
 
   /// @brief Static method to get the single instance.

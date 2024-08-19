@@ -47,7 +47,12 @@ void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
     }
   }
 
-  microstep_period_us_ = 1000000.0 / (speed_microsteps_per_second); // (us).
+  if (speed_microsteps_per_second == 0.0) {
+    microstep_period_us_ = 0.0; // (us).
+  }
+  else {
+    microstep_period_us_ = 1000000.0 / (speed_microsteps_per_second); // (us).
+  }
 }
 
 void StepperDriver::SetAcceleration(double acceleration, AccelerationUnits acceleration_units) {
@@ -72,7 +77,12 @@ void StepperDriver::SetAcceleration(double acceleration, AccelerationUnits accel
     }
   }
 
-  speed_period_us_ = 1000000.0 / acceleration_microsteps_per_second_per_second; // (us).
+  if (acceleration_microsteps_per_second_per_second == 0.0) {
+    speed_period_us_ = 0.0; // (us).
+  }
+  else {
+    speed_period_us_ = 1000000.0 / acceleration_microsteps_per_second_per_second; // (us).
+  }
 }
 
 uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units,
@@ -132,6 +142,10 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 	return abs(relative_angle_microsteps);
 }
 
+uint64_t StepperDriver::CalculateMicrostepsForAcceleration() {
+  // TODO(JM): Implementation.
+}
+
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
   static bool new_acceleration = true; // Flag to indicate motion is starting from zero speed (idle or paused).
@@ -139,6 +153,10 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
 
   if (power_state_ == PowerState::kDisabled) {
     motion_type = MotionType::kStopAndReset;
+  }
+  else if (microstep_period_us_ == 0.0) {
+    // Pause if the set speed is 0.
+    motion_type = MotionType::kPause;
   }
 
   switch (motion_type) {
@@ -181,7 +199,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
       break;
     }
     case MotionStatus::kAccelerate: {
-      // TODO(JM): Implement acceleration.
+      // TODO(JM): Implement acceleration. Don't forget to deal with set acceleration = 0.
       motion_status = MotionStatus::kConstantSpeed; // TODO(JM): Add condition once acceleration is implemented.
       break;
     }
@@ -207,7 +225,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
 }
 
 void StepperDriver::MoveByJogging(MotionDirection direction) {
-  if (power_state_ == PowerState::kDisabled) return;
+  if (power_state_ == PowerState::kDisabled || microstep_period_us_ == 0.0) return;
 
   static MotionDirection set_direction = MotionDirection::kNeutral;
 

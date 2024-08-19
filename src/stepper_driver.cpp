@@ -157,36 +157,37 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
   }
 
   switch (motion_type) {
-      case MotionType::kStopAndReset: {
-        relative_microsteps_to_move_ = 0;
+    case MotionType::kStopAndReset: {
+      relative_microsteps_to_move_ = 0;
+      microsteps_after_acceleration = 0;
+      microsteps_after_constant_speed = 0;
+      motion_status = MotionStatus::kIdle;
+      break;
+    }
+    case MotionType::kPause: {
+      motion_status = MotionStatus::kPaused;
+      break;
+    }
+    case MotionType::kResume: {
+      [[fallthrough]];
+    }
+    case MotionType::kAbsolute: {
+      [[fallthrough]];
+    }
+    case MotionType::kRelative: {
+      if (motion_status == MotionStatus::kIdle || motion_status == MotionStatus::kPaused) {
         microsteps_after_acceleration = 0;
         microsteps_after_constant_speed = 0;
-        motion_status = MotionStatus::kIdle;
-        break;
+        motion_status = MotionStatus::kAccelerate;
       }
-      case MotionType::kPause: {
-        motion_status = MotionStatus::kPaused;
-        break;
-      }
-      case MotionType::kResume: {
-        [[fallthrough]];
-      }
-      case MotionType::kAbsolute: {
-        [[fallthrough]];
-      }
-      case MotionType::kRelative: {
-        if (motion_status == MotionStatus::kIdle || motion_status == MotionStatus::kPaused) {
-          microsteps_after_acceleration = 0;
-          microsteps_after_constant_speed = 0;
-          motion_status = MotionStatus::kAccelerate;
-        }
 
-        if (motion_status == MotionStatus::kIdle) {
-          relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
-                                                                                CalculationOption::kSetupMotion);
-
-        break;
+      if (motion_status == MotionStatus::kIdle) {
+        relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
+                                                                              CalculationOption::kSetupMotion);
       }
+
+      break;
+    }
   }
 
   switch (motion_status) {
@@ -252,6 +253,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         }
         else {
           MoveByMicrostepAtMicrostepPeriod();
+        }
       }
 
       break;

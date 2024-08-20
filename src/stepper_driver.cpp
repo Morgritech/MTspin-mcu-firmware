@@ -144,8 +144,8 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
   // TODO(JM): Implementation.
-  static uint64_t microsteps_after_acceleration = 0; // Expected number of microsteps remaining after acceleration has occurred (microsteps).
-  static uint64_t microsteps_after_constant_speed = 0; // Expected number of microsteps remaining after constant speed motion gas occurred (microsteps).
+  static uint64_t microsteps_after_acceleration = 0; // Expected number of microsteps remaining after acceleration has completed (microsteps).
+  static uint64_t microsteps_after_constant_speed = 0; // Expected number of microsteps remaining after constant speed motion has completed (microsteps).
   static MotionStatus motion_status = MotionStatus::kIdle;
 
   if (power_state_ == PowerState::kDisabled) {
@@ -179,11 +179,11 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         microsteps_after_acceleration = 0;
         microsteps_after_constant_speed = 0;
         motion_status = MotionStatus::kAccelerate;
-      }
 
-      if (motion_status == MotionStatus::kIdle) {
-        relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
-                                                                              CalculationOption::kSetupMotion);
+        if (motion_status == MotionStatus::kIdle) {
+          relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
+                                                                                CalculationOption::kSetupMotion);
+        }
       }
 
       break;
@@ -207,11 +207,11 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
         uint64_t min_microsteps_for_acceleration = speed_period_us_ / (microstep_period_us_ * microstep_period_us_);
         if (relative_microsteps_to_move_ <= min_microsteps_for_acceleration) {
-          // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps and then decelerate to 0.
+          // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps, then decelerate to 0.
           microsteps_after_acceleration = relative_microsteps_to_move_ / 2;
         }
         else {
-          // Setup trapezoidal speed profile; motor will accelerate to set speed, move at constant speed, and then decelerate to 0.
+          // Setup trapezoidal speed profile; motor will accelerate to set speed, move at constant speed, then decelerate to 0.
           microsteps_after_acceleration = relative_microsteps_to_move_ - (1.5 * min_microsteps_for_acceleration);
           microsteps_after_constant_speed = min_microsteps_for_acceleration / 2;
         }
@@ -239,12 +239,12 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
     case MotionStatus::kConstantSpeed: {
       if (speed_period_us_ == 0.0) {
         // No acceleration/deceleration.
-        if (relative_microsteps_to_move_ <= 0) {
+        if (relative_microsteps_to_move_ == 0) {
           motion_status = MotionStatus::kIdle;
         }
         else {
           MoveByMicrostepAtMicrostepPeriod();
-        }        
+        }
       }
       else if (microsteps_after_constant_speed != 0) {
         // Trapezoidal speed profile.
@@ -259,9 +259,12 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
       break;
     }
     case MotionStatus::kDecelerate: {
-      // TODO(JM): Implement deceleration.
+      // TODO(JM): Call a function to decelerate. How do we save and restore the set speed?
       if (relative_microsteps_to_move_ == 0) {
         motion_status = MotionStatus::kIdle;
+      }
+      else {
+        MoveByMicrostepAtMicrostepPeriod();
       }
 
       break;

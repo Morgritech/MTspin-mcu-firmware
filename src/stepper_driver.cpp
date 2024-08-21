@@ -26,62 +26,62 @@ StepperDriver::StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, 
 StepperDriver::~StepperDriver() {}
 
 void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
-  double speed_microsteps_per_second = 0.0;
+  double speed_microsteps_per_s = 0.0;
 
   switch (speed_units) {
     case SpeedUnits::kMicrostepsPerSecond: {
-      speed_microsteps_per_second = speed;
+      speed_microsteps_per_s = speed;
       break;
     }
     case SpeedUnits::kDegreesPerSecond: {
-      speed_microsteps_per_second = speed / microstep_angle_degrees_;
+      speed_microsteps_per_s = speed / microstep_angle_degrees_;
       break;
     }
     case SpeedUnits::kRadiansPerSecond: {
-      speed_microsteps_per_second = (180.0 * speed) / (kPi * microstep_angle_degrees_);
+      speed_microsteps_per_s = (180.0 * speed) / (kPi * microstep_angle_degrees_);
       break;
     }
     case SpeedUnits::kRevolutionsPerMinute: {
-      speed_microsteps_per_second = (6.0 * speed) / microstep_angle_degrees_;
+      speed_microsteps_per_s = (6.0 * speed) / microstep_angle_degrees_;
       break;
     }
   }
 
-  if (speed_microsteps_per_second == 0.0) {
+  if (speed_microsteps_per_s == 0.0) {
     microstep_period_us_ = 0.0; // (us).
   }
   else {
-    microstep_period_us_ = 1000000.0 / (speed_microsteps_per_second); // (us).
+    microstep_period_us_ = 1000000.0 / (speed_microsteps_per_s); // (us).
   }
 }
 
 void StepperDriver::SetAcceleration(double acceleration, AccelerationUnits acceleration_units) {
-  double acceleration_microsteps_per_second_per_second = 0.0;
+  double acceleration_microsteps_per_s_per_s = 0.0;
 
   switch (acceleration_units) {
     case AccelerationUnits::kMicrostepsPerSecondPerSecond: {
-      acceleration_microsteps_per_second_per_second = acceleration;
+      acceleration_microsteps_per_s_per_s = acceleration;
       break;
     }
     case AccelerationUnits::kDegreesPerSecondPerSecond: {
-      acceleration_microsteps_per_second_per_second = acceleration / microstep_angle_degrees_;
+      acceleration_microsteps_per_s_per_s = acceleration / microstep_angle_degrees_;
       break;
     }
     case AccelerationUnits::kRadiansPerSecondPerSecond: {
-      acceleration_microsteps_per_second_per_second = (180.0 * acceleration) / (kPi * microstep_angle_degrees_);
+      acceleration_microsteps_per_s_per_s = (180.0 * acceleration) / (kPi * microstep_angle_degrees_);
       break;
     }
     case AccelerationUnits::kRevolutionsPerMinutePerMinute: {
-      acceleration_microsteps_per_second_per_second = (6.0 * acceleration) / microstep_angle_degrees_;
+      acceleration_microsteps_per_s_per_s = (6.0 * acceleration) / microstep_angle_degrees_;
       break;
     }
   }
 
-  if (acceleration_microsteps_per_second_per_second == 0.0) {
+  if (acceleration_microsteps_per_s_per_s == 0.0) {
     speed_period_us_ = 0.0; // (us).
   }
   else {
-    speed_period_us_ = 1000000.0 / acceleration_microsteps_per_second_per_second; // (us).
+    speed_period_us_ = 1000000.0 / acceleration_microsteps_per_s_per_s; // (us).
   }
 }
 
@@ -143,7 +143,6 @@ uint64_t StepperDriver::CalculateRelativeMicrostepsToMoveByAngle(float angle, An
 }
 
 StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits angle_units, MotionType motion_type) {
-  // TODO(JM): Implementation.
   static uint64_t microsteps_after_acceleration = 0; // Expected number of microsteps remaining after acceleration has completed (microsteps).
   static uint64_t microsteps_after_constant_speed = 0; // Expected number of microsteps remaining after constant speed motion has completed (microsteps).
   static MotionStatus motion_status = MotionStatus::kIdle;
@@ -205,8 +204,11 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
       }
       else if (microsteps_after_acceleration == 0) {
         // Setup a new acceleration.
+        // Calculate initial acceleration parameters.
+        AccelerateOrDecelerateAtSpeedPeriod(MotionStatus::kAccelerate, CalculationOption::kCalculateOnly);
         // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
-        uint64_t min_microsteps_for_acceleration = speed_period_us_ / (2000000 * microstep_period_us_ * microstep_period_us_);
+        uint64_t min_microsteps_for_acceleration = speed_period_us_ / (2000000 * microstep_period_us_ * microstep_period_us_); // (microsteps).
+
         if (relative_microsteps_to_move_ <= (2 * min_microsteps_for_acceleration)) {
           // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps, then decelerate to 0.
           microsteps_after_acceleration = relative_microsteps_to_move_ / 2;
@@ -230,7 +232,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           }
         }
         else {
-          // TODO(JM): Call a function to accelerate. How do we save and restore the set speed?
+          AccelerateOrDecelerateAtSpeedPeriod(MotionStatus::kAccelerate, CalculationOption::kSetupMotion);
         }
       }
 
@@ -263,7 +265,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         motion_status = MotionStatus::kIdle;
       }
       else {
-        // TODO(JM): Call a function to decelerate. How do we save and restore the set speed?
+        AccelerateOrDecelerateAtSpeedPeriod(MotionStatus::kDecelerate, CalculationOption::kSetupMotion);
       }
 
       break;
@@ -353,7 +355,7 @@ void StepperDriver::MoveByMicrostep() {
 }
 
 void StepperDriver::MoveByMicrostepAtMicrostepPeriod(double operating_microstep_period_us) {
-  static uint64_t reference_microstep_time_us = micros();
+  static uint64_t reference_microstep_time_us = micros(); // (us).
 
   if ((micros() - reference_microstep_time_us) >= operating_microstep_period_us) {
     MoveByMicrostep();
@@ -361,18 +363,34 @@ void StepperDriver::MoveByMicrostepAtMicrostepPeriod(double operating_microstep_
   }
 }
 
-void StepperDriver::AccelerateOrDecelerateAtSpeedPeriod(MotionStatus motion_status) {
-  static double microstep_period_us = 0.0;
+void StepperDriver::AccelerateOrDecelerateAtSpeedPeriod(MotionStatus motion_status, CalculationOption calculation_option) {
+  static double speed_microsteps_per_us; // (microsteps/us).
+  static double microstep_period_us; // (us).
+  static uint64_t reference_speed_time_us = micros(); // (us).
 
-  if (motion_status == MotionStatus::kAccelerate) {
-
+  if(calculation_option == CalculationOption::kCalculateOnly) {
+    // Setup a new acceleration.
+    speed_microsteps_per_us = (1000000.0 * microstep_period_us_) / speed_period_us_;
+    microstep_period_us = 1.0 / speed_microsteps_per_us;
   }
   else {
-    // Decelerate.
+    // Acceleration/deceleration already in progress.
+    MoveByMicrostepAtMicrostepPeriod(microstep_period_us);
 
+    if ((micros() - reference_speed_time_us) >= speed_period_us_) {
+      // Calculate new speed based on the microstep period (us).
+      if (motion_status == MotionStatus::kAccelerate) {
+        speed_microsteps_per_us = (1.0 / microstep_period_us) + ((1000000.0 * microstep_period_us) / speed_period_us_);
+      }
+      else {
+        // Decelerate.
+        speed_microsteps_per_us = (1.0 / microstep_period_us) - ((1000000.0 * microstep_period_us) / speed_period_us_);
+      }
+
+      microstep_period_us = 1.0 / speed_microsteps_per_us;
+      reference_speed_time_us = micros();
+    }
   }
-
-  MoveByMicrostepAtMicrostepPeriod(microstep_period_us);
 }
 
 } // namespace mt

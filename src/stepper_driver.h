@@ -106,6 +106,7 @@ class StepperDriver {
   /// @param angle The target angle (positive or negative).
   /// @param angle_units The units of the specified angle.
   /// @param motion_type The type of motion.
+  /// @param calculation_option The calculation option.
   /// @return The relative number of microsteps.
   uint64_t CalculateRelativeMicrostepsToMoveByAngle(float angle, AngleUnits angle_units = AngleUnits::kDegrees,
                            MotionType motion_type = MotionType::kRelative, 
@@ -152,10 +153,13 @@ class StepperDriver {
   void MoveByMicrostep(); ///< This must be called periodically.
 
   /// @brief Move the motor by the minimum step based on the micro-stepping mode, at speed based on the microstep period (us).
+  /// @param operating_microstep_period_us The microstep period (us).
   void MoveByMicrostepAtMicrostepPeriod(double operating_microstep_period_us); ///< This must be called periodically.
 
   /// @brief Accelerate/decelerate the motor based on the speed period (us), by increasing/decreasing the speed based on the microstep period (us).
-  void AccelerateOrDecelerateAtSpeedPeriod(MotionStatus motion_status); ///< This must be called periodically.
+  /// @param motion_status The status of the motion operation.
+  /// @param calculation_option The calculation option.
+  void AccelerateOrDecelerateAtSpeedPeriod(MotionStatus motion_status, CalculationOption calculation_option); ///< This must be called periodically.
 
   /// @{
   /// @brief Output pins.

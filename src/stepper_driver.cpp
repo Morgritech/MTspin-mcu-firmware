@@ -176,14 +176,15 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
     }
     case MotionType::kRelative: {
       if (motion_status == MotionStatus::kIdle || motion_status == MotionStatus::kPaused) {
-        microsteps_after_acceleration = 0;
-        microsteps_after_constant_speed = 0;
-        motion_status = MotionStatus::kAccelerate;
-
         if (motion_status == MotionStatus::kIdle) {
           relative_microsteps_to_move_ = CalculateRelativeMicrostepsToMoveByAngle(angle, angle_units, motion_type, 
                                                                                 CalculationOption::kSetupMotion);
         }
+        
+        microsteps_after_acceleration = 0;
+        microsteps_after_constant_speed = 0;
+        motion_status = MotionStatus::kAccelerate;
+
       }
 
       break;
@@ -205,20 +206,19 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
       else if (microsteps_after_acceleration == 0) {
         // Setup a new acceleration.
         // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
-        uint64_t min_microsteps_for_acceleration = speed_period_us_ / (microstep_period_us_ * microstep_period_us_);
-        if (relative_microsteps_to_move_ <= min_microsteps_for_acceleration) {
+        uint64_t min_microsteps_for_acceleration = speed_period_us_ / (2000000 * microstep_period_us_ * microstep_period_us_);
+        if (relative_microsteps_to_move_ <= (2 * min_microsteps_for_acceleration)) {
           // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps, then decelerate to 0.
           microsteps_after_acceleration = relative_microsteps_to_move_ / 2;
         }
         else {
           // Setup trapezoidal speed profile; motor will accelerate to set speed, move at constant speed, then decelerate to 0.
-          microsteps_after_acceleration = relative_microsteps_to_move_ - (1.5 * min_microsteps_for_acceleration);
-          microsteps_after_constant_speed = min_microsteps_for_acceleration / 2;
+          microsteps_after_acceleration = relative_microsteps_to_move_ - min_microsteps_for_acceleration;
+          microsteps_after_constant_speed = min_microsteps_for_acceleration;
         }
       }
       else {
         // Acceleration already in progress.
-        // TODO(JM): Call a function to accelerate. How do we save and restore the set speed?
         if (relative_microsteps_to_move_ <= microsteps_after_acceleration) {
           if (microsteps_after_constant_speed == 0) {
             // Triangular speed profile.
@@ -230,7 +230,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           }
         }
         else {
-          MoveByMicrostepAtMicrostepPeriod();
+          // TODO(JM): Call a function to accelerate. How do we save and restore the set speed?
         }
       }
 
@@ -243,7 +243,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           motion_status = MotionStatus::kIdle;
         }
         else {
-          MoveByMicrostepAtMicrostepPeriod();
+          MoveByMicrostepAtMicrostepPeriod(microstep_period_us_);
         }
       }
       else if (microsteps_after_constant_speed != 0) {
@@ -252,19 +252,18 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           motion_status = MotionStatus::kDecelerate;
         }
         else {
-          MoveByMicrostepAtMicrostepPeriod();
+          MoveByMicrostepAtMicrostepPeriod(microstep_period_us_);
         }
       }
 
       break;
     }
     case MotionStatus::kDecelerate: {
-      // TODO(JM): Call a function to decelerate. How do we save and restore the set speed?
       if (relative_microsteps_to_move_ == 0) {
         motion_status = MotionStatus::kIdle;
       }
       else {
-        MoveByMicrostepAtMicrostepPeriod();
+        // TODO(JM): Call a function to decelerate. How do we save and restore the set speed?
       }
 
       break;
@@ -295,7 +294,7 @@ void StepperDriver::MoveByJogging(MotionDirection direction) {
 
   if (direction == MotionDirection::kNeutral) return;
   
-  MoveByMicrostepAtMicrostepPeriod();
+  MoveByMicrostepAtMicrostepPeriod(microstep_period_us_);
 }
 
 double StepperDriver::GetAngularPosition(AngleUnits angle_units) const {
@@ -353,13 +352,27 @@ void StepperDriver::MoveByMicrostep() {
   angular_position_microsteps_ = angular_position_microsteps_ + angular_position_updater_microsteps_;
 }
 
-void StepperDriver::MoveByMicrostepAtMicrostepPeriod() {
+void StepperDriver::MoveByMicrostepAtMicrostepPeriod(double operating_microstep_period_us) {
   static uint64_t reference_microstep_time_us = micros();
 
-  if ((micros() - reference_microstep_time_us) >= microstep_period_us_) {
+  if ((micros() - reference_microstep_time_us) >= operating_microstep_period_us) {
     MoveByMicrostep();
     reference_microstep_time_us = micros();
   }
+}
+
+void StepperDriver::AccelerateOrDecelerateAtSpeedPeriod(MotionStatus motion_status) {
+  static double microstep_period_us = 0.0;
+
+  if (motion_status == MotionStatus::kAccelerate) {
+
+  }
+  else {
+    // Decelerate.
+
+  }
+
+  MoveByMicrostepAtMicrostepPeriod(microstep_period_us);
 }
 
 } // namespace mt

@@ -187,7 +187,7 @@ class StepperDriver {
   /// @brief Motor states and targets.
   PowerState power_state_ = PowerState::kEnabled; ///< Power state based on the ENA/EN pin.
   double microstep_period_us_ = 10000.0; ///< Target speed based on the microstep period (us) between microsteps.
-  double speed_period_us_; ///< Target acceleration/deceleration based on the speed period (us) between increase/decrease of the microstep period.
+  double speed_period_us_ = 0.0; ///< Target acceleration/deceleration based on the speed period (us) between increase/decrease of the microstep period.
   uint64_t angular_position_microsteps_ = 0; ///< The current angular position (microsteps).
   uint64_t relative_microsteps_to_move_ = 0; ///< Target number of microsteps to move the motor relative to the current angular position.
   int8_t angular_position_updater_microsteps_; ///< Value (microsteps) to increment/decrement the current angular position depending on motor motion direction based on the DIR/CW pin.

@@ -163,7 +163,7 @@ class StepperDriver {
   /// @brief Accelerate/decelerate the motor based on the speed period (us), by increasing/decreasing the speed based on the microstep period (us).
   /// @param motion_status The status of the motion operation.
   /// @param calculation_option The calculation option.
-  void AccelerateOrDecelerateAtSpeedPeriod(MotionStatus motion_status, CalculationOption calculation_option); ///< This must be called periodically.
+  void AccelerateOrDecelerateAtSpeedPeriod(CalculationOption calculation_option); ///< This must be called periodically.
 
   /// @{
   /// @brief Output pins.
@@ -191,10 +191,17 @@ class StepperDriver {
   /// @brief Motor states and targets.
   PowerState power_state_ = PowerState::kEnabled; ///< Power state based on the ENA/EN pin.
   double microstep_period_us_ = 100000.0; ///< Target speed based on the microstep period (us) between microsteps.
+  double microstep_period_in_flux_us_; // The microstep period (us) that is changing due to acceleration/deceleration.
+  uint64_t reference_microstep_time_us_; ///< Reference time (us) for the microstep period.
   double speed_period_us_ = 0.0; ///< Target acceleration/deceleration based on the speed period (us) between increase/decrease of the microstep period.
+  uint64_t reference_speed_time_us_; ///< Reference time (us) for the speed period.
   uint64_t angular_position_microsteps_ = 0; ///< The current angular position (microsteps).
   uint64_t relative_microsteps_to_move_ = 0; ///< Target number of microsteps to move the motor relative to the current angular position.
   int8_t angular_position_updater_microsteps_; ///< Value (microsteps) to increment/decrement the current angular position depending on motor motion direction based on the DIR/CW pin.
+  uint64_t microsteps_after_acceleration_ = 0; ///< Expected number of microsteps remaining after acceleration has completed (microsteps).
+  uint64_t microsteps_after_constant_speed_ = 0; ///< Expected number of microsteps remaining after constant speed motion has completed (microsteps).
+  MotionStatus motion_status_ = MotionStatus::kIdle; ///< The status of the move (by angle) operation.
+  MotionDirection jog_direction_ = MotionDirection::kNeutral; ///< The direction of the move (by jogging) operation.
   /// @}
 };
 

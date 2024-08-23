@@ -340,6 +340,8 @@ void StepperDriver::set_power_state(PowerState power_state) {
   delayMicroseconds(ena_delay_us_);
 }
 
+StepperDriver::PowerState StepperDriver::power_state() { return power_state_; }
+
 void StepperDriver::MoveByMicrostep() {
   digitalWrite(pul_pin_, LOW);
   delayMicroseconds(pul_delay_us_);

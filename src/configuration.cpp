@@ -33,7 +33,7 @@ void Configuration::BeginHardware() const {
   pinMode(kSpeedButtonPin, INPUT);
   pinMode(kAngleButtonPin, INPUT);
 
-  // Initialise the output pins
+  // Initialise the output pins.
   pinMode(kPulPin, OUTPUT);
   pinMode(kDirPin, OUTPUT);
   pinMode(kEnaPin, OUTPUT);

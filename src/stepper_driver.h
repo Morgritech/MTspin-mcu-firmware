@@ -140,9 +140,13 @@ class StepperDriver {
   /// @param ena_delay_us The minimum ENA change delay (us).
   void set_ena_delay_us(float ena_delay_us);
 
-  /// @brief Set the ENA/EN (enable) pin to enable or disable the motor.
+  /// @brief Set the ENA/EN (enable) pin to control the power state (enable or disable) the motor.
   /// @param power_state The power state.
   void set_power_state(PowerState power_state);
+
+  /// @brief Get the state of the ENA/EN (enable) pin to determine the power state of the motor.
+  /// @return The power state.
+  PowerState power_state();
 
  private:
 

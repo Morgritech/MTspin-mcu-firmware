@@ -84,6 +84,11 @@ void ControlSystem::CheckAndProcess() {
   }
   //*/
   //* TESTING MOVE BY JOGGING.
+  // Save power.
+  //if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kEnabled) {
+  //  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
+  //}
+
   static bool pressed = false;
   static mt::StepperDriver::MotionDirection motion_direction = mt::StepperDriver::MotionDirection::kPositive;
 

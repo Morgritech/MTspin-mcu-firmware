@@ -103,17 +103,17 @@ void ControlSystem::CheckAndProcess() {
     pressed = false;
   }
 
-  //mt::MomentaryButton::PressType angle_button_press_type = angle_button_.DetectPressType();
-  //if (angle_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
-  //  if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
-  //    motion_direction = mt::StepperDriver::MotionDirection::kNegative;
-  //  }
-  //  else {
-  //    motion_direction = mt::StepperDriver::MotionDirection::kPositive;
-  //  }
+  mt::MomentaryButton::PressType angle_button_press_type = angle_button_.DetectPressType();
+  if (angle_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+    if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
+      motion_direction = mt::StepperDriver::MotionDirection::kNegative;
+    }
+    else {
+      motion_direction = mt::StepperDriver::MotionDirection::kPositive;
+    }
 
-  //  Log.noticeln(F("ANGLE SHORT PRESS"));
-  //}
+    Log.noticeln(F("ANGLE SHORT PRESS"));
+  }
 
   if (pressed == true) {
     stepper_driver_.MoveByJogging(motion_direction);

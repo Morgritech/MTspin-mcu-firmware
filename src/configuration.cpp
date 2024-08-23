@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file configuration.cpp
-/// @brief The Configuration class using the singleton pattern i.e., only a single instance can exist.
+/// @brief Structure to setup common configuration settings, including serial port and pin definitions, etc.
 
 #include "configuration.h"
 
@@ -33,13 +33,13 @@ void Configuration::BeginHardware() const {
   pinMode(kSpeedButtonPin, INPUT);
   pinMode(kAngleButtonPin, INPUT);
 
-  // Initialise the output pins
+  // Initialise the output pins.
   pinMode(kPulPin, OUTPUT);
   pinMode(kDirPin, OUTPUT);
   pinMode(kEnaPin, OUTPUT);
 
-  // Delay for the startup time required by stepper driver.
-  delay(kMinStartupTime_ms);
+  // Delay for the startup time.
+  delay(kStartupTime_ms);
 }
 
 Configuration::Configuration() {}

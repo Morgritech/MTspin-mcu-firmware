@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file configuration.h
-/// @brief Class to setup common configuration settings, including serial port and pin definitions, etc.
+/// @brief Structure to setup common configuration settings, including serial port and pin definitions, etc.
 
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
@@ -22,8 +22,16 @@
 
 namespace mtspin {
 
-/// @brief The Configuration class using the singleton pattern i.e., only a single instance can exist.
+/// @brief The Configuration structure using the singleton pattern i.e., only a single instance can exist.
 struct Configuration {
+
+  /// @brief Enum of motor speed settings.
+  enum class SpeedSettings {
+    kOne = 1,
+    kTwo,
+    kThree,
+    kFour,
+  };
 
   /// @brief Static method to get the single instance.
   /// @return The Configuration instance. 
@@ -38,8 +46,6 @@ struct Configuration {
   /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
   void BeginHardware() const;
 
-  // GPIO pins
-
   // Notes
 
   // Interrupt pins:
@@ -48,78 +54,66 @@ struct Configuration {
   // Due                                all digital pins
 
   /// @{
-  /// @brief Button input pins.
-  const uint8_t kDirectionButtonPin = 2; ///< Input pin for the button controlling motor direction.
-  const uint8_t kSpeedButtonPin = 3; ///< Input pin for the button controlling motor speed.
-  const uint8_t kAngleButtonPin = 4; ///< Input pin for the button controlling motor angle.
+  /// @brief GPIO pins.
+  /// Input pins for the buttons.
+  const uint8_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
+  const uint8_t kSpeedButtonPin = 3; ///< For the button controlling motor speed.
+  const uint8_t kAngleButtonPin = 4; ///< For the button controlling motor angle.
+  /// Output pins for the stepper motor driver.
+  const uint8_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint8_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
+  const uint8_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
   /// @}
 
-  /// @{
-  /// @brief Stepper motor driver output pins.
-  const uint8_t kPulPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint8_t kDirPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
-  const uint8_t kEnaPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
-  /// @}
-
-  // Hardware properties/characteristics
-
-  // Serial properties
-
-  /// @brief The serial communication speed.
-  const int kBaudRate = 9600;
-
-  // Button properties
+  /// @brief Serial properties.
+  const int kBaudRate = 9600; ///< The serial communication speed.
 
   /// @{
-  /// @brief Unpressed button pin states.
+  /// @brief Button properties.
+  /// Button unpressed pin states.
   const mt::MomentaryButton::PinState kDirectionButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
   const mt::MomentaryButton::PinState kSpeedButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
   const mt::MomentaryButton::PinState kAngleButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  /// @}
-
-  /// @{
-  /// @brief Debounce periods.
+  /// Button debounce periods.
   const uint16_t kDirectionButtonDebouncePeriod = 20;
   const uint16_t kSpeedButtonDebouncePeriod = 20;
   const uint16_t kAngleButtonDebouncePeriod = 20;
-  /// @}
-
-  /// @{
-  /// @brief Short press periods.
+  /// Button short press periods.
   const uint16_t kDirectionButtonShortPressPeriod = 500;
   const uint16_t kSpeedButtonShortPressPeriod = 500;
   const uint16_t kAngleButtonShortPressPeriod = 500;
-  /// @}
-
-  /// @{
-  /// @brief Long press periods.
+  /// Button long press periods.
   const uint16_t kDirectionButtonLongPressPeriod = 1000;
   const uint16_t kSpeedButtonLongPressPeriod = 1000;
   const uint16_t kAngleButtonLongPressPeriod = 1000;
   /// @}
 
-  // Stepper motor properties
+  /// @{
+  /// @brief Stepper motor/drive system properties. 
+  const float kFullStepAngleDegrees = 1.8F; ///< The full step angle in degrees.
+  const double kGearRatio = 1.0; ///< The gear ratio.
+  /// @}
 
-  /// @brief 
-  const float kFullStepAngleDegrees = 1.8;
+  /// @{
+  /// @brief Stepper driver properties.
+  const uint8_t kStepMode = 1; ///< Micro-stepping/step mode.
+  /// Minimum time (us) to delay after changing the state of a pin.
+  const float kPulDelay_us = 2.5F; ///< For the PUL pin.
+  const float kDirDelay_us = 5.0F; ///< For the Dir pin.
+  const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
+  /// Speed and acceleration.
+  const double kMinSpeed_RPM = 3.0; ///< Minimum rotation speed (RPM).
+  const double kDefaultSpeed_RPM = 2.0 * kMinSpeed_RPM; ///< Default rotation speed (RPM).
+  const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
+  /// @}
 
-  /// @brief 
-  const double kGearRatio = 1; 
+  /// @brief Logger properties (for debugging and system reporting).
+  const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE; ///< The default log level.
 
-  // Stepper driver properties
-
-  /// @brief 
-  const uint8_t kStepMode = 1;
-
-  /// @brief Minimum startup/boot time in milliseconds (ms) for the stepper driver.
-  const uint16_t kMinStartupTime_ms = 1000;
-
-  // Other properties/characteristics
-
-  // Logging
-
-  /// @brief The default log level for debugging and system reporting.
-  const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;  
+  /// @{
+  /// @brief Other properties.
+  const uint16_t kStartupTime_ms = 1000; ///< Minimum startup/boot time in milliseconds (ms); based on the stepper driver.
+  /// @}
 
  private:
 

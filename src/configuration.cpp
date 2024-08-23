@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file configuration.cpp
-/// @brief The Configuration class using the singleton pattern i.e., only a single instance can exist.
+/// @brief Structure to setup common configuration settings, including serial port and pin definitions, etc.
 
 #include "configuration.h"
 

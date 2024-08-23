@@ -41,7 +41,7 @@ ControlSystem::ControlSystem()
 ControlSystem::~ControlSystem() {}
 
 void ControlSystem::Begin() const {
-  mtspin::Configuration::GetInstance().BeginHardware();
+  Configuration::GetInstance().BeginHardware();
 }
 
 void ControlSystem::CheckAndProcess() const {

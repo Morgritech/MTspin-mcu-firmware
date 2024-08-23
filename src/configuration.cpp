@@ -38,8 +38,8 @@ void Configuration::BeginHardware() const {
   pinMode(kDirPin, OUTPUT);
   pinMode(kEnaPin, OUTPUT);
 
-  // Delay for the startup time required by stepper driver.
-  delay(kMinStartupTime_ms);
+  // Delay for the startup time.
+  delay(kStartupTime_ms);
 }
 
 Configuration::Configuration() {}

@@ -25,6 +25,14 @@ namespace mtspin {
 /// @brief The Configuration structure using the singleton pattern i.e., only a single instance can exist.
 struct Configuration {
 
+  /// @brief Enum of motor speed settings.
+  enum class SpeedSettings {
+    kOne = 1,
+    kTwo,
+    kThree,
+    kFour,
+  };
+
   /// @brief Static method to get the single instance.
   /// @return The Configuration instance. 
   static Configuration& GetInstance();
@@ -82,18 +90,30 @@ struct Configuration {
 
   /// @{
   /// @brief Stepper motor/drive system properties. 
-  const float kFullStepAngleDegrees = 1.8; ///< The full step angle in degrees.
-  const double kGearRatio = 1; ///< The gear ratio.
+  const float kFullStepAngleDegrees = 1.8F; ///< The full step angle in degrees.
+  const double kGearRatio = 1.0; ///< The gear ratio.
   /// @}
 
   /// @{
   /// @brief Stepper driver properties.
-  const uint8_t kStepMode = 1; ///< The step mode.
-  const uint16_t kMinStartupTime_ms = 1000; ///< Minimum startup/boot time in milliseconds (ms).
+  const uint8_t kStepMode = 1; ///< Micro-stepping/step mode.
+  /// Minimum time (us) to delay after changing the state of a pin.
+  const float kPulDelay_us = 2.5F; ///< For the PUL pin.
+  const float kDirDelay_us = 5.0F; ///< For the Dir pin.
+  const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
+  /// Speed and acceleration.
+  const double kMinSpeed_RPM = 3.0; ///< Minimum rotation speed (RPM).
+  const double kDefaultSpeed_RPM = 2.0 * kMinSpeed_RPM; ///< Default rotation speed (RPM).
+  const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
   /// @}
 
   /// @brief Logger properties (for debugging and system reporting).
   const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE; ///< The default log level.
+
+  /// @{
+  /// @brief Other properties.
+  const uint16_t kStartupTime_ms = 1000; ///< Minimum startup/boot time in milliseconds (ms); based on the stepper driver.
+  /// @}
 
  private:
 

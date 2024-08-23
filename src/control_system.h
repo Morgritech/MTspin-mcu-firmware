@@ -29,15 +29,15 @@ class ControlSystem {
   void Begin() const;
 
   /// @brief Check inputs and trigger outputs/actions.
-  void CheckAndProcess() const;
+  void CheckAndProcess(); ///< This must be called periodically.
 
  private:
 
   /// @{
   /// @brief Buttons to control the motor driver.
-  mt::MomentaryButton direction_button_; ///< Button to control motor direction.
-  mt::MomentaryButton speed_button_; ///< Button to control motor speed.
-  mt::MomentaryButton angle_button_; ///< Button to control motor rotation angles.
+  mt::MomentaryButton direction_button_; ///< To control motor direction.
+  mt::MomentaryButton speed_button_; ///< To control motor speed.
+  mt::MomentaryButton angle_button_; ///< To control motor rotation angles.
   /// @}
 
   /// @brief Stepper motor driver to control the stepper motor.

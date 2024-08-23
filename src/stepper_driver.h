@@ -82,10 +82,10 @@ class StepperDriver {
   /// @param pul_pin PUL/STP/CLK (pulse/step/clock) pin.
   /// @param dir_pin DIR/CW (direction) pin.
   /// @param ena_pin ENA/EN (enable) pin.
-  /// @param step_mode Micro-stepping/step mode (1 = full step, 2 = half step (1/2), 4 = quarter step (1/4), etc.).  
+  /// @param microstep_mode Microstep mode (1 = full step, 2 = half step (1/2), 4 = quarter step (1/4), etc.).  
   /// @param full_step_angle_degrees Motor full step angle in degrees.
   /// @param gear_ratio Gear ratio for motors coupled with a gearbox in the drive system.
-  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, uint8_t step_mode = 1,
+  StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, uint8_t microstep_mode = 1,
                 float full_step_angle_degrees = 1.8, double gear_ratio = 1);
 
   /// @brief Destroy the Stepper Driver object.
@@ -176,12 +176,12 @@ class StepperDriver {
   /// @brief Motor drive system properties.
   float full_step_angle_degrees_; ///< Motor full step angle in degrees.
   double gear_ratio_; ///< Gear ratio for motors coupled with a gearbox in the drive system.
-  double microstep_angle_degrees_; ///< microstep angle = full step angle in degrees / (gear ratio x step mode)
+  double microstep_angle_degrees_; ///< microstep angle = full step angle in degrees / (gear ratio x microstep mode)
   /// @}
 
   /// @{
   /// @brief Stepper driver properties.
-  uint8_t step_mode_; ///< Micro-stepping/step mode.
+  uint8_t microstep_mode_; ///< Microstep mode.
   float pul_delay_us_ = 2.5F; ///< Minimum time (us) to delay after a low or high-level pulse of the PUL pin.
   float dir_delay_us_ = 5.0F; ///< Minimum time (us) to delay after changing direction via the DIR pin.
   float ena_delay_us_ = 5.0F; ///< Minimum time (us) to delay after changing the power state via the ENA pin.

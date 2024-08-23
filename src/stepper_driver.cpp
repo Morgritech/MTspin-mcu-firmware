@@ -12,15 +12,15 @@
 
 namespace mt {
 
-StepperDriver::StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, uint8_t step_mode,
+StepperDriver::StepperDriver(uint8_t pul_pin, uint8_t dir_pin, uint8_t ena_pin, uint8_t microstep_mode,
                              float full_step_angle_degrees, double gear_ratio) {
   pul_pin_ = pul_pin;
   dir_pin_ = dir_pin;
   ena_pin_ = ena_pin;
   full_step_angle_degrees_ = full_step_angle_degrees;
-  step_mode_ = step_mode;
+  microstep_mode_ = microstep_mode;
   gear_ratio_ = gear_ratio;
-  microstep_angle_degrees_ = full_step_angle_degrees_ / (gear_ratio_ * step_mode_);
+  microstep_angle_degrees_ = full_step_angle_degrees_ / (gear_ratio_ * microstep_mode_);
 }
 
 StepperDriver::~StepperDriver() {}

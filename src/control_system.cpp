@@ -42,7 +42,6 @@ ControlSystem::ControlSystem()
   stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us);
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
-  stepper_driver_.SetSpeed(configuration_.kDefaultSpeed_RPM, mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_rads_per_s_per_s,
                                   mt::StepperDriver::AccelerationUnits::kRadiansPerSecondPerSecond);
 }
@@ -90,75 +89,146 @@ void ControlSystem::CheckAndProcess() {
   //  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
   //}
 
-  // Variable to keep track of the motor speed (RPM).
-  static double speed_RPM = configuration_.kDefaultSpeed_RPM;
+  // Variable to determine if this is the first entry into the control system.
+  static bool initial_entry = true;
+  // Variable to keep track of the control system mode.
+  static Configuration::ControlMode control_mode = configuration_.kDefaultControlMode;
   // Variable to hold the serial message received.
   static char serial_message;
-  // Flag to keep track of when to move the motor based on a start/stop message received over serial.
+  // Variable to keep track of the motion direction (for continuous operation).
+  static mt::StepperDriver::MotionDirection motion_direction = configuration_.kDefaultMotionDirection;
+  // Variable to keep track of the motion type (for oscillation).
+  static mt::StepperDriver::MotionType motion_type = mt::StepperDriver::MotionType::kStopAndReset;
+  // Index to keep track of the sweep angle set from the lookup table.
+  static uint8_t sweep_angle_index = configuration_.kDefaultSweepAngleIndex;
+  // Index to keep track of the motor speed set from the lookup table.
+  static uint8_t speed_index = configuration_.kDefaultSpeedIndex;
+  // Flag to keep track of when to move the motor.
   static bool move_motor = false;
-  // Variable to keep track of the motion direction based on a direction message received over serial.
-  static mt::StepperDriver::MotionDirection motion_direction = mt::StepperDriver::MotionDirection::kPositive;
+
+  // Initialise remaining settings and log initial status of control system.
+  if (initial_entry == true) {
+    initial_entry = false;
+
+    // Initialise the speed.
+    stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
+                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+
+    if (control_mode == Configuration::ControlMode::kContinuous) {
+      Log.noticeln(F("Control mode: full rotation"));  
+    }
+    else {
+      Log.noticeln(F("Control mode: oscillate"));
+    }
+
+    if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
+      Log.noticeln(F("Motion direction: clockwise (CW)"));
+    }
+    else {
+      Log.noticeln(F("Motion direction: counter-clockwise (CCW)"));
+    }
+    
+    Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAnglesDegrees[sweep_angle_index]);
+    Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
+  }
 
   // Check for and process serial messages, one character at a time.
   if (Serial.available() > 0) {
     serial_message = Serial.read();
-    //Serial.print(serial_message);
+    Log.noticeln(F("Message received: %c"), serial_message);
 
     switch(serial_message) {
+      case Configuration::kToggleDirectionMessage: {
+        if (move_motor == false) {
+          // Fall through to start motor.
+          [[fallthrough]];
+        }
+        else {
+          // Change direction.
+          if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
+            motion_direction = mt::StepperDriver::MotionDirection::kNegative;
+            Log.noticeln(F("Motion direction: counter-clockwise (CCW)"));
+          }
+          else {
+            motion_direction = mt::StepperDriver::MotionDirection::kPositive;
+            Log.noticeln(F("Motion direction: clockwise (CW)"));
+          }
+
+          break;
+        }
+      }
+      case Configuration::kCycleAngleMessage: {
+        if (move_motor == false) {
+          // Fall through to start motor.
+          [[fallthrough]];
+        }
+        else {
+          // Change sweep angle.
+          if (sweep_angle_index == (configuration_.kSizeOfSweepAngles - 1)) {
+            sweep_angle_index = 0;
+          }
+          else {
+            sweep_angle_index++;
+          }
+
+          motion_type = mt::StepperDriver::MotionType::kStopAndReset;
+          Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAnglesDegrees[sweep_angle_index]);
+          break;
+        }
+      }
+      case Configuration::kCycleSpeedMessage: {
+        if (move_motor == false) {
+          // Fall through to start motor.          
+          [[fallthrough]];
+        }
+        else {
+          // Change speed.
+          if (speed_index == (configuration_.kSizeOfSpeeds - 1)) {
+            speed_index = 0;
+          }
+          else {
+            speed_index++;
+          }
+          
+          stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
+                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+          Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
+          break;
+        }
+      }
       case Configuration::kToggleMotionMessage: {
         if (move_motor == false) {
           move_motor = true;
-          Serial.println(F("Start moving."));
+          Log.noticeln(F("Start moving."));
         }
         else {
           move_motor = false;
-          Serial.println(F("Stop moving."));
+          Log.noticeln(F("Stop moving."));
         }
         
-        break;
-      }
-      case Configuration::kToggleDirectionMessage: {
-        if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
-          motion_direction = mt::StepperDriver::MotionDirection::kNegative;
-          Serial.println(F("Negative direction."));
-        }
-        else {
-          motion_direction = mt::StepperDriver::MotionDirection::kPositive;
-          Serial.println(F("Positive direction."));
-        }
-
-        break;
-      }
-      case Configuration::kCycleSpeedMessage: {
-        if (speed_RPM < configuration_.kMaxSpeed_RPM) {
-          speed_RPM = speed_RPM * configuration_.kSpeedMultiplier;
-        }
-        else {
-          speed_RPM = configuration_.kMinSpeed_RPM;
-        }
-        
-        stepper_driver_.SetSpeed(speed_RPM, mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
-        Serial.print(F("Speed (RPM) = "));
-        Serial.println(speed_RPM);
         break;
       }
       default : {
-        Serial.println(F("Invalid serial message."));
+        Log.noticeln(F("Invalid serial message."));
         break;
       }
     }
   }
 
-  // Move the motor.
-  if (move_motor == true) {
-    stepper_driver_.MoveByJogging(motion_direction);
+  switch (control_mode) {
+    case Configuration::ControlMode::kContinuous: {
+      if (move_motor == true) {
+        stepper_driver_.MoveByJogging(motion_direction);
+      }
+
+      break;
+    }
+    case Configuration::ControlMode::kOscillate: {
+      stepper_driver_.MoveByAngle(configuration_.kSweepAnglesDegrees[sweep_angle_index],
+                                  mt::StepperDriver::AngleUnits::kDegrees, motion_type);
+      break;
+    }
   }
-
-
-  //*/
-
-  // Process button presses.
-
 }
 
 } // namespace mtspin

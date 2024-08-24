@@ -39,9 +39,9 @@ class ControlSystem {
 
   /// @{
   /// @brief Buttons to control the motor driver.
-  mt::MomentaryButton direction_button_; ///< To control motor direction.
-  mt::MomentaryButton speed_button_; ///< To control motor speed.
-  mt::MomentaryButton angle_button_; ///< To control motor rotation angles.
+  const mt::MomentaryButton direction_button_; ///< To control motor direction.
+  const mt::MomentaryButton speed_button_; ///< To control motor speed.
+  const mt::MomentaryButton angle_button_; ///< To control motor rotation angles.
   /// @}
 
   /// @brief Stepper motor driver to control the stepper motor.

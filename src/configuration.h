@@ -27,8 +27,13 @@ struct Configuration {
 
   /// @brief Enum of control system modes.
   enum class ControlMode {
-    kFullRotation = 1,
-    kSweepAngle,
+    kContinuous = 1,
+    kOscillate,
+  };
+
+  enum class SerialMessages {
+    kToggleMotionMessage = 'm',
+
   };
 
   /// @brief Static method to get the single instance.
@@ -64,13 +69,18 @@ struct Configuration {
   /// @}
 
   /// @{
+  /// @brief Control system properties
+  const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
+  /// @}
+
+  /// @{
   /// @brief Serial properties.
   const int kBaudRate = 9600; ///< The serial communication speed.
   /// Serial messages.
   static const char kToggleMotionMessage = 'm'; ///< Toggle (start/stop) the motor.
   static const char kToggleDirectionMessage = 'd'; ///< Change to full rotation mode or change motor direction.
   static const char kCycleSpeedMessage = 's'; ///< Cycle through motor speed settings.
-  static const char kCycleAngleMessage = 'a'; ///< Change to sweep angle mode or cycle through sweep angles. 
+  static const char kCycleAngleMessage = 'a'; ///< Change to sweep angle mode or cycle through sweep angles.
   /// @}
 
   /// @{
@@ -106,11 +116,16 @@ struct Configuration {
   const float kPulDelay_us = 2.5F; ///< For the PUL pin.
   const float kDirDelay_us = 5.0F; ///< For the Dir pin.
   const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
+  /// Motion direction during continuous operation.
+  const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
+  /// Sweep angle during oscillation.
+  static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
+  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
+  const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
-  const double kMinSpeed_RPM = 3.0; ///< Minimum rotation speed (RPM).
-  const double kSpeedMultiplier = 2.0; ///< Amount by which to multiply the speed when cycling through speed settings.
-  const double kDefaultSpeed_RPM = kSpeedMultiplier * kMinSpeed_RPM; ///< Initial/default rotation speed (RPM). Initial speed = 6 RPM.
-  const double kMaxSpeed_RPM = 4 * kSpeedMultiplier * kMinSpeed_RPM;; ///< Maximum rotation speed (RPM). Max speed = 24 RPM.
+  static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
+  const float kSpeedsRPM[kSizeOfSpeeds] = {3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
+  const uint8_t kDefaultSpeedIndex = 1; // Index of initial/default sweep angle, i.e., 6 RPM.
   const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
   /// @}
 

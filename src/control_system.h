@@ -12,6 +12,7 @@
 #include <momentary_button.h>
 
 #include "stepper_driver.h"
+#include "configuration.h"
 
 namespace mtspin {
 
@@ -33,6 +34,9 @@ class ControlSystem {
 
  private:
 
+  /// @brief Configuration settings.
+  const Configuration& configuration_ = Configuration::GetInstance();
+
   /// @{
   /// @brief Buttons to control the motor driver.
   mt::MomentaryButton direction_button_; ///< To control motor direction.
@@ -42,6 +46,7 @@ class ControlSystem {
 
   /// @brief Stepper motor driver to control the stepper motor.
   mt::StepperDriver stepper_driver_;
+  
 };
 
 } // namespace mtspin

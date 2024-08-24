@@ -25,12 +25,10 @@ namespace mtspin {
 /// @brief The Configuration structure using the singleton pattern i.e., only a single instance can exist.
 struct Configuration {
 
-  /// @brief Enum of motor speed settings.
-  enum class SpeedSettings {
-    kOne = 1,
-    kTwo,
-    kThree,
-    kFour,
+  /// @brief Enum of control system modes.
+  enum class ControlMode {
+    kFullRotation = 1,
+    kSweepAngle,
   };
 
   /// @brief Static method to get the single instance.
@@ -65,8 +63,15 @@ struct Configuration {
   const uint8_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
   /// @}
 
+  /// @{
   /// @brief Serial properties.
   const int kBaudRate = 9600; ///< The serial communication speed.
+  /// Serial messages.
+  static const char kToggleMotionMessage = 'm'; ///< Toggle (start/stop) the motor.
+  static const char kToggleDirectionMessage = 'd'; ///< Change to full rotation mode or change motor direction.
+  static const char kCycleSpeedMessage = 's'; ///< Cycle through motor speed settings.
+  static const char kCycleAngleMessage = 'a'; ///< Change to sweep angle mode or cycle through sweep angles. 
+  /// @}
 
   /// @{
   /// @brief Button properties.
@@ -74,36 +79,38 @@ struct Configuration {
   const mt::MomentaryButton::PinState kDirectionButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
   const mt::MomentaryButton::PinState kSpeedButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
   const mt::MomentaryButton::PinState kAngleButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  /// Button debounce periods.
-  const uint16_t kDirectionButtonDebouncePeriod = 20;
-  const uint16_t kSpeedButtonDebouncePeriod = 20;
-  const uint16_t kAngleButtonDebouncePeriod = 20;
-  /// Button short press periods.
-  const uint16_t kDirectionButtonShortPressPeriod = 500;
-  const uint16_t kSpeedButtonShortPressPeriod = 500;
-  const uint16_t kAngleButtonShortPressPeriod = 500;
-  /// Button long press periods.
-  const uint16_t kDirectionButtonLongPressPeriod = 1000;
-  const uint16_t kSpeedButtonLongPressPeriod = 1000;
-  const uint16_t kAngleButtonLongPressPeriod = 1000;
+  /// Button debounce periods (ms).
+  const uint16_t kDirectionButtonDebouncePeriod_ms = 20;
+  const uint16_t kSpeedButtonDebouncePeriod_ms = 20;
+  const uint16_t kAngleButtonDebouncePeriod_ms = 20;
+  /// Button short press periods (ms).
+  const uint16_t kDirectionButtonShortPressPeriod_ms = 500;
+  const uint16_t kSpeedButtonShortPressPeriod_ms = 500;
+  const uint16_t kAngleButtonShortPressPeriod_ms = 500;
+  /// Button long press periods (ms).
+  const uint16_t kDirectionButtonLongPressPeriod_ms = 1000;
+  const uint16_t kSpeedButtonLongPressPeriod_ms = 1000;
+  const uint16_t kAngleButtonLongPressPeriod_ms = 1000;
   /// @}
 
   /// @{
-  /// @brief Stepper motor/drive system properties. 
+  /// @brief Stepper motor/drive system properties.
   const float kFullStepAngleDegrees = 1.8F; ///< The full step angle in degrees.
   const double kGearRatio = 1.0; ///< The gear ratio.
   /// @}
 
   /// @{
   /// @brief Stepper driver properties.
-  const uint8_t kStepMode = 1; ///< Micro-stepping/step mode.
+  const uint8_t kMicrostepMode = 16; ///< Microstep mode.
   /// Minimum time (us) to delay after changing the state of a pin.
   const float kPulDelay_us = 2.5F; ///< For the PUL pin.
   const float kDirDelay_us = 5.0F; ///< For the Dir pin.
   const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
   /// Speed and acceleration.
   const double kMinSpeed_RPM = 3.0; ///< Minimum rotation speed (RPM).
-  const double kDefaultSpeed_RPM = 2.0 * kMinSpeed_RPM; ///< Default rotation speed (RPM).
+  const double kSpeedMultiplier = 2.0; ///< Amount by which to multiply the speed when cycling through speed settings.
+  const double kDefaultSpeed_RPM = kSpeedMultiplier * kMinSpeed_RPM; ///< Initial/default rotation speed (RPM). Initial speed = 6 RPM.
+  const double kMaxSpeed_RPM = 4 * kSpeedMultiplier * kMinSpeed_RPM;; ///< Maximum rotation speed (RPM). Max speed = 24 RPM.
   const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
   /// @}
 

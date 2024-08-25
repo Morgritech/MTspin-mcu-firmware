@@ -146,7 +146,7 @@ class StepperDriver {
 
   /// @brief Get the state of the ENA/EN (enable) pin to determine the power state of the motor.
   /// @return The power state.
-  PowerState power_state();
+  PowerState power_state() const;
 
  private:
 

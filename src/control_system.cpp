@@ -19,26 +19,29 @@ namespace mtspin {
 
 ControlSystem::ControlSystem()
     : direction_button_(configuration_.kDirectionButtonPin,
-                        configuration_.kDirectionButtonUnpressedPinState,
-                        configuration_.kDirectionButtonDebouncePeriod_ms,
-                        configuration_.kDirectionButtonShortPressPeriod_ms,
-                        configuration_.kDirectionButtonLongPressPeriod_ms),
+                        configuration_.kUnpressedPinState,
+                        configuration_.kDebouncePeriod_ms,
+                        configuration_.kShortPressPeriod_ms,
+                        configuration_.kLongPressPeriod_ms),
       speed_button_(configuration_.kSpeedButtonPin,
-                    configuration_.kSpeedButtonUnpressedPinState,
-                    configuration_.kSpeedButtonDebouncePeriod_ms,
-                    configuration_.kSpeedButtonShortPressPeriod_ms,
-                    configuration_.kAngleButtonLongPressPeriod_ms),
+                    configuration_.kUnpressedPinState,
+                    configuration_.kDebouncePeriod_ms,
+                    configuration_.kShortPressPeriod_ms,
+                    configuration_.kLongPressPeriod_ms),
       angle_button_(configuration_.kAngleButtonPin,
-                    configuration_.kAngleButtonUnpressedPinState,
-                    configuration_.kAngleButtonDebouncePeriod_ms,
-                    configuration_.kAngleButtonShortPressPeriod_ms,
-                    configuration_.kAngleButtonLongPressPeriod_ms),
+                    configuration_.kUnpressedPinState,
+                    configuration_.kDebouncePeriod_ms,
+                    configuration_.kShortPressPeriod_ms,
+                    configuration_.kLongPressPeriod_ms),
       stepper_driver_(configuration_.kPulPin,
                       configuration_.kDirPin,
                       configuration_.kEnaPin,
                       configuration_.kMicrostepMode,
                       configuration_.kFullStepAngleDegrees,
                       configuration_.kGearRatio) {
+  direction_button_.set_long_press_option(configuration_.kLongPressOption);
+  speed_button_.set_long_press_option(configuration_.kLongPressOption);
+  angle_button_.set_long_press_option(configuration_.kLongPressOption);
   stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us);
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
@@ -94,7 +97,7 @@ void ControlSystem::CheckAndProcess() {
   // Variable to keep track of the control system mode.
   static Configuration::ControlMode control_mode = configuration_.kDefaultControlMode;
   // Variable to hold the serial message received.
-  static char serial_message;
+  static char serial_message = Configuration::kIdleMessage;
   // Variable to keep track of the motion direction (for continuous operation).
   static mt::StepperDriver::MotionDirection motion_direction = configuration_.kDefaultMotionDirection;
   // Variable to keep track of the motion type (for oscillation).
@@ -115,7 +118,7 @@ void ControlSystem::CheckAndProcess() {
                              mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
 
     if (control_mode == Configuration::ControlMode::kContinuous) {
-      Log.noticeln(F("Control mode: full rotation"));  
+      Log.noticeln(F("Control mode: continuous"));
     }
     else {
       Log.noticeln(F("Control mode: oscillate"));
@@ -136,14 +139,16 @@ void ControlSystem::CheckAndProcess() {
   if (Serial.available() > 0) {
     serial_message = Serial.read();
     Log.noticeln(F("Message received: %c"), serial_message);
+  }
 
-    switch(serial_message) {
-      case Configuration::kToggleDirectionMessage: {
-        if (move_motor == false) {
-          // Fall through to start motor.
-          [[fallthrough]];
-        }
-        else {
+  switch(serial_message) {
+    case Configuration::kToggleDirectionMessage: {
+      if (move_motor == false) {
+        // Fall through to start motor.
+        [[fallthrough]];
+      }
+      else {
+        if (control_mode == Configuration::ControlMode::kContinuous) {
           // Change direction.
           if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
             motion_direction = mt::StepperDriver::MotionDirection::kNegative;
@@ -153,16 +158,23 @@ void ControlSystem::CheckAndProcess() {
             motion_direction = mt::StepperDriver::MotionDirection::kPositive;
             Log.noticeln(F("Motion direction: clockwise (CW)"));
           }
-
-          break;
-        }
-      }
-      case Configuration::kCycleAngleMessage: {
-        if (move_motor == false) {
-          // Fall through to start motor.
-          [[fallthrough]];
         }
         else {
+          // Change control mode.
+          control_mode = Configuration::ControlMode::kContinuous;
+          Log.noticeln(F("Control mode: continuous"));
+        }
+
+        break;
+      }
+    }
+    case Configuration::kCycleAngleMessage: {
+      if (move_motor == false) {
+        // Fall through to start motor.
+        [[fallthrough]];
+      }
+      else {
+        if (control_mode == Configuration::ControlMode::kOscillate) {
           // Change sweep angle.
           if (sweep_angle_index == (configuration_.kSizeOfSweepAngles - 1)) {
             sweep_angle_index = 0;
@@ -173,60 +185,88 @@ void ControlSystem::CheckAndProcess() {
 
           motion_type = mt::StepperDriver::MotionType::kStopAndReset;
           Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAnglesDegrees[sweep_angle_index]);
-          break;
-        }
-      }
-      case Configuration::kCycleSpeedMessage: {
-        if (move_motor == false) {
-          // Fall through to start motor.          
-          [[fallthrough]];
         }
         else {
-          // Change speed.
-          if (speed_index == (configuration_.kSizeOfSpeeds - 1)) {
-            speed_index = 0;
-          }
-          else {
-            speed_index++;
-          }
-          
-          stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
-                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
-          Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
-          break;
+          // Change control mode.
+          control_mode = Configuration::ControlMode::kOscillate;
+          Log.noticeln(F("Control mode: oscillate"));
         }
+
+        break;
       }
-      case Configuration::kToggleMotionMessage: {
-        if (move_motor == false) {
-          move_motor = true;
-          Log.noticeln(F("Start moving."));
+    }
+    case Configuration::kCycleSpeedMessage: {
+      if (move_motor == false) {
+        // Fall through to start motor.          
+        [[fallthrough]];
+      }
+      else {
+        // Change speed.
+        if (speed_index == (configuration_.kSizeOfSpeeds - 1)) {
+          speed_index = 0;
         }
         else {
-          move_motor = false;
-          Log.noticeln(F("Stop moving."));
+          speed_index++;
         }
         
+        stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
+                            mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
         break;
       }
-      default : {
-        Log.noticeln(F("Invalid serial message."));
-        break;
+    }
+    case Configuration::kToggleMotionMessage: {
+      if (move_motor == false) {
+        move_motor = true;
+        Log.noticeln(F("Start moving."));
       }
+      else {
+        move_motor = false;
+        Log.noticeln(F("Stop moving."));
+      }
+      
+      break;
+    }
+    case Configuration::kIdleMessage: {
+      // No action.
+      break;
+    }
+    default: {
+      Log.noticeln(F("Invalid serial message."));
+      break;
     }
   }
 
-  switch (control_mode) {
-    case Configuration::ControlMode::kContinuous: {
-      if (move_motor == true) {
-        stepper_driver_.MoveByJogging(motion_direction);
-      }
+  // Reset serial message.
+  serial_message = Configuration::kIdleMessage;
 
-      break;
-    }
-    case Configuration::ControlMode::kOscillate: {
-      stepper_driver_.MoveByAngle(configuration_.kSweepAnglesDegrees[sweep_angle_index],
-                                  mt::StepperDriver::AngleUnits::kDegrees, motion_type);
-      break;
+  if (move_motor == true) {
+    switch (control_mode) {
+      case Configuration::ControlMode::kContinuous: {
+        stepper_driver_.MoveByJogging(motion_direction);
+        break;
+      }
+      case Configuration::ControlMode::kOscillate: {
+        static float sweep_direction = static_cast<float>(motion_direction);
+        mt::StepperDriver::MotionStatus motion_status = stepper_driver_.MoveByAngle(
+                                                        sweep_direction * configuration_.kSweepAnglesDegrees[sweep_angle_index],
+                                                        mt::StepperDriver::AngleUnits::kDegrees, motion_type);
+
+        if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {
+          motion_type = mt::StepperDriver::MotionType::kRelative;
+
+          if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
+            motion_direction = mt::StepperDriver::MotionDirection::kNegative; 
+          }
+          else {
+            motion_direction = mt::StepperDriver::MotionDirection::kPositive;
+          }
+
+          sweep_direction = static_cast<float>(motion_direction);
+        }
+
+        break;
+      }
     }
   }
 }

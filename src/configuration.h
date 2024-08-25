@@ -77,6 +77,7 @@ struct Configuration {
   /// @brief Serial properties.
   const int kBaudRate = 9600; ///< The serial communication speed.
   /// Serial messages.
+  static const char kIdleMessage = '0'; ///< No action.
   static const char kToggleMotionMessage = 'm'; ///< Toggle (start/stop) the motor.
   static const char kToggleDirectionMessage = 'd'; ///< Change to full rotation mode or change motor direction.
   static const char kCycleSpeedMessage = 's'; ///< Cycle through motor speed settings.
@@ -86,21 +87,15 @@ struct Configuration {
   /// @{
   /// @brief Button properties.
   /// Button unpressed pin states.
-  const mt::MomentaryButton::PinState kDirectionButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  const mt::MomentaryButton::PinState kSpeedButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  const mt::MomentaryButton::PinState kAngleButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
+  const mt::MomentaryButton::PinState kUnpressedPinState = mt::MomentaryButton::PinState::kLow;
   /// Button debounce periods (ms).
-  const uint16_t kDirectionButtonDebouncePeriod_ms = 20;
-  const uint16_t kSpeedButtonDebouncePeriod_ms = 20;
-  const uint16_t kAngleButtonDebouncePeriod_ms = 20;
+  const uint16_t kDebouncePeriod_ms = 20;
   /// Button short press periods (ms).
-  const uint16_t kDirectionButtonShortPressPeriod_ms = 500;
-  const uint16_t kSpeedButtonShortPressPeriod_ms = 500;
-  const uint16_t kAngleButtonShortPressPeriod_ms = 500;
+  const uint16_t kShortPressPeriod_ms = 500;
   /// Button long press periods (ms).
-  const uint16_t kDirectionButtonLongPressPeriod_ms = 1000;
-  const uint16_t kSpeedButtonLongPressPeriod_ms = 1000;
-  const uint16_t kAngleButtonLongPressPeriod_ms = 1000;
+  const uint16_t kLongPressPeriod_ms = 1000;
+  /// Button long press options.
+  mt::MomentaryButton::LongPressOption kLongPressOption = mt::MomentaryButton::LongPressOption::kDetectWhileHolding;
   /// @}
 
   /// @{

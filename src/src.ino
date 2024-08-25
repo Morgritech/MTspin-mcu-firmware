@@ -20,7 +20,7 @@ void setup() {
   // Setup the control system.
   control_system.Begin();
   
-  Log.noticeln(F("\n...Setup complete...\n"));
+  Log.noticeln(F("...Setup complete...\n"));
 }
 
 /// @brief The continuously running function for repetitive tasks.

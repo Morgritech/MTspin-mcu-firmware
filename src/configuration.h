@@ -25,12 +25,19 @@ namespace mtspin {
 /// @brief The Configuration structure using the singleton pattern i.e., only a single instance can exist.
 struct Configuration {
 
-  /// @brief Enum of motor speed settings.
-  enum class SpeedSettings {
-    kOne = 1,
-    kTwo,
-    kThree,
-    kFour,
+  /// @brief Enum of control system modes.
+  enum class ControlMode {
+    kContinuous = 1,
+    kOscillate,
+  };
+
+  /// @brief Enum of control actions.
+  enum class ControlAction {
+    kToggleDirection = 'd',
+    kCycleAngle = 'a',
+    kCycleSpeed = 's',
+    kToggleMotion = 'm',
+    kIdle = '0',
   };
 
   /// @brief Static method to get the single instance.
@@ -46,23 +53,21 @@ struct Configuration {
   /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
   void BeginHardware() const;
 
-  // Notes
-
-  // Interrupt pins:
-  // Uno, Nano, Mini, other 328-based   2, 3
-  // Mega, Mega2560, MegaADK            2, 3, 18, 19, 20, 21
-  // Due                                all digital pins
-
   /// @{
   /// @brief GPIO pins.
   /// Input pins for the buttons.
   const uint8_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
-  const uint8_t kSpeedButtonPin = 3; ///< For the button controlling motor speed.
-  const uint8_t kAngleButtonPin = 4; ///< For the button controlling motor angle.
+  const uint8_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
+  const uint8_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
   /// Output pins for the stepper motor driver.
   const uint8_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
   const uint8_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
   const uint8_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
+  /// @}
+
+  /// @{
+  /// @brief Control system properties.
+  const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
   /// @}
 
   /// @brief Serial properties.
@@ -71,39 +76,40 @@ struct Configuration {
   /// @{
   /// @brief Button properties.
   /// Button unpressed pin states.
-  const mt::MomentaryButton::PinState kDirectionButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  const mt::MomentaryButton::PinState kSpeedButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  const mt::MomentaryButton::PinState kAngleButtonUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  /// Button debounce periods.
-  const uint16_t kDirectionButtonDebouncePeriod = 20;
-  const uint16_t kSpeedButtonDebouncePeriod = 20;
-  const uint16_t kAngleButtonDebouncePeriod = 20;
-  /// Button short press periods.
-  const uint16_t kDirectionButtonShortPressPeriod = 500;
-  const uint16_t kSpeedButtonShortPressPeriod = 500;
-  const uint16_t kAngleButtonShortPressPeriod = 500;
-  /// Button long press periods.
-  const uint16_t kDirectionButtonLongPressPeriod = 1000;
-  const uint16_t kSpeedButtonLongPressPeriod = 1000;
-  const uint16_t kAngleButtonLongPressPeriod = 1000;
+  const mt::MomentaryButton::PinState kUnpressedPinState = mt::MomentaryButton::PinState::kLow;
+  /// Button debounce periods (ms).
+  const uint16_t kDebouncePeriod_ms = 20;
+  /// Button short press periods (ms).
+  const uint16_t kShortPressPeriod_ms = 500;
+  /// Button long press periods (ms).
+  const uint16_t kLongPressPeriod_ms = 1000;
+  /// Button long press options.
+  mt::MomentaryButton::LongPressOption kLongPressOption = mt::MomentaryButton::LongPressOption::kDetectWhileHolding;
   /// @}
 
   /// @{
-  /// @brief Stepper motor/drive system properties. 
+  /// @brief Stepper motor/drive system properties.
   const float kFullStepAngleDegrees = 1.8F; ///< The full step angle in degrees.
   const double kGearRatio = 1.0; ///< The gear ratio.
   /// @}
 
   /// @{
   /// @brief Stepper driver properties.
-  const uint8_t kStepMode = 1; ///< Micro-stepping/step mode.
+  const uint8_t kMicrostepMode = 16; ///< Microstep mode.
   /// Minimum time (us) to delay after changing the state of a pin.
   const float kPulDelay_us = 2.5F; ///< For the PUL pin.
   const float kDirDelay_us = 5.0F; ///< For the Dir pin.
   const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
+  /// Motion direction during continuous operation.
+  const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
+  /// Sweep angle during oscillation.
+  static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
+  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
+  const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
-  const double kMinSpeed_RPM = 3.0; ///< Minimum rotation speed (RPM).
-  const double kDefaultSpeed_RPM = 2.0 * kMinSpeed_RPM; ///< Default rotation speed (RPM).
+  static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
+  const float kSpeedsRPM[kSizeOfSpeeds] = {3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
+  const uint8_t kDefaultSpeedIndex = 1; // Index of initial/default sweep angle, i.e., 6 RPM.
   const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
   /// @}
 

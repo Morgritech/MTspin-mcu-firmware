@@ -47,6 +47,8 @@ ControlSystem::ControlSystem()
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_rads_per_s_per_s,
                                   mt::StepperDriver::AccelerationUnits::kRadiansPerSecondPerSecond);
+  // Save power when idle.
+  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
 }
 
 ControlSystem::~ControlSystem() {}
@@ -56,11 +58,6 @@ void ControlSystem::Begin() const {
 }
 
 void ControlSystem::CheckAndProcess() {
-  // Save power.
-  //if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kEnabled) {
-  //  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
-  //}
-
   // Variable to determine if this is the first entry into the control system.
   static bool initial_entry = true;
   // Variable to keep track of the control system mode.
@@ -221,10 +218,12 @@ void ControlSystem::CheckAndProcess() {
       // Toggle (start/stop) the motor.
       if (move_motor == false) {
         move_motor = true;
+        stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kEnabled); // Restore power to allow motion.
         Log.noticeln(F("Start moving."));
       }
       else {
         move_motor = false;
+        stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled); // Save power when idle.
         Log.noticeln(F("Stop moving."));
       }
       

@@ -30,8 +30,8 @@ void Configuration::BeginHardware() const {
 
   // Initialise the input pins.
   pinMode(kDirectionButtonPin, INPUT);
-  pinMode(kSpeedButtonPin, INPUT);
   pinMode(kAngleButtonPin, INPUT);
+  pinMode(kSpeedButtonPin, INPUT);
 
   // Initialise the output pins.
   pinMode(kPulPin, OUTPUT);

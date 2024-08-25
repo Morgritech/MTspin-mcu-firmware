@@ -31,9 +31,13 @@ struct Configuration {
     kOscillate,
   };
 
-  enum class SerialMessages {
-    kToggleMotionMessage = 'm',
-
+  /// @brief Enum of control actions.
+  enum class ControlAction {
+    kToggleDirection = 'd',
+    kCycleAngle = 'a',
+    kCycleSpeed = 's',
+    kToggleMotion = 'm',
+    kIdle = '0',
   };
 
   /// @brief Static method to get the single instance.
@@ -49,19 +53,12 @@ struct Configuration {
   /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
   void BeginHardware() const;
 
-  // Notes
-
-  // Interrupt pins:
-  // Uno, Nano, Mini, other 328-based   2, 3
-  // Mega, Mega2560, MegaADK            2, 3, 18, 19, 20, 21
-  // Due                                all digital pins
-
   /// @{
   /// @brief GPIO pins.
   /// Input pins for the buttons.
   const uint8_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
-  const uint8_t kSpeedButtonPin = 3; ///< For the button controlling motor speed.
-  const uint8_t kAngleButtonPin = 4; ///< For the button controlling motor angle.
+  const uint8_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
+  const uint8_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
   /// Output pins for the stepper motor driver.
   const uint8_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
   const uint8_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
@@ -69,20 +66,12 @@ struct Configuration {
   /// @}
 
   /// @{
-  /// @brief Control system properties
+  /// @brief Control system properties.
   const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
   /// @}
 
-  /// @{
   /// @brief Serial properties.
   const int kBaudRate = 9600; ///< The serial communication speed.
-  /// Serial messages.
-  static const char kIdleMessage = '0'; ///< No action.
-  static const char kToggleMotionMessage = 'm'; ///< Toggle (start/stop) the motor.
-  static const char kToggleDirectionMessage = 'd'; ///< Change to full rotation mode or change motor direction.
-  static const char kCycleSpeedMessage = 's'; ///< Cycle through motor speed settings.
-  static const char kCycleAngleMessage = 'a'; ///< Change to sweep angle mode or cycle through sweep angles.
-  /// @}
 
   /// @{
   /// @brief Button properties.

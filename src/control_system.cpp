@@ -23,12 +23,12 @@ ControlSystem::ControlSystem()
                         configuration_.kDebouncePeriod_ms,
                         configuration_.kShortPressPeriod_ms,
                         configuration_.kLongPressPeriod_ms),
-      speed_button_(configuration_.kSpeedButtonPin,
+      angle_button_(configuration_.kAngleButtonPin,
                     configuration_.kUnpressedPinState,
                     configuration_.kDebouncePeriod_ms,
                     configuration_.kShortPressPeriod_ms,
                     configuration_.kLongPressPeriod_ms),
-      angle_button_(configuration_.kAngleButtonPin,
+      speed_button_(configuration_.kSpeedButtonPin,
                     configuration_.kUnpressedPinState,
                     configuration_.kDebouncePeriod_ms,
                     configuration_.kShortPressPeriod_ms,
@@ -40,8 +40,8 @@ ControlSystem::ControlSystem()
                       configuration_.kFullStepAngleDegrees,
                       configuration_.kGearRatio) {
   direction_button_.set_long_press_option(configuration_.kLongPressOption);
-  speed_button_.set_long_press_option(configuration_.kLongPressOption);
   angle_button_.set_long_press_option(configuration_.kLongPressOption);
+  speed_button_.set_long_press_option(configuration_.kLongPressOption);
   stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us);
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
@@ -56,37 +56,6 @@ void ControlSystem::Begin() const {
 }
 
 void ControlSystem::CheckAndProcess() {
-  /* TESTING BUTTON STATE CHANGE.
-  mt::MomentaryButton::ButtonState direction_button_state = direction_button_.DetectStateChange();
-
-  static int state_counter = 0;
-  if (direction_button_state == mt::MomentaryButton::ButtonState::kPressed) {
-    state_counter++;
-    Log.noticeln(F("DIRECTION BUTTON PRESSED: %d"), state_counter);
-  }
-
-  if (direction_button_state == mt::MomentaryButton::ButtonState::kReleased) {
-    Log.noticeln(F("DIRECTION BUTTON RELEASED: %d"), state_counter);
-  }
-  //*/
-  /* TESTING BUTTON PRESS TYPE.
-  mt::MomentaryButton::PressType direction_button_press_type = direction_button_.DetectPressType();
-  if (direction_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
-    Log.noticeln(F("DIRECTION SHORT PRESS"));
-  }
-  
-  if (direction_button_press_type == mt::MomentaryButton::PressType::kLongPress) {
-    Log.noticeln(F("DIRECTION LONG PRESS"));
-  }
-  //*/
-  /* TESTING BUTTON PRESS COUNT.
-  uint8_t direction_button_press_count = direction_button_.CountPresses();
-  if (direction_button_press_count > 0)
-  {
-    Log.noticeln(F("DIRECTION PRESSED %d TIMES"), direction_button_press_count);
-  }
-  //*/
-  //* TESTING MOVE BY JOGGING.
   // Save power.
   //if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kEnabled) {
   //  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
@@ -96,8 +65,8 @@ void ControlSystem::CheckAndProcess() {
   static bool initial_entry = true;
   // Variable to keep track of the control system mode.
   static Configuration::ControlMode control_mode = configuration_.kDefaultControlMode;
-  // Variable to hold the serial message received.
-  static char serial_message = Configuration::kIdleMessage;
+  // Variable to keep track of the control actions from button presses/serial messages.
+  Configuration::ControlAction control_action = Configuration::ControlAction::kIdle;
   // Variable to keep track of the motion direction (for continuous operation).
   static mt::StepperDriver::MotionDirection motion_direction = configuration_.kDefaultMotionDirection;
   // Variable to keep track of the motion type (for oscillation).
@@ -135,14 +104,45 @@ void ControlSystem::CheckAndProcess() {
     Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
   }
 
-  // Check for and process serial messages, one character at a time.
+  // Check for button presses.
+  mt::MomentaryButton::PressType direction_button_press_type = direction_button_.DetectPressType();
+  mt::MomentaryButton::PressType angle_button_press_type = angle_button_.DetectPressType();
+  mt::MomentaryButton::PressType speed_button_press_type = speed_button_.DetectPressType();
+
+  // Process button presses.
+  if (direction_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+    control_action = Configuration::ControlAction::kToggleDirection;
+    Log.noticeln(F("Direction button short press."));
+  }
+
+  if (angle_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+    control_action = Configuration::ControlAction::kCycleAngle;
+    Log.noticeln(F("Angle button short press."));
+  }
+
+  if (speed_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+    control_action = Configuration::ControlAction::kCycleSpeed;
+    Log.noticeln(F("Speed button short press."));
+  }
+
+  if (direction_button_press_type == mt::MomentaryButton::PressType::kLongPress 
+      || angle_button_press_type == mt::MomentaryButton::PressType::kLongPress 
+      || speed_button_press_type == mt::MomentaryButton::PressType::kLongPress) {
+   control_action = Configuration::ControlAction::kToggleMotion;
+    Log.noticeln(F("Button long press."));
+  }
+
+  // Check for serial messages, one character at a time.
   if (Serial.available() > 0) {
-    serial_message = Serial.read();
+    char serial_message = Serial.read();
+    control_action = static_cast<Configuration::ControlAction>(serial_message);
     Log.noticeln(F("Message received: %c"), serial_message);
   }
 
-  switch(serial_message) {
-    case Configuration::kToggleDirectionMessage: {
+  // Process control actions.
+  switch(control_action) {
+    case Configuration::ControlAction::kToggleDirection: {
+      // Change to continuous mode or change motor direction.
       if (move_motor == false) {
         // Fall through to start motor.
         [[fallthrough]];
@@ -168,7 +168,8 @@ void ControlSystem::CheckAndProcess() {
         break;
       }
     }
-    case Configuration::kCycleAngleMessage: {
+    case Configuration::ControlAction::kCycleAngle: {
+      // Change to oscillation mode or cycle through sweep angles.
       if (move_motor == false) {
         // Fall through to start motor.
         [[fallthrough]];
@@ -195,7 +196,8 @@ void ControlSystem::CheckAndProcess() {
         break;
       }
     }
-    case Configuration::kCycleSpeedMessage: {
+    case Configuration::ControlAction::kCycleSpeed: {
+      // Cycle through motor speed settings.
       if (move_motor == false) {
         // Fall through to start motor.          
         [[fallthrough]];
@@ -215,7 +217,8 @@ void ControlSystem::CheckAndProcess() {
         break;
       }
     }
-    case Configuration::kToggleMotionMessage: {
+    case Configuration::ControlAction::kToggleMotion: {
+      // Toggle (start/stop) the motor.
       if (move_motor == false) {
         move_motor = true;
         Log.noticeln(F("Start moving."));
@@ -227,18 +230,18 @@ void ControlSystem::CheckAndProcess() {
       
       break;
     }
-    case Configuration::kIdleMessage: {
+    case Configuration::ControlAction::kIdle: {
       // No action.
       break;
     }
     default: {
-      Log.noticeln(F("Invalid serial message."));
+      Log.errorln(F("Invalid control action."));
       break;
     }
   }
 
-  // Reset serial message.
-  serial_message = Configuration::kIdleMessage;
+  // Reset control action.
+  control_action = Configuration::ControlAction::kIdle;
 
   if (move_motor == true) {
     switch (control_mode) {

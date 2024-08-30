@@ -67,7 +67,7 @@ struct Configuration {
 
   /// @{
   /// @brief Control system properties.
-  const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
+  const ControlMode kDefaultControlMode = ControlMode::kOscillate; //ControlMode::kContinuous; ///< The default/initial control mode. 
   /// @}
 
   /// @brief Serial properties.
@@ -104,13 +104,13 @@ struct Configuration {
   const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
   /// Sweep angle during oscillation.
   static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
-  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
+  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {360.0F, 90.0F, 180.0F, 360.0F}; //{45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
   const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
   static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
-  const float kSpeedsRPM[kSizeOfSpeeds] = {3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
-  const uint8_t kDefaultSpeedIndex = 1; // Index of initial/default sweep angle, i.e., 6 RPM.
-  const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
+  const float kSpeedsRPM[kSizeOfSpeeds] = {200.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
+  const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 6 RPM.
+  const double kAcceleration_microsteps_per_s_per_s = 5.0; ///< Acceleration (microteps per second-squared).
   /// @}
 
   /// @brief Logger properties (for debugging and system reporting).

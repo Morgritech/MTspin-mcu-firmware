@@ -52,6 +52,8 @@ void StepperDriver::SetSpeed(double speed, SpeedUnits speed_units) {
   }
   else {
     microstep_period_us_ = 1000000.0 / (speed_microsteps_per_s); // (us).
+    Serial.print(F("Set microstep period (us): "));
+    Serial.println(microstep_period_us_);
   }
 }
 
@@ -179,7 +181,8 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         microsteps_after_acceleration_ = 0;
         microsteps_after_constant_speed_ = 0;
         motion_status_ = MotionStatus::kAccelerate;
-
+        Serial.print(F("Set speed period (us): "));
+        Serial.println(speed_period_us_);
       }
 
       break;
@@ -202,18 +205,29 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         // Setup a new acceleration.
         // Calculate initial acceleration parameters.
         AccelerateOrDecelerateAtSpeedPeriod(CalculationOption::kCalculateOnly);
+        Serial.print(F("Initial microstep period (us): "));
+        Serial.println(microstep_period_in_flux_us_, 8);
         // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
-        uint64_t min_microsteps_for_acceleration = speed_period_us_ 
-                                                   / (2000000 * microstep_period_us_ * microstep_period_us_); // (microsteps).
-
+        double min_microsteps_for_acceleration = (500000.0 * speed_period_us_)
+                                                 / (microstep_period_us_ * microstep_period_us_); // (microsteps).
+        Serial.print(F("Min microsteps for acceleration: "));
+        Serial.println(min_microsteps_for_acceleration, 8);
+        Serial.print(F("Relative microsteps to move: "));
+        Serial.println(static_cast<uint32_t>(relative_microsteps_to_move_));        
         if (relative_microsteps_to_move_ <= (2 * min_microsteps_for_acceleration)) {
           // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps, then decelerate to 0.
           microsteps_after_acceleration_ = relative_microsteps_to_move_ / 2;
+          Serial.print(F("Triangular: microsteps after acceleration: "));
+          Serial.println(static_cast<uint32_t>(microsteps_after_acceleration_));
         }
         else {
           // Setup trapezoidal speed profile; motor will accelerate to set speed, move at constant speed, then decelerate to 0.
           microsteps_after_acceleration_ = relative_microsteps_to_move_ - min_microsteps_for_acceleration;
           microsteps_after_constant_speed_ = min_microsteps_for_acceleration;
+          Serial.print(F("Trapezoidal: microsteps after acceleration: "));
+          Serial.println(static_cast<uint32_t>(microsteps_after_acceleration_));
+          Serial.print(F("Trapezoidal: microsteps after constant speed: "));
+          Serial.println(static_cast<uint32_t>(microsteps_after_constant_speed_));
         }
       }
       else {
@@ -222,14 +236,18 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           if (microsteps_after_constant_speed_ == 0) {
             // Triangular speed profile.
             motion_status_ = MotionStatus::kDecelerate;
+            Serial.println(F("Triangular: finished accel, going to decel."));
           }
           else {
             // Trapezoidal speed profile.
             motion_status_ = MotionStatus::kConstantSpeed;
+            Serial.println(F("Trapezoidal: finished accel, going to constant."));            
           }
         }
         else {
           AccelerateOrDecelerateAtSpeedPeriod(CalculationOption::kSetupMotion);
+          //Serial.print(F("Running microstep period (us): "));
+          //Serial.println(microstep_period_in_flux_us_, 8);    
         }
       }
 
@@ -249,9 +267,12 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         // Trapezoidal speed profile.
         if (relative_microsteps_to_move_ <= microsteps_after_constant_speed_) {
           motion_status_ = MotionStatus::kDecelerate;
+          Serial.println(F("Trapezoidal: finished constant, going to decel."));          
         }
         else {
           MoveByMicrostepAtMicrostepPeriod(microstep_period_us_);
+          //Serial.print(F("Constant speed; max trapezoidal microstep period (us): "));
+          //Serial.println(microstep_period_us_);
         }
       }
 
@@ -260,9 +281,12 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
     case MotionStatus::kDecelerate: {
       if (relative_microsteps_to_move_ == 0) {
         motion_status_ = MotionStatus::kIdle;
+        Serial.println(F("Finished decel., going to idle."));        
       }
       else {
         AccelerateOrDecelerateAtSpeedPeriod(CalculationOption::kSetupMotion);
+        //Serial.print(F("Running microstep period (us): "));
+        //Serial.println(microstep_period_in_flux_us_, 8);         
       }
 
       break;
@@ -363,8 +387,10 @@ void StepperDriver::AccelerateOrDecelerateAtSpeedPeriod(CalculationOption calcul
 
   if(calculation_option == CalculationOption::kCalculateOnly) {
     // Setup a new acceleration.
-    speed_microsteps_per_us = (1000000.0 * microstep_period_us_) / speed_period_us_;
+    speed_microsteps_per_us = microstep_period_us_ / (1000000.0 * speed_period_us_);
     microstep_period_in_flux_us_ = 1.0 / speed_microsteps_per_us;
+    //Serial.print(F("Initial speed (microsteps/us): "));
+    //Serial.println(speed_microsteps_per_us, 8);
   }
   else {
     // Acceleration/deceleration already in progress.
@@ -374,12 +400,16 @@ void StepperDriver::AccelerateOrDecelerateAtSpeedPeriod(CalculationOption calcul
       // Calculate new speed based on the microstep period (us).
       if (motion_status_ == MotionStatus::kAccelerate) {
         speed_microsteps_per_us = (1.0 / microstep_period_in_flux_us_) 
-                                  + ((1000000.0 * microstep_period_in_flux_us_) / speed_period_us_);
+                                  + (microstep_period_in_flux_us_ / (1000000.0 * speed_period_us_));
+      //Serial.print(F("Running speed (accelerating) (microsteps/us): "));
+      //Serial.println(speed_microsteps_per_us, 8);
       }
       else {
         // Decelerate.
         speed_microsteps_per_us = (1.0 / microstep_period_in_flux_us_) 
-                                  - ((1000000.0 * microstep_period_in_flux_us_) / speed_period_us_);
+                                  - (microstep_period_in_flux_us_ / (1000000.0 * speed_period_us_));
+      //Serial.print(F("Running speed (decelerating) (microsteps/us): "));
+      //Serial.println(speed_microsteps_per_us, 8);                                  
       }
 
       microstep_period_in_flux_us_ = 1.0 / speed_microsteps_per_us;

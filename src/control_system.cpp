@@ -260,9 +260,6 @@ void ControlSystem::CheckAndProcess() {
 
           move_motor = false;
           Log.noticeln(F("Going to Idle."));
-          if (control_action == Configuration::ControlAction::kIdle) {
-            Log.notice(F("Control action idle: %d"), static_cast<uint8_t>(control_action));
-          }
           //if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
           //  motion_direction = mt::StepperDriver::MotionDirection::kNegative; 
           //}

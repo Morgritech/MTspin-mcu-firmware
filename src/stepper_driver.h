@@ -191,6 +191,7 @@ class StepperDriver {
   /// @brief Motor states and targets.
   PowerState power_state_ = PowerState::kEnabled; ///< Power state based on the ENA/EN pin.
   double microstep_period_us_ = 100000.0; ///< Target speed based on the microstep period (us) between microsteps.
+  double speed_in_flux_microsteps_per_us_; /// The speed (microsteps/us) that is changing due acceleration/deceleration.
   double microstep_period_in_flux_us_; // The microstep period (us) that is changing due to acceleration/deceleration.
   uint64_t reference_microstep_time_us_; ///< Reference time (us) for the microstep period.
   double speed_period_us_ = 0.0; ///< Target acceleration/deceleration based on the speed period (us) between increase/decrease of the microstep period.

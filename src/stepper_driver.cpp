@@ -208,15 +208,15 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         Serial.print(F("Initial microstep period (us): "));
         Serial.println(microstep_period_in_flux_us_, 8);
         // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
-        double min_microsteps_for_acceleration = (500000.0 * speed_period_us_)
-                                                 / (microstep_period_us_ * microstep_period_us_); // (microsteps).
+        double min_microsteps_for_acceleration = round((500000.0 * speed_period_us_)
+                                                 / (microstep_period_us_ * microstep_period_us_)); // (microsteps).
         Serial.print(F("Min microsteps for acceleration: "));
         Serial.println(min_microsteps_for_acceleration, 8);
         Serial.print(F("Relative microsteps to move: "));
         Serial.println(static_cast<uint32_t>(relative_microsteps_to_move_));        
         if (relative_microsteps_to_move_ <= (2 * min_microsteps_for_acceleration)) {
           // Setup triangular speed profile; motor will accelerate to achievable speed (<= set speed) for available microsteps, then decelerate to 0.
-          microsteps_after_acceleration_ = relative_microsteps_to_move_ / 2;
+          microsteps_after_acceleration_ = round(relative_microsteps_to_move_ / 2);
           Serial.print(F("Triangular: microsteps after acceleration: "));
           Serial.println(static_cast<uint32_t>(microsteps_after_acceleration_));
         }
@@ -273,9 +273,12 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           Serial.println(F("Trapezoidal: finished constant, going to decel."));          
         }
         else {
-          MoveByMicrostepAtMicrostepPeriod(microstep_period_us_);
+          MoveByMicrostepAtMicrostepPeriod(microstep_period_in_flux_us_);
+          //MoveByMicrostepAtMicrostepPeriod(microstep_period_us_);
           /**
-          Serial.print(F("Constant speed; max trapezoidal microstep period (us): "));
+          Serial.print(F("Constant speed; actual max trapezoidal microstep period (us): "));
+          Serial.println(microstep_period_in_flux_us_);
+          Serial.print(F("Constant speed; set max trapezoidal microstep period (us): "));
           Serial.println(microstep_period_us_);
           //*/
         }

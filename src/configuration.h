@@ -110,7 +110,7 @@ struct Configuration {
   static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
   const float kSpeedsRPM[kSizeOfSpeeds] = {150.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
   const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 6 RPM.
-  const double kAcceleration_microsteps_per_s_per_s = 7000.0; ///< Acceleration (microteps per second-squared).
+  const double kAcceleration_microsteps_per_s_per_s = 3000; //7000.0; ///< Acceleration (microteps per second-squared).
   /// @}
 
   /// @brief Logger properties (for debugging and system reporting).

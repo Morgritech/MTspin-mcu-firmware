@@ -198,6 +198,8 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
         // Setup a new acceleration.
         // Eiderman*.
         m_ = -R_;
+        // Austin*.
+        n_ = 0;
 
         motion_phase_multiplier_ = 1;
         // Calculate the minimum microsteps required to accelerate to; and decelerate from; the set speed.
@@ -229,6 +231,8 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
             // Triangular speed profile. Setup deceleration.
             // Eiderman*.
             m_ = R_;
+            // Austin*.
+            n_ = -microsteps_after_acceleration_;
 
             motion_phase_multiplier_ = -1;
             motion_status_ = MotionStatus::kDecelerate;
@@ -258,7 +262,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
       if (acceleration_microsteps_per_s_per_s_ == 0.0) {
         // No acceleration/deceleration.
         if (relative_microsteps_to_move_ == 0) {
-          //Finished constant speed motion. Stop motion.
+          //Finished constant speed motion. Indicate motion complete.
           motion_status_ = MotionStatus::kIdle;
         }
         else {
@@ -272,6 +276,8 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
           // Finished constant speed motion. Setup deceleration.
           // Eiderman*.
           m_ = R_;
+          // Austin*.
+          n_ = -microsteps_after_constant_speed_;
 
           motion_phase_multiplier_ = -1;
           motion_status_ = MotionStatus::kDecelerate;
@@ -287,7 +293,7 @@ StepperDriver::MotionStatus StepperDriver::MoveByAngle(float angle, AngleUnits a
     }
     case MotionStatus::kDecelerate: {
       if (relative_microsteps_to_move_ == 0) {
-        // Finished decelerating.
+        // Finished decelerating. Indicate motion complete.
         motion_status_ = MotionStatus::kIdle;
         Serial.println(F("Finished decel., going to idle."));        
       }
@@ -371,15 +377,10 @@ void StepperDriver::set_power_state(PowerState power_state) {
 StepperDriver::PowerState StepperDriver::power_state() const { return power_state_; }
 
 void StepperDriver::MoveByMicrostep() {
-  //digitalWrite(pul_pin_, LOW);
-  //delayMicroseconds(pul_delay_us_);
-  //digitalWrite(pul_pin_, HIGH);
-  //delayMicroseconds(pul_delay_us_);
-
-  digitalWrite(pul_pin_, HIGH);
-  delayMicroseconds(1);
   digitalWrite(pul_pin_, LOW);
-  //delayMicroseconds(pul_delay_us_);
+  delayMicroseconds(pul_delay_us_);
+  digitalWrite(pul_pin_, HIGH);
+  delayMicroseconds(pul_delay_us_);
 
   if (relative_microsteps_to_move_ != 0) {
     // Move by angle (not by jogging) is in operation.
@@ -398,20 +399,17 @@ void StepperDriver::MoveByMicrostepAtMicrostepPeriod() {
 }
 
 void StepperDriver::CalculateMicrostepPeriodInFlux() {
-/*
+//*
   // Austin*.
   if(n_ == 0) {
     // Setup a new acceleration.
     Cn_ = 0.676 * f_ * sqrt(2.0 / acceleration_microsteps_per_s_per_s_); // Equation 15.
     //Serial.print(F("C0 = ")); Serial.println(Cn_);
   }
-  else if (motion_status_ == MotionStatus::kAccelerate) {
+  else {
+    // n > 0 for acceleration, n < 0 for deceleration.
     Cn_ = Cn_ - ((2.0 * Cn_) / ((4.0 * n_) + 1)); // Equation 13.
     //Serial.print(F("C")); Serial.print(n_); Serial.print(F(" = ")); Serial.println(Cn_);
-  }
-  else {
-    // Decelerate.
-    // TBD
   }
   
   n_++;
@@ -426,7 +424,7 @@ void StepperDriver::CalculateMicrostepPeriodInFlux() {
     //Serial.print(F("p1 = ")); Serial.println(p_);
   }
   else {
-    // m = -R for acceleration, 0 in-between, R for deceleration
+    // m = -R for acceleration, 0 in-between, R for deceleration.
     q_ = m_ * p_ * p_;
     p_ = p_ * (1 + q_); // Equation 20.
     //p_ = p_ * (1 + q_ + (q_ * q_)); // Equation 23.
@@ -438,7 +436,7 @@ void StepperDriver::CalculateMicrostepPeriodInFlux() {
   microstep_period_in_flux_us_ = p_;
 //*/
 
-//*
+/*
   // Morgridge*.
   if(i_ == 1) {
     // Setup a new acceleration.

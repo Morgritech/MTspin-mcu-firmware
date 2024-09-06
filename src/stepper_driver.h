@@ -212,12 +212,12 @@ class StepperDriver {
   float acceleration_microsteps_per_s_per_s_ = 0.0; ///< Target acceleration (microsteps/s^2).
   uint64_t reference_microstep_flux_time_us_ = 0; ///< Reference time (us) for the microstep period in flux.
   int8_t motion_phase_multiplier_ = 0; ///< Constant multiplier. (+1 for acceleration, 0 in-between, -1 for deceleration).
-  float R_ = 0.0; ///< Constant multiplier. (R_ = acceleration_microsteps_per_s_per_s_ / (f_ * f_)) Eiderman*.
-  float m_ = 0.0; ///< Variable multiplier that depends on movement phase (m_ = -R_ for acceleration, m_ = 0 in-between, m_ = R_ for deceleration) Eiderman*.
+  float R_ = 0.0; ///< Constant multiplier. Eiderman*.
+  float m_ = 0.0; ///< Variable multiplier that depends on movement phase (m_ = -R_ for acceleration, 0 in-between, R_ for deceleration). Eiderman*.
   /// Other.
   MotionStatus motion_status_ = MotionStatus::kIdle; ///< The status of the move (by angle) operation.
   MotionDirection jog_direction_ = MotionDirection::kNeutral; ///< The direction of the move (by jogging) operation.
-  uint32_t n_ = 0; ///< Iteration counter. Austin*. //(speed_microsteps_per_s * speed_microsteps_per_s) / (2.0 * a);
+  int32_t n_ = 0; ///< Iteration counter. Also depends on movement phase (n > 0 for acceleration, n < 0 for deceleration). Austin*.
   uint32_t i_ = 1; ///< Iteration counter. Eiderman/Morgridge*.
   float q_ = 0.0; ///< Variable to calculate a more accurate value of p at the expense of processing overhead (i.e., slower). Eiderman*.
   /// @}

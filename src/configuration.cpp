@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file configuration.cpp
-/// @brief Structure to setup common configuration settings, including serial port and pin definitions, etc.
+/// @brief Class to setup common configuration settings, including serial port and pin definitions, etc.
 
 #include "configuration.h"
 

@@ -45,8 +45,8 @@ ControlSystem::ControlSystem()
   stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us);
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
-  stepper_driver_.SetAcceleration(configuration_.kAcceleration_rads_per_s_per_s,
-                                  mt::StepperDriver::AccelerationUnits::kRadiansPerSecondPerSecond);
+  stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s,
+                                  mt::StepperDriver::AccelerationUnits::kMicrostepsPerSecondPerSecond);
   // Save power when idle.
   stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
 }
@@ -81,7 +81,7 @@ void ControlSystem::CheckAndProcess() {
 
     // Initialise the speed.
     stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
-                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);                           
 
     if (control_mode == Configuration::ControlMode::kContinuous) {
       Log.noticeln(F("Control mode: continuous"));
@@ -231,6 +231,7 @@ void ControlSystem::CheckAndProcess() {
     }
     case Configuration::ControlAction::kIdle: {
       // No action.
+      //Log.noticeln(F("Idle: no action."));
       break;
     }
     default: {
@@ -257,14 +258,16 @@ void ControlSystem::CheckAndProcess() {
         if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {
           motion_type = mt::StepperDriver::MotionType::kRelative;
 
-          if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
-            motion_direction = mt::StepperDriver::MotionDirection::kNegative; 
-          }
-          else {
-            motion_direction = mt::StepperDriver::MotionDirection::kPositive;
-          }
+          move_motor = false;
+          Log.noticeln(F("Going to Idle."));
+          //if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
+          //  motion_direction = mt::StepperDriver::MotionDirection::kNegative; 
+          //}
+          //else {
+          //  motion_direction = mt::StepperDriver::MotionDirection::kPositive;
+          //}
 
-          sweep_direction = static_cast<float>(motion_direction);
+          //sweep_direction = static_cast<float>(motion_direction);
         }
 
         break;

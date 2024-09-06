@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file configuration.h
-/// @brief Structure to setup common configuration settings, including serial port and pin definitions, etc.
+/// @brief Class to setup common configuration settings, including serial port and pin definitions, etc.
 
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
@@ -22,8 +22,9 @@
 
 namespace mtspin {
 
-/// @brief The Configuration structure using the singleton pattern i.e., only a single instance can exist.
-struct Configuration {
+/// @brief The Configuration class using the singleton pattern i.e., only a single instance can exist.
+class Configuration {
+ public:
 
   /// @brief Enum of control system modes.
   enum class ControlMode {
@@ -56,18 +57,18 @@ struct Configuration {
   /// @{
   /// @brief GPIO pins.
   /// Input pins for the buttons.
-  const uint8_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
-  const uint8_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
-  const uint8_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
+  const uint16_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
+  const uint16_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
+  const uint16_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
   /// Output pins for the stepper motor driver.
-  const uint8_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint8_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
-  const uint8_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
+  const uint16_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint16_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
+  const uint16_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
   /// @}
 
   /// @{
   /// @brief Control system properties.
-  const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
+  const ControlMode kDefaultControlMode = ControlMode::kOscillate; //ControlMode::kContinuous; ///< The default/initial control mode. 
   /// @}
 
   /// @brief Serial properties.
@@ -90,12 +91,12 @@ struct Configuration {
   /// @{
   /// @brief Stepper motor/drive system properties.
   const float kFullStepAngleDegrees = 1.8F; ///< The full step angle in degrees.
-  const double kGearRatio = 1.0; ///< The gear ratio.
+  const float kGearRatio = 1.0F; ///< The gear ratio.
   /// @}
 
   /// @{
   /// @brief Stepper driver properties.
-  const uint8_t kMicrostepMode = 16; ///< Microstep mode.
+  const uint16_t kMicrostepMode = 16; ///< Microstep mode.
   /// Minimum time (us) to delay after changing the state of a pin.
   const float kPulDelay_us = 2.5F; ///< For the PUL pin.
   const float kDirDelay_us = 5.0F; ///< For the Dir pin.
@@ -104,13 +105,13 @@ struct Configuration {
   const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
   /// Sweep angle during oscillation.
   static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
-  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
+  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {3600.0F, 90.0F, 180.0F, 360.0F}; //{45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
   const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
   static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
-  const float kSpeedsRPM[kSizeOfSpeeds] = {3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
-  const uint8_t kDefaultSpeedIndex = 1; // Index of initial/default sweep angle, i.e., 6 RPM.
-  const double kAcceleration_rads_per_s_per_s = 0.0; ///< Acceleration (Radians per second-squared).
+  const float kSpeedsRPM[kSizeOfSpeeds] = {150.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
+  const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 6 RPM.
+  const float kAcceleration_microsteps_per_s_per_s = 3000.0; //7000.0; ///< Acceleration (microsteps per second-squared).
   /// @}
 
   /// @brief Logger properties (for debugging and system reporting).

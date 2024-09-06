@@ -4,7 +4,7 @@
 // See the LICENSE file in the project root for full license details.
 
 /// @file configuration.h
-/// @brief Structure to setup common configuration settings, including serial port and pin definitions, etc.
+/// @brief Class to setup common configuration settings, including serial port and pin definitions, etc.
 
 #ifndef CONFIGURATION_H_
 #define CONFIGURATION_H_
@@ -22,8 +22,9 @@
 
 namespace mtspin {
 
-/// @brief The Configuration structure using the singleton pattern i.e., only a single instance can exist.
-struct Configuration {
+/// @brief The Configuration class using the singleton pattern i.e., only a single instance can exist.
+class Configuration {
+ public:
 
   /// @brief Enum of control system modes.
   enum class ControlMode {

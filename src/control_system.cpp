@@ -37,7 +37,7 @@ ControlSystem::ControlSystem()
                       configuration_.kDirPin,
                       configuration_.kEnaPin,
                       configuration_.kMicrostepMode,
-                      configuration_.kFullStepAngleDegrees,
+                      configuration_.kFullStepAngle_degrees,
                       configuration_.kGearRatio) {
   direction_button_.set_long_press_option(configuration_.kLongPressOption);
   angle_button_.set_long_press_option(configuration_.kLongPressOption);
@@ -80,7 +80,7 @@ void ControlSystem::CheckAndProcess() {
     initial_entry = false;
 
     // Initialise the speed.
-    stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
+    stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM[speed_index],
                              mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);                           
 
     if (control_mode == Configuration::ControlMode::kContinuous) {
@@ -97,8 +97,8 @@ void ControlSystem::CheckAndProcess() {
       Log.noticeln(F("Motion direction: counter-clockwise (CCW)"));
     }
     
-    Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAnglesDegrees[sweep_angle_index]);
-    Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
+    Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees[sweep_angle_index]);
+    Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM[speed_index]);
   }
 
   // Check for button presses.
@@ -182,7 +182,7 @@ void ControlSystem::CheckAndProcess() {
           }
 
           motion_type = mt::StepperDriver::MotionType::kStopAndReset;
-          Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAnglesDegrees[sweep_angle_index]);
+          Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees[sweep_angle_index]);
         }
         else {
           // Change control mode.
@@ -208,9 +208,9 @@ void ControlSystem::CheckAndProcess() {
           speed_index++;
         }
         
-        stepper_driver_.SetSpeed(configuration_.kSpeedsRPM[speed_index],
+        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM[speed_index],
                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
-        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeedsRPM[speed_index]);
+        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM[speed_index]);
         break;
       }
     }
@@ -252,7 +252,7 @@ void ControlSystem::CheckAndProcess() {
       case Configuration::ControlMode::kOscillate: {
         static float sweep_direction = static_cast<float>(motion_direction);
         mt::StepperDriver::MotionStatus motion_status = stepper_driver_.MoveByAngle(
-                                                        sweep_direction * configuration_.kSweepAnglesDegrees[sweep_angle_index],
+                                                        sweep_direction * configuration_.kSweepAngles_degrees[sweep_angle_index],
                                                         mt::StepperDriver::AngleUnits::kDegrees, motion_type);
 
         if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {

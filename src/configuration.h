@@ -90,7 +90,7 @@ class Configuration {
 
   /// @{
   /// @brief Stepper motor/drive system properties.
-  const float kFullStepAngleDegrees = 1.8F; ///< The full step angle in degrees.
+  const float kFullStepAngle_degrees = 1.8F; ///< The full step angle in degrees.
   const float kGearRatio = 1.0F; ///< The gear ratio.
   /// @}
 
@@ -105,11 +105,11 @@ class Configuration {
   const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
   /// Sweep angle during oscillation.
   static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
-  const float kSweepAnglesDegrees[kSizeOfSweepAngles] = {3600.0F, 90.0F, 180.0F, 360.0F}; //{45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
+  const float kSweepAngles_degrees[kSizeOfSweepAngles] = {3600.0F, 90.0F, 180.0F, 360.0F}; //{45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
   const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
   static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
-  const float kSpeedsRPM[kSizeOfSpeeds] = {150.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
+  const float kSpeeds_RPM[kSizeOfSpeeds] = {150.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
   const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 6 RPM.
   const float kAcceleration_microsteps_per_s_per_s = 3000.0; //7000.0; ///< Acceleration (microsteps per second-squared).
   /// @}

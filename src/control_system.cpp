@@ -47,6 +47,7 @@ ControlSystem::ControlSystem()
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s,
                                   mt::StepperDriver::AccelerationUnits::kMicrostepsPerSecondPerSecond);
+  stepper_driver_.set_acceleration_algorithm(configuration_.kAccelerationAlgorithm);
   // Save power when idle.
   stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
 }

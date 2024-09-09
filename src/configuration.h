@@ -85,7 +85,7 @@ class Configuration {
   /// Button long press periods (ms).
   const uint16_t kLongPressPeriod_ms = 1000;
   /// Button long press options.
-  mt::MomentaryButton::LongPressOption kLongPressOption = mt::MomentaryButton::LongPressOption::kDetectWhileHolding;
+  const mt::MomentaryButton::LongPressOption kLongPressOption = mt::MomentaryButton::LongPressOption::kDetectWhileHolding;
   /// @}
 
   /// @{
@@ -112,6 +112,7 @@ class Configuration {
   const float kSpeeds_RPM[kSizeOfSpeeds] = {150.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
   const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 6 RPM.
   const float kAcceleration_microsteps_per_s_per_s = 3000.0; //7000.0; ///< Acceleration (microsteps per second-squared).
+  const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24;
   /// @}
 
   /// @brief Logger properties (for debugging and system reporting).

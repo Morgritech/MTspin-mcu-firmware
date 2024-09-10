@@ -349,7 +349,7 @@ float StepperDriver::GetAngularPosition(AngleUnits angle_units) const {
 
 void StepperDriver::set_acceleration_algorithm(AccelerationAlgorithm acceleration_algorithm) {
   acceleration_algorithm_ = acceleration_algorithm;
-  if (acceleration_algorithm_ == AccelerationAlgorithm::kEiderman04) R_ = acceleration_microsteps_per_s_per_s_ / fsquared_; // Eiderman '04, equation 19.
+  if (acceleration_algorithm_ == AccelerationAlgorithm::kEiderman04) R_ = acceleration_microsteps_per_s_per_s_ / fsquared_; // Eiderman '04, Equation 19.
   // Reset relative_angle_to_move_microsteps_, relative_angle_to_move_in_flux_microsteps_, angle_after_acceleration_microsteps_, n_, i_.
   ResetAccelerationParameters();
 }

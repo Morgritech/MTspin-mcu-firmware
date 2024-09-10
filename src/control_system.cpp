@@ -259,16 +259,16 @@ void ControlSystem::CheckAndProcess() {
         if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {
           motion_type = mt::StepperDriver::MotionType::kRelative;
 
-          move_motor = false;
-          Log.noticeln(F("Going to Idle."));
-          //if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
-          //  motion_direction = mt::StepperDriver::MotionDirection::kNegative; 
-          //}
-          //else {
-          //  motion_direction = mt::StepperDriver::MotionDirection::kPositive;
-          //}
+          //move_motor = false;
+          //Log.noticeln(F("Going to Idle."));
+          if (motion_direction == mt::StepperDriver::MotionDirection::kPositive) {
+            motion_direction = mt::StepperDriver::MotionDirection::kNegative; 
+          }
+          else {
+            motion_direction = mt::StepperDriver::MotionDirection::kPositive;
+          }
 
-          //sweep_direction = static_cast<float>(motion_direction);
+          sweep_direction = static_cast<float>(motion_direction);
         }
 
         break;

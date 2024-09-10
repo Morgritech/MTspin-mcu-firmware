@@ -275,9 +275,10 @@ class StepperDriver {
   float q_ = 0.0; ///< Variable to calculate a more accurate value of p at the expense of processing overhead (i.e., slower). Eiderman '04.
   int32_t n_ = 0; ///< Iteration counter. Also depends on movement phase (n > 0 for acceleration, n < 0 for deceleration). Austin '05.
   /// Debug helpers.
-  bool debug_helper_flag_accel_initial_vars_printed_ = false; ///< Flag to aid in printing initial debug outputs during acceleration only once.
-  bool debug_helper_flag_cspeed_initial_vars_printed_ = false; ///< Flag to aid in printing initial debug outputs during constant speed only once.
-  bool debug_helper_flag_decel_initial_vars_printed_ = false; ///< Flag to aid in printing initial debug outputs during deceleration speed only once.
+  bool debug_enabled_ = false; ///< Flag to control whether debug outputs are printed.
+  bool debug_helper_accel_initial_vars_printed_ = false; ///< Flag to aid in printing initial debug outputs during acceleration only once.
+  bool debug_helper_cspeed_initial_vars_printed_ = false; ///< Flag to aid in printing initial debug outputs during constant speed only once.
+  bool debug_helper_decel_initial_vars_printed_ = false; ///< Flag to aid in printing initial debug outputs during deceleration speed only once.
   /// @}
 };
 

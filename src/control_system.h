@@ -10,8 +10,8 @@
 #define CONTROL_SYSTEM_H_
 
 #include <momentary_button.h>
+#include <stepper_driver.h>
 
-#include "stepper_driver.h"
 #include "configuration.h"
 
 namespace mtspin {

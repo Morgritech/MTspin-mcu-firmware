@@ -11,8 +11,8 @@
 #include <Arduino.h>
 #include <ArduinoLog.h>
 #include <momentary_button.h>
+#include <stepper_driver.h>
 
-#include "stepper_driver.h"
 #include "configuration.h"
 
 namespace mtspin {

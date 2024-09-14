@@ -16,7 +16,6 @@ mtspin::ControlSystem control_system;
 
 /// @brief The main application entry point for initialisation tasks.
 void setup() {
-
   // Setup the control system.
   control_system.Begin();
   
@@ -25,14 +24,6 @@ void setup() {
 
 /// @brief The continuously running function for repetitive tasks.
 void loop() {
-
-  //TESTING.
-  //delay(500);
-
-  // Start the control system.
+  // Run the control system.
   control_system.CheckAndProcess();
-
-  //if (digitalRead(2) == HIGH) {
-  //  Log.noticeln(F("BUTTON PRESSED"));
-  //}
 }

@@ -57,18 +57,18 @@ class Configuration {
   /// @{
   /// @brief GPIO pins.
   /// Input pins for the buttons.
-  const uint16_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
-  const uint16_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
-  const uint16_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
+  const uint8_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
+  const uint8_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
+  const uint8_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
   /// Output pins for the stepper motor driver.
-  const uint16_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint16_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
-  const uint16_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
+  const uint8_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint8_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
+  const uint8_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
   /// @}
 
   /// @{
   /// @brief Control system properties.
-  const ControlMode kDefaultControlMode = ControlMode::kOscillate; //ControlMode::kContinuous; ///< The default/initial control mode. 
+  const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
   /// @}
 
   /// @brief Serial properties.
@@ -105,7 +105,7 @@ class Configuration {
   const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
   /// Sweep angle during oscillation.
   static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
-  const float kSweepAngles_degrees[kSizeOfSweepAngles] = {3600.0F, 90.0F, 180.0F, 360.0F}; //{45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
+  const float kSweepAngles_degrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
   const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
   static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.

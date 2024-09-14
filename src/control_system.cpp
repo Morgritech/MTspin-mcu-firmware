@@ -242,14 +242,12 @@ void ControlSystem::CheckAndProcess() {
       mt::StepperDriver::MotionStatus motion_status = stepper_driver_.MoveByAngle(
                                                       sweep_direction_ * configuration_.kSweepAngles_degrees[sweep_angle_index_],
                                                       mt::StepperDriver::AngleUnits::kDegrees, motion_type_);
-      //if (configuration_.kSpeeds_RPM[speed_index_] == 150.0) {Log.noticeln(F("Motion status: %d"), motion_status); }
       if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {
         if (motion_type_ == mt::StepperDriver::MotionType::kStopAndReset) {
           // Stop and reset issued by user changing sweep angle, restart motion.
           motion_type_ = mt::StepperDriver::MotionType::kRelative;
         }
         else if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kEnabled) {
-          Log.noticeln(F("Completed sweep, switching direction."));
 
           if (motion_direction_ == mt::StepperDriver::MotionDirection::kPositive) {
             motion_direction_ = mt::StepperDriver::MotionDirection::kNegative; 

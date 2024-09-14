@@ -109,9 +109,9 @@ class Configuration {
   const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
   /// Speed and acceleration.
   static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
-  const float kSpeeds_RPM[kSizeOfSpeeds] = {150.0F, 6.0F, 12.0F, 24.0F}; //{3.0F, 6.0F, 12.0F, 24.0F}; // Lookup table for rotation speeds (RPM).
+  const float kSpeeds_RPM[kSizeOfSpeeds] = {4.0F, 8.0F, 16.0F, 32.0F}; // Lookup table for rotation speeds (RPM).
   const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 6 RPM.
-  const float kAcceleration_microsteps_per_s_per_s = 3000.0; //7000.0; ///< Acceleration (microsteps per second-squared).
+  const float kAcceleration_microsteps_per_s_per_s = 0.0; //3000.0; //7000.0; ///< Acceleration (microsteps per second-squared).
   const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24;
   /// @}
 

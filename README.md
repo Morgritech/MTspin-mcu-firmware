@@ -28,10 +28,18 @@ This project uses [CMake](https://cmake.org) to build and run the project. Under
 
 Arduino CLI contains all the tools required to build the embedded code. For the unit tests, [MinGW](https://en.wikipedia.org/wiki/MinGW) for Windows and the [GNU toolchain](https://en.wikipedia.org/wiki/GNU_toolchain) for Linux are the defaults set by the CMakePresets.json file. However, these can be overridden by creating a CMakeUserPresets.json file in the root folder with settings for your preferred environment.
 
+### External libraries
+
+The following libraries (included via the [Arduino library manager](https://www.arduino.cc/reference/en/libraries/)) are used within the project:
+
+- [MT-arduino-momentary-button](https://github.com/Morgritech/MT-arduino-momentary-button)
+- [MT-arduino-stepper-driver](https://github.com/Morgritech/MT-arduino-stepper-driver)
+- [Arduino-Log](https://github.com/thijse/Arduino-Log/)
+
 ## Setup and build
 
 > [!NOTE]
-> Running the setup scripts will install Arduino CLI, CMake and other dependencies on your device.
+> Running the setup scripts will install Arduino CLI, CMake, and other dependencies and Arduino libraries on your device.
 
 ### Setup on Windows
 

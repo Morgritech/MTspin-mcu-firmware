@@ -115,12 +115,18 @@ class Configuration {
   const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24;
   /// @}
 
-  /// @brief Logger properties (for debugging and system reporting).
-  const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE; ///< The default log level.
-
   /// @{
   /// @brief Other properties.
   const uint16_t kStartupTime_ms = 1000; ///< Minimum startup/boot time in milliseconds (ms); based on the stepper driver.
+  /// @}
+
+  /// @{
+  /// @brief Debug helpers.
+  bool debug_enabled_ = false; ///< Flag to control whether debug outputs are printed.
+  //bool debug_enabled_ = true;  
+  /// Logger properties (for debugging and system reporting).
+  const int kDefaultLogLevel =  LOG_LEVEL_SILENT; ///< The default log level.
+  //const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;
   /// @}
 
  private:

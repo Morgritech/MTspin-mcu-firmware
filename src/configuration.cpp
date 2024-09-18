@@ -21,9 +21,11 @@ void Configuration::BeginHardware() const {
   // Initialise the serial port.
   MTSPIN_SERIAL.begin(kBaudRate);
 
-  // Wait until a serial connection is made.
+  // Wait until a serial connection is made if debugging is enabled.
   // This is mainly for the arduino due, other boards do this automatically.
-  while (!MTSPIN_SERIAL);
+  if (debug_enabled_ == true) {
+    while (!MTSPIN_SERIAL);
+  }
 
   // Initialise logging.
   Log.begin(kDefaultLogLevel, &MTSPIN_SERIAL);

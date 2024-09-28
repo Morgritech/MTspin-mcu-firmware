@@ -38,6 +38,7 @@ class Configuration {
     kCycleAngle = 'a',
     kCycleSpeed = 's',
     kToggleMotion = 'm',
+    kLogGeneralStatus = 'l',
     kIdle = '0',
   };
 
@@ -98,7 +99,7 @@ class Configuration {
   /// @brief Stepper driver properties.
   const uint16_t kMicrostepMode = 32; ///< Microstep mode.
   /// Minimum time (us) to delay after changing the state of a pin.
-  const float kPulDelay_us = 2.5F; ///< For the PUL pin.
+  const float kPulDelay_us = 1.0; ///< For the PUL pin. 2.5 for TB6600 is not required since the library functions are slow enough.
   const float kDirDelay_us = 5.0F; ///< For the Dir pin.
   const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
   /// Motion direction during continuous operation.

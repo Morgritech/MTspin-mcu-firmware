@@ -34,6 +34,9 @@ class ControlSystem {
 
  private:
 
+  /// @brief Log/report the general status of the control system.
+  void LogGeneralStatus() const;
+
   /// @brief Configuration settings.
   const Configuration& configuration_ = Configuration::GetInstance();
 
@@ -67,6 +70,8 @@ class ControlSystem {
   uint8_t sweep_angle_index_ = configuration_.kDefaultSweepAngleIndex;
   /// Index to keep track of the motor speed set from the lookup table.
   uint8_t speed_index_ = configuration_.kDefaultSpeedIndex;
+  /// Variable to keep track of the motion status.
+  mt::StepperDriver::MotionStatus motion_status_ = mt::StepperDriver::MotionStatus::kIdle;
   /// @}
 };
 

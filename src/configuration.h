@@ -12,8 +12,7 @@
 #include <Arduino.h>
 #include <ArduinoLog.h>
 #include <momentary_button.h>
-
-#include "stepper_driver.h"
+#include <stepper_driver.h>
 
 /// @brief Macro to define Serial port
 #ifndef MTSPIN_SERIAL
@@ -123,8 +122,8 @@ class Configuration {
 
   /// @{
   /// @brief Debug helpers.
-  bool debug_enabled_ = false; ///< Flag to control whether debug outputs are printed.
-  //bool debug_enabled_ = true;  
+  const bool debug_enabled_ = false; ///< Flag to control whether debug outputs are printed.
+  //const bool debug_enabled_ = true;  
   /// Logger properties (for debugging and system reporting).
   const int kDefaultLogLevel =  LOG_LEVEL_SILENT; ///< The default log level.
   //const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;

@@ -40,39 +40,25 @@ class ControlSystem {
   /// @brief Configuration settings.
   const Configuration& configuration_ = Configuration::GetInstance();
 
-  /// @{
-  /// @brief Buttons to control the motor driver.
-  mt::MomentaryButton direction_button_; ///< To control motor direction.
-  mt::MomentaryButton angle_button_; ///< To control motor rotation angles.
-  mt::MomentaryButton speed_button_; ///< To control motor speed.
-  /// @}
+  // Buttons to control the motor.
+  mt::MomentaryButton direction_button_; ///< Button to control motor direction.
+  mt::MomentaryButton angle_button_; ///< Button to control motor rotation angles.
+  mt::MomentaryButton speed_button_; ///< Button to control motor speed.
 
-  /// @brief Stepper motor driver to control the stepper motor.
-  mt::StepperDriver stepper_driver_;
+  // Stepper motor driver.
+  mt::StepperDriver stepper_driver_; ///< Stepper motor driver to control the stepper motor.
 
-  /// @{
-  /// @brief Control flags and indicator variables.
-  /// Flag to determine if this is the first entry into the control system.
-  bool initial_entry_ = true;
-  /// Variable to keep track of the control system mode.
-  Configuration::ControlMode control_mode_ = configuration_.kDefaultControlMode;
-  /// Variable to keep track of the control actions from button presses/serial messages.
-  Configuration::ControlAction control_action_ = Configuration::ControlAction::kIdle;
-  /// Variable to keep track of the motion direction (for continuous operation).
-  mt::StepperDriver::MotionDirection motion_direction_ = configuration_.kDefaultMotionDirection;
-  /// Variable to keep track of the previously set motion direction.
-  //mt::StepperDriver::MotionDirection previous_motion_direction_ = configuration_.kDefaultMotionDirection;
-  /// Variable to keep track of the motion type (for oscillation).
-  mt::StepperDriver::MotionType motion_type_ = mt::StepperDriver::MotionType::kRelative;
-  /// Variable to keep track of the sweep direction.
-  float sweep_direction_ = static_cast<float>(motion_direction_);
-  /// Index to keep track of the sweep angle set from the lookup table.
-  uint8_t sweep_angle_index_ = configuration_.kDefaultSweepAngleIndex;
-  /// Index to keep track of the motor speed set from the lookup table.
-  uint8_t speed_index_ = configuration_.kDefaultSpeedIndex;
-  /// Variable to keep track of the motion status.
-  mt::StepperDriver::MotionStatus motion_status_ = mt::StepperDriver::MotionStatus::kIdle;
-  /// @}
+  // Control flags and indicator variables.
+  bool initial_entry_ = true; ///< Flag to determine if this is the first entry into the control system.
+  Configuration::ControlMode control_mode_ = configuration_.kDefaultControlMode; ///< Variable to keep track of the control system mode.
+  Configuration::ControlAction control_action_ = Configuration::ControlAction::kIdle; ///< Variable to keep track of the control actions from button presses/serial messages.
+  mt::StepperDriver::MotionDirection motion_direction_ = configuration_.kDefaultMotionDirection; ///< Variable to keep track of the motion direction (for continuous operation).
+  //mt::StepperDriver::MotionDirection previous_motion_direction_ = configuration_.kDefaultMotionDirection; // Variable to keep track of the previously set motion direction.
+  mt::StepperDriver::MotionType motion_type_ = mt::StepperDriver::MotionType::kRelative; ///< Variable to keep track of the motion type (for oscillation).
+  float sweep_direction_ = static_cast<float>(motion_direction_); ///< Variable to keep track of the sweep direction.
+  uint8_t sweep_angle_index_ = configuration_.kDefaultSweepAngleIndex; ///< Index to keep track of the sweep angle set from the lookup table.
+  uint8_t speed_index_ = configuration_.kDefaultSpeedIndex; ///< Index to keep track of the motor speed set from the lookup table.
+  mt::StepperDriver::MotionStatus motion_status_ = mt::StepperDriver::MotionStatus::kIdle; ///< Variable to keep track of the motion status.
 };
 
 } // namespace mtspin

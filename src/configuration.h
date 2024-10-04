@@ -14,7 +14,7 @@
 #include <momentary_button.h>
 #include <stepper_driver.h>
 
-/// @brief Macro to define Serial port
+/// @brief Macro to define Serial port.
 #ifndef MTSPIN_SERIAL
 #define MTSPIN_SERIAL Serial // "Serial" for programming port, "SerialUSB" for native port (Due and Zero only).
 #endif
@@ -45,97 +45,71 @@ class Configuration {
   /// @return The Configuration instance. 
   static Configuration& GetInstance();
 
-  /// @{
-  /// @brief Delete the copy constructor and assignment operator to prevent copying of the single instance.
+  /// @brief Delete the copy constructor to prevent copying of the single instance.
   Configuration(const Configuration&) = delete;
+
+  /// @brief Delete the assignment operator to prevent copying of the single instance.
   Configuration& operator=(const Configuration&) = delete;
-  /// @}
 
   /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
   void BeginHardware() const;
 
-  /// @{
-  /// @brief GPIO pins.
-  /// Input pins for the buttons.
-  const uint8_t kDirectionButtonPin = 2; ///< For the button controlling motor direction.
-  const uint8_t kAngleButtonPin = 3; ///< For the button controlling motor angle.
-  const uint8_t kSpeedButtonPin = 4; ///< For the button controlling motor speed.
-  /// Output pins for the stepper motor driver.
-  const uint8_t kPulPin = 11; ///< For the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint8_t kDirPin = 12; ///< For the stepper driver DIR/CW (direction) interface.
-  const uint8_t kEnaPin = 13; ///< For the stepper driver ENA/EN (enable) interface.
-  /// @}
+  // GPIO pins.
+  const uint8_t kDirectionButtonPin = 2; ///< Input pin for the button controlling motor direction.
+  const uint8_t kAngleButtonPin = 3; ///< Input pin for the button controlling motor angle.
+  const uint8_t kSpeedButtonPin = 4; ///< Input pin for the button controlling motor speed.
+  const uint8_t kPulPin = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint8_t kDirPin = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
+  const uint8_t kEnaPin = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
 
-  /// @{
-  /// @brief Control system properties.
+  // Control system properties.
   const ControlMode kDefaultControlMode = ControlMode::kContinuous; ///< The default/initial control mode. 
-  /// @}
 
-  /// @brief Serial properties.
+  // Serial properties.
   const int kBaudRate = 9600; ///< The serial communication speed.
 
-  /// @{
-  /// @brief Button properties.
-  /// Button unpressed pin states.
-  const mt::MomentaryButton::PinState kUnpressedPinState = mt::MomentaryButton::PinState::kLow;
-  /// Button debounce periods (ms).
-  const uint16_t kDebouncePeriod_ms = 20;
-  /// Button short press periods (ms).
-  const uint16_t kShortPressPeriod_ms = 500;
-  /// Button long press periods (ms).
-  const uint16_t kLongPressPeriod_ms = 1000;
-  /// Button long press options.
-  const mt::MomentaryButton::LongPressOption kLongPressOption = mt::MomentaryButton::LongPressOption::kDetectWhileHolding;
-  /// @}
+  // Button properties.
+  const mt::MomentaryButton::PinState kUnpressedPinState = mt::MomentaryButton::PinState::kLow; ///< Button unpressed pin states.
+  const uint16_t kDebouncePeriod_ms = 20; ///< Button debounce periods (ms).
+  const uint16_t kShortPressPeriod_ms = 500; ///< Button short press periods (ms).
+  const uint16_t kLongPressPeriod_ms = 1000; ///< Button long press periods (ms).
+  const mt::MomentaryButton::LongPressOption kLongPressOption = mt::MomentaryButton::LongPressOption::kDetectWhileHolding; ///< Button long press options.
 
-  /// @{
-  /// @brief Stepper motor/drive system properties.
-  const float kFullStepAngle_degrees = 1.8F; ///< The full step angle in degrees.
-  const float kGearRatio = 1.0F; ///< The gear ratio.
-  /// @}
+  // Stepper motor/drive system properties.
+  const float kFullStepAngle_degrees = 1.8F; ///< The stepper motor full step angle (degrees).
+  const float kGearRatio = 1.0F; ///< The system/stepper motor gear ratio.
 
-  /// @{
-  /// @brief Stepper driver properties.
-  const uint16_t kMicrostepMode = 32; ///< Microstep mode.
-  /// Minimum time (us) to delay after changing the state of a pin.
-  const float kPulDelay_us = 1.0; ///< For the PUL pin. 2.5 for TB6600 is not required since the library functions are slow enough.
-  const float kDirDelay_us = 5.0F; ///< For the Dir pin.
-  const float kEnaDelay_us = 5.0F; ///< For the Ena pin.
-  /// Motion direction during continuous operation.
-  const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; // Clockwise (CW).
-  /// Sweep angle during oscillation.
-  static const uint8_t kSizeOfSweepAngles = 4; // No. of sweep angles in the lookup table.
-  const float kSweepAngles_degrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; // Lookup table for sweep angles (degrees).
-  const uint8_t kDefaultSweepAngleIndex = 0; // Index of initial/default sweep angle, i.e., 45 degrees.
-  /// Speed and acceleration.
-  static const uint8_t kSizeOfSpeeds = 4; // No. of speeds in the lookup table.
-  const float kSpeeds_RPM[kSizeOfSpeeds] = {5.0F, 10.0F, 15.0F, 20.0F}; // Lookup table for rotation speeds (RPM).
-  const uint8_t kDefaultSpeedIndex = 0; // Index of initial/default sweep angle, i.e., 5 RPM.
+  // Stepper driver properties.
+  const uint16_t kMicrostepMode = 32; ///< Stepper driver microstep mode.
+  const float kPulDelay_us = 1.0; ///< Minimum delay (us) for the stepper driver PUL pin. 2.5 for TB6600 is not required since the library functions are slow enough.
+  const float kDirDelay_us = 5.0F; ///< Minimum delay (us) for the stepper driver Dir pin.
+  const float kEnaDelay_us = 5.0F; ///< Minimum delay (us) for the stepper driver Ena pin.
+  const mt::StepperDriver::MotionDirection kDefaultMotionDirection = mt::StepperDriver::MotionDirection::kPositive; ///< Initial/default motion direction (Clockwise (CW)).
+  static const uint8_t kSizeOfSweepAngles = 4; ///< No. of sweep angles in the lookup table.
+  const float kSweepAngles_degrees[kSizeOfSweepAngles] = {45.0F, 90.0F, 180.0F, 360.0F}; ///< Lookup table for sweep angles (degrees) during oscillation.
+  const uint8_t kDefaultSweepAngleIndex = 0; ///< Index of initial/default sweep angle, i.e., 45 degrees.
+  static const uint8_t kSizeOfSpeeds = 4; ///< No. of speeds in the lookup table.
+  const float kSpeeds_RPM[kSizeOfSpeeds] = {5.0F, 10.0F, 15.0F, 20.0F}; ///< Lookup table for rotation speeds (RPM).
+  const uint8_t kDefaultSpeedIndex = 0; ///< Index of initial/default speed, i.e., 5 RPM.
   const float kAcceleration_microsteps_per_s_per_s = 6000; //8000.0; ///< Acceleration (microsteps per second-squared).
-  const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24;
-  /// @}
+  const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24; ///< Acceleration algorithm.
 
-  /// @{
-  /// @brief Other properties.
+  // Other properties.
   const uint16_t kStartupTime_ms = 1000; ///< Minimum startup/boot time in milliseconds (ms); based on the stepper driver.
-  /// @}
 
-  /// @{
-  /// @brief Debug helpers.
+  // Debug helpers and logger properties (for debugging and system reporting).
   const bool debug_enabled_ = false; ///< Flag to control whether debug outputs are printed.
   //const bool debug_enabled_ = true;  
-  /// Logger properties (for debugging and system reporting).
   const int kDefaultLogLevel =  LOG_LEVEL_SILENT; ///< The default log level.
   //const int kDefaultLogLevel =  LOG_LEVEL_VERBOSE;
-  /// @}
 
  private:
 
-  /// @{  
-  /// @brief Private constructor and destructor so objects cannot be manually instantiated. 
+  /// @brief Private constructor so objects cannot be manually instantiated. 
   Configuration();
+
+  /// @brief Private destructor so objects cannot be manually instantiated. 
   ~Configuration();
-  /// @}
 };
 
 } // namespace mtspin

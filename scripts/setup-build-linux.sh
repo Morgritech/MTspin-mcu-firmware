@@ -27,23 +27,21 @@ if [ "$1" == "$CMD_CLI" ] ; then
   echo ...Installing Arduino CLI...
   echo
 
-  pushd $PWD
+  pushd $PWD # Save current working directory.
   cd ~ # Ensure we are in the "home/<username>" directory.
   sudo apt-get --no-install-recommends install -y curl
   curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-  popd
+  echo
+  popd > /dev/null # Restore the working directory + suppress the output of popd.
 
   if [ "$2" == "$ARG_PATH" ] ; then
-    # If not already added, add arduino CLI directory to linux user environment path (this and child scripts) so it can be executed directly.
-    if [ -z "PATH_UPDATED" ] ; then
-      echo ...Adding arduino-cli to the Linux user environment path...
-      echo
-      PATH_UPDATED=true
-      PATH=$PATH:$ARDUINO_CLI_DIR
-      $ARDUINO_CLI_DIR/arduino-cli version
-      echo
-    fi
+    echo ...Adding arduino-cli to the Linux user environment path...
+    echo
+    PATH=$PATH:$ARDUINO_CLI_DIR
   fi
+
+  #$ARDUINO_CLI_DIR/arduino-cli version
+  #echo
 fi
 
 if [ "$1" == "$CMD_DEPS" ] ; then
@@ -119,7 +117,7 @@ if [ "$1" == "$CMD_HELP" ] || ([ "$1" != "$CMD_CLI" ] && [ "$1" != "$CMD_DEPS" ]
   Usage:
   $SCRIPT_NAME <command>
   $SCRIPT_NAME $CMD_CLI [optional flag]
-  $SCRIPT_NAME $CMD_BUILD [optional arduino-cli compile flags...]
+  $SCRIPT_NAME $CMD_BUILD [optional arduino-cli compile flags]
   EXAMPLES
   $SCRIPT_NAME $CMD_CLI $ARG_PATH
   $SCRIPT_NAME $CMD_BUILD --port /dev/ttyACM0 --upload

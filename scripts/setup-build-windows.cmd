@@ -24,6 +24,7 @@ set CMD_HELP=-help
 rem Specify the directory where arduino-cli is/will be installed.
 rem C:\Program Files\Arduino CLI
 set ARDUINO_CLI_DIR="%ProgramFiles%\Arduino CLI"
+set ARDUINO_CLI_DIR_FOR_PATH=%ProgramFiles%\Arduino CLI
 
 if "%~1" == "%CMD_CLI%" GOTO cli
 if "%~1" == "%CMD_DEPS%" GOTO deps
@@ -37,17 +38,15 @@ echo ...Installing Arduino CLI...
 echo:
 
 winget install --accept-package-agreements -e ArduinoSA.CLI
+echo:
 
 if "%~2" == "%ARG_PATH%" (
   rem If not already added, add arduino CLI directory to windows environment path (current session) so it can be executed directly.
-  if defined PATH_UPDATED (
-    GOTO end rem "set PATH" fails due to unknown reasons when used inside of an "if-else" block.
-  )
   echo ...Adding Arduino CLI to the Windows environment path...
   echo:
-  set PATH_UPDATED=true
-  set PATH=%PATH%;%ARDUINO_CLI_DIR%
+  set "PATH=%PATH%;%ARDUINO_CLI_DIR_FOR_PATH%;"
 )
+
 %ARDUINO_CLI_DIR%\arduino-cli version
 echo:
 
@@ -135,7 +134,7 @@ echo %CMD_HELP%   Show available commands.
 echo Usage:
 echo %SCRIPT_NAME% ^<command^>
 echo %SCRIPT_NAME% %CMD_CLI% [optional flag]
-echo %SCRIPT_NAME% %CMD_BUILD% [optional arduino-cli compile flags...]
+echo %SCRIPT_NAME% %CMD_BUILD% [optional arduino-cli compile flags]
 echo Examples:
 echo %SCRIPT_NAME% %CMD_CLI% %ARG_PATH%
 echo %SCRIPT_NAME% %CMD_BUILD% --port COM3 --upload

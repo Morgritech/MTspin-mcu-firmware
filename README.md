@@ -34,18 +34,16 @@ The following libraries (available via the [Arduino library manager](https://www
 
 ## Setup and build
 
-As with any other Arduino project, you can simply download the project and open the sketch folder ([src](src)) in the Arduino IDE.
+As with any other Arduino project, you can simply download the project and open the sketch folder ([src](src)) in the Arduino IDE. You can manually install the required libraries via the built-in library manager in the IDE, and build/compile/upload the project via the relevant options in the IDE.
 
-You can manually install the required libraries via the built-in library manager in the Arduino IDE,
-OR,
-you can run the setup scripts to automatically install the required libraries as described in the following sections.
+OR
 
-Building/compiling and uploading the project can be done via the relevant options in the IDE.
+You work without an IDE by making use of the provided setup/build scripts and/or Arduino CLI. You can run the setup/build scripts to automatically install the required libraries, and build/compile/upload the project as described in the following sections.
 
 > [!NOTE]
-> Running the setup scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device.
+> Running the setup/build scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device.
 
-### Setup and build on Windows
+### Setup and build scripts for Windows
 
 **Setup a Windows device ready to build the project.**
 
@@ -56,6 +54,7 @@ scripts\setup-build-windows.cmd -cli
 ```
 
 Install arduino-cli and add it to the Windows environment path:
+> [!NOTE] This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
 
 ``` shell
 scripts\setup-build-windows.cmd -cli --path
@@ -83,9 +82,17 @@ scripts\setup-build-windows.cmd -build --port COM3 --upload
 
 Replace COM3 in the command with the desired serial port.
 
-### Setup and build on Linux
+### Setup and build scripts for Linux
 
 **Setup a Linux device ready to build the project.**
+
+In order for Arduino tools to access the ports (e.g., for upload the programme to a board), your username/log-in name must be added to the dialout group:
+
+``` shell
+sudo usermod -a G dialout username
+```
+
+Replace "username" with your actual username/log-in name. You will need to log-out and back in again for changes to take effect.
 
 Install arduino-cli:
 
@@ -93,7 +100,12 @@ Install arduino-cli:
 scripts/setup-build-linux.sh -cli
 ```
 
-The script does not provide an option to add arduino-cli to the Linux environment path.
+Install arduino-cli and add it to the Windows environment path:
+> [!NOTE] This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
+
+``` shell
+source scripts/setup-build-linux.sh -cli --path
+```
 
 Install arduino cores and libraries:
 

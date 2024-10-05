@@ -18,38 +18,38 @@
 namespace mtspin {
 
 ControlSystem::ControlSystem()
-    : direction_button_(configuration_.kDirectionButtonPin,
-                        configuration_.kUnpressedPinState,
-                        configuration_.kDebouncePeriod_ms,
-                        configuration_.kShortPressPeriod_ms,
-                        configuration_.kLongPressPeriod_ms),
-      angle_button_(configuration_.kAngleButtonPin,
-                    configuration_.kUnpressedPinState,
-                    configuration_.kDebouncePeriod_ms,
-                    configuration_.kShortPressPeriod_ms,
-                    configuration_.kLongPressPeriod_ms),
-      speed_button_(configuration_.kSpeedButtonPin,
-                    configuration_.kUnpressedPinState,
-                    configuration_.kDebouncePeriod_ms,
-                    configuration_.kShortPressPeriod_ms,
-                    configuration_.kLongPressPeriod_ms),
-      stepper_driver_(configuration_.kPulPin,
-                      configuration_.kDirPin,
-                      configuration_.kEnaPin,
-                      configuration_.kMicrostepMode,
-                      configuration_.kFullStepAngle_degrees,
-                      configuration_.kGearRatio) {
-  direction_button_.set_long_press_option(configuration_.kLongPressOption);
-  angle_button_.set_long_press_option(configuration_.kLongPressOption);
-  speed_button_.set_long_press_option(configuration_.kLongPressOption);
-  stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us);
-  stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us);
-  stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us);
-  stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM[speed_index_],
+    : direction_button_(configuration_.kDirectionButtonPin_,
+                        configuration_.kUnpressedPinState_,
+                        configuration_.kDebouncePeriod_ms_,
+                        configuration_.kShortPressPeriod_ms_,
+                        configuration_.kLongPressPeriod_ms_),
+      angle_button_(configuration_.kAngleButtonPin_,
+                    configuration_.kUnpressedPinState_,
+                    configuration_.kDebouncePeriod_ms_,
+                    configuration_.kShortPressPeriod_ms_,
+                    configuration_.kLongPressPeriod_ms_),
+      speed_button_(configuration_.kSpeedButtonPin_,
+                    configuration_.kUnpressedPinState_,
+                    configuration_.kDebouncePeriod_ms_,
+                    configuration_.kShortPressPeriod_ms_,
+                    configuration_.kLongPressPeriod_ms_),
+      stepper_driver_(configuration_.kPulPin_,
+                      configuration_.kDirPin_,
+                      configuration_.kEnaPin_,
+                      configuration_.kMicrostepMode_,
+                      configuration_.kFullStepAngle_degrees_,
+                      configuration_.kGearRatio_) {
+  direction_button_.set_long_press_option(configuration_.kLongPressOption_);
+  angle_button_.set_long_press_option(configuration_.kLongPressOption_);
+  speed_button_.set_long_press_option(configuration_.kLongPressOption_);
+  stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us_);
+  stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us_);
+  stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us_);
+  stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
                              mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
-  stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s,
+  stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s_,
                                   mt::StepperDriver::AccelerationUnits::kMicrostepsPerSecondPerSecond);
-  stepper_driver_.set_acceleration_algorithm(configuration_.kAccelerationAlgorithm);
+  stepper_driver_.set_acceleration_algorithm(configuration_.kAccelerationAlgorithm_);
   // Save power when idle.
   stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
 }
@@ -148,14 +148,14 @@ void ControlSystem::CheckAndProcess() {
         // Change sweep angles, or change to oscillation mode.
         if (control_mode_ == Configuration::ControlMode::kOscillate) {
           // Change sweep angle.
-          if (sweep_angle_index_ == (configuration_.kSizeOfSweepAngles - 1)) {
+          if (sweep_angle_index_ == (configuration_.kSizeOfSweepAngles_ - 1)) {
             sweep_angle_index_ = 0;
           }
           else {
             sweep_angle_index_++;
           }
 
-          Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees[sweep_angle_index_]);
+          Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees_[sweep_angle_index_]);
         }
         else {
           // Change to oscillation mode.
@@ -175,16 +175,16 @@ void ControlSystem::CheckAndProcess() {
       }
       else {
         // Change speed.
-        if (speed_index_ == (configuration_.kSizeOfSpeeds - 1)) {
+        if (speed_index_ == (configuration_.kSizeOfSpeeds_ - 1)) {
           speed_index_ = 0;
         }
         else {
           speed_index_++;
         }
         
-        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM[speed_index_],
+        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
-        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM[speed_index_]);
+        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_index_]);
         break;
       }
     }
@@ -205,8 +205,8 @@ void ControlSystem::CheckAndProcess() {
         //motion_type_ = mt::StepperDriver::MotionType::kStopAndReset;
         //previous_motion_direction_ = motion_direction_;
         //motion_direction_ = mt::StepperDriver::MotionDirection::kNeutral;
-        speed_index_ = configuration_.kDefaultSpeedIndex;
-        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM[speed_index_],
+        speed_index_ = configuration_.kDefaultSpeedIndex_;
+        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);        
         LogGeneralStatus();
         Log.noticeln(F("Motion status: Stopped."));       
@@ -214,10 +214,19 @@ void ControlSystem::CheckAndProcess() {
       
       break;
     }
+    case Configuration::ControlAction::kToggleLogReport: {
+      // Toggle reporting/output of log messages over serial.
+      configuration_.ToggleLogs();
+      break;
+    }
     case Configuration::ControlAction::kLogGeneralStatus: {
       // Log/report the general status of the control system.
       LogGeneralStatus();
       break;
+    }
+    case Configuration::ControlAction::kReportFirmwareVersion: {
+      // Log/report the firmware version.
+      configuration_.ReportFirmwareVersion();
     }
     case Configuration::ControlAction::kIdle: {
       // No action.
@@ -254,7 +263,7 @@ void ControlSystem::CheckAndProcess() {
     }
     case Configuration::ControlMode::kOscillate: {
       mt::StepperDriver::MotionStatus motion_status = stepper_driver_.MoveByAngle(
-                                                      sweep_direction_ * configuration_.kSweepAngles_degrees[sweep_angle_index_],
+                                                      sweep_direction_ * configuration_.kSweepAngles_degrees_[sweep_angle_index_],
                                                       mt::StepperDriver::AngleUnits::kDegrees, motion_type_);
       if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {
         // Motion completed OR stop and reset issued.
@@ -296,8 +305,8 @@ void ControlSystem::LogGeneralStatus() const {
     Log.noticeln(F("Motion direction: counter-clockwise (CCW)"));
   }
   
-  Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees[sweep_angle_index_]);
-  Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM[speed_index_]);
+  Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees_[sweep_angle_index_]);
+  Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_index_]);
 }
 
 } // namespace mtspin

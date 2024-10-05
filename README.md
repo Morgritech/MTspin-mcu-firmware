@@ -152,3 +152,17 @@ For Linux:
 ``` shell
 ~/bin/arduino-cli <commands>
 ```
+
+## System control and logging/status reporting
+
+The project provides a means of controlling the system, and interrogating the status of the system via serial messages once the programme is uploaded to the Arduino board. The following messages are implemented:
+
+|Message|Action|
+|:----:|----|
+|d|Toggle motion **direction** clockwise (CW)/Counter-clockwise (CCW).|
+|a|Cycle through motion **angles**.|
+|s|Cycle through motion **speeds**.|
+|m|Toggle **motion** ON/OFF.|
+|r|Toggle log **reporting** ON/OFF.|
+|l|**Log**/report the general system status.|
+|v|Report firmware **version**.|

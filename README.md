@@ -16,6 +16,10 @@ Arduino UNO is the primary target for this project.
 
 The primary language for this project is the [Arduino programming language](https://www.arduino.cc/reference) (a subset of C/C++).
 
+### Coding standard
+
+This project follows the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
+
 ### Build system and programming environment/toolchain
 
 This project doesn't impose any specific build system, however the preferred method is to make use of the tools provided by the Arduino eco-system such as [Arduino CLI](https://arduino.github.io/arduino-cli) and/or the [Arduino IDE](https://www.arduino.cc/en/software). See the "Setup and build" section for more details.

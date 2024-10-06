@@ -9,6 +9,7 @@
 #ifndef CONTROL_SYSTEM_H_
 #define CONTROL_SYSTEM_H_
 
+#include <Arduino.h>
 #include <momentary_button.h>
 #include <stepper_driver.h>
 

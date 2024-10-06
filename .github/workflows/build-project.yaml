@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Compile examples
+      - name: Compile project
         uses: arduino/compile-sketches@v1
         with:
           libraries: |

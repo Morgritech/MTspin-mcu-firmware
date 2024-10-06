@@ -1,0 +1,49 @@
+@startuml
+title UML Class Diagram - High Level System Overview
+
+package MTspin-mcu-firmware {
+  class ArduinoSketch {
+    +setup()
+    +loop()
+  }
+
+  class Configuration {
+    +{static} Configuration& GetInstance()
+    +void BeginHardware()
+    +void ToggleLogs()
+    +void ReportFirmwareVersion()
+  }
+
+  class ControlSystem {
+    +void Begin()
+    +void CheckAndProcess()
+    -void LogGeneralStatus()
+  }
+}
+
+package ArduinoLog {
+  class Logging {
+  }
+}
+
+package MT-arduino-momentary-button {
+  class MomentaryButton {
+  }
+}
+
+package MT-arduino-stepper-driver {
+  class StepperDriver {
+  }
+}
+
+ArduinoSketch "1" o--"0..*" ControlSystem : Has
+ArduinoSketch <.. Logging
+
+Configuration <.. Logging
+
+ControlSystem "1" o-- "1" Configuration : Has
+ControlSystem "1" o-- "0..*" MomentaryButton : Has
+ControlSystem "1" o-- "0..*" StepperDriver : Has
+ControlSystem <.. Logging
+
+@enduml

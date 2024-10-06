@@ -2,7 +2,7 @@
 
 ## MTspin-mcu-firmware
 
-[![Build, test and release](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-test-release.yaml/badge.svg)](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-test-release.yaml)
+[![Static check](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/static-check.yaml/badge.svg)](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/static-check.yaml) [![Build project](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-project.yaml/badge.svg)](https://github.com/Morgritech/MTspin-mcu-firmware/actions/workflows/build-project.yaml)
 
 Microcontroller firmware for MTspin; a motorised rotating display stand.
 
@@ -16,43 +16,163 @@ Arduino UNO is the primary target for this project.
 
 The primary language for this project is the [Arduino programming language](https://www.arduino.cc/reference) (a subset of C/C++).
 
-Unit tests are developed using the [GoogleTest](http://google.github.io/googletest/) framework.
+### Coding standard
 
-### Build system and continuous integration/delivery (CI/CD)
+This project follows the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
 
-This project uses [CMake](https://cmake.org) to build and run the project. Under the hood, [Arduino CLI](https://arduino.github.io/arduino-cli) is used to compile and upload the embedded code. Setup scripts for Windows and Linux have been created to automate the process of installing system dependencies, except for a C++ programming toolchain on Windows (required for building the unit tests), which must be manually installed. CMake and Arduino CLI are used to automate the process of obtaining other project dependencies.
+### Build system and programming environment/toolchain
+
+This project doesn't impose any specific build system, however the preferred method is to make use of the tools provided by the Arduino eco-system such as [Arduino CLI](https://arduino.github.io/arduino-cli) and/or the [Arduino IDE](https://www.arduino.cc/en/software). See the "Setup and build" section for more details.
+
+### Continuous integration/delivery (CI/CD)
 
 [GitHub Actions](https://docs.github.com/en/actions) is used as the CI/CD platform, and the workflow also makes use of the Linux setup script.
 
-### Programming environment/toolchain
+### External libraries
 
-Arduino CLI contains all the tools required to build the embedded code. For the unit tests, [MinGW](https://en.wikipedia.org/wiki/MinGW) for Windows and the [GNU toolchain](https://en.wikipedia.org/wiki/GNU_toolchain) for Linux are the defaults set by the CMakePresets.json file. However, these can be overridden by creating a CMakeUserPresets.json file in the root folder with settings for your preferred environment.
+The following libraries (available via the [Arduino library manager](https://www.arduino.cc/reference/en/libraries)) are used within the project:
+
+- [MT-arduino-momentary-button](https://github.com/Morgritech/MT-arduino-momentary-button)
+- [MT-arduino-stepper-driver](https://github.com/Morgritech/MT-arduino-stepper-driver)
+- [Arduino-Log](https://github.com/thijse/Arduino-Log)
+
+### UML class diagram
+
+The image below shows a high level overview of the system:
+
+![UML class diagram](docs\uml-class-diagram-overview.png)
 
 ## Setup and build
 
+As with any other Arduino project, you can simply download the project and open the sketch folder ([src](src)) in the Arduino IDE. You can manually install the required libraries via the built-in library manager in the IDE, and build/compile/upload the project via the relevant options in the IDE.
+
+OR
+
+You work without an IDE by making use of the provided setup/build scripts and/or Arduino CLI. You can run the setup/build scripts to automatically install the required libraries, and build/compile/upload the project as described in the following sections.
+
 > [!NOTE]
-> Running the setup scripts will install Arduino CLI, CMake and other dependencies on your device.
+> Running the setup/build scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device.
 
-### Setup on Windows
+### Setup and build scripts for Windows
 
-To setup a Windows device ready to build the project, run:
+**Setup a Windows device ready to build the project.**
 
-``` shell
-scripts\setup-windows.cmd
-```
-
-### Setup on Linux
-
-To setup a Linux device ready to build the project, run:
+Install arduino-cli:
 
 ``` shell
-scripts/setup-linux.sh
+scripts\setup-build-windows.cmd -cli
 ```
 
-### Build on Windows or Linux
-
-To build the project (Windows or Linux), run:
+Install arduino-cli and add it to the Windows environment path:
+> [!NOTE] This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
 
 ``` shell
-TBC..
+scripts\setup-build-windows.cmd -cli --path
 ```
+
+Install arduino cores and libraries:
+
+``` shell
+scripts\setup-build-windows.cmd -deps
+```
+
+**Build and optionally upload the project.**
+
+Build only:
+
+``` shell
+scripts\setup-build-windows.cmd -build
+```
+
+Build and upload:
+
+``` shell
+scripts\setup-build-windows.cmd -build --port COM3 --upload
+```
+
+Replace COM3 in the command with the desired serial port.
+
+### Setup and build scripts for Linux
+
+**Setup a Linux device ready to build the project.**
+
+In order for Arduino tools to access the ports (e.g., to upload the programme to a board), your username/log-in name must be added to the dialout group:
+
+``` shell
+sudo usermod -a G dialout username
+```
+
+Replace "username" with your actual username/log-in name. You will need to log-out and back in again for changes to take effect.
+
+Install arduino-cli:
+
+``` shell
+scripts/setup-build-linux.sh -cli
+```
+
+Install arduino-cli and add it to the Windows environment path:
+> [!NOTE] This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
+
+``` shell
+source scripts/setup-build-linux.sh -cli --path
+```
+
+Install arduino cores and libraries:
+
+``` shell
+scripts/setup-build-linux.sh -deps
+```
+
+**Build and optionally upload the project.**
+
+Build only:
+
+``` shell
+scripts/setup-build-linux.sh -build
+```
+
+Build and upload:
+
+``` shell
+scripts/setup-build-linux.sh -build --port /dev/ttyACM0 --upload
+```
+
+Replace /dev/ttyACM0 in the command with the desired serial port.
+
+### Running arduino-cli directly (Windows or Linux)
+
+Once arduino-cli is installed as described above, the commands can be used directly in the terminal. This can be useful if more functionality is required, beyond what the setup and build scripts provide. See the official [Arduino CLI](https://arduino.github.io/arduino-cli) website for more information.
+
+If you added arduino-cli to your devices environment path:
+
+``` shell
+arduino-cli <commands>
+```
+
+If you did not add arduino-cli to your devices environment path, the full path must be given with the command.
+
+For windows:
+
+``` shell
+C:\Program Files\arduino-cli <commands>
+```
+
+For Linux:
+
+``` shell
+~/bin/arduino-cli <commands>
+```
+
+## System control and logging/status reporting
+
+The project provides a means of controlling the system, and interrogating the status of the system via serial messages once the programme is uploaded to the Arduino board. The following messages are implemented:
+
+|Message|Action|
+|:----:|----|
+|d|Toggle motion **direction** clockwise (CW)/Counter-clockwise (CCW).|
+|a|Cycle through motion **angles**.|
+|s|Cycle through motion **speeds**.|
+|m|Toggle **motion** ON/OFF.|
+|r|Toggle log **reporting** ON/OFF.|
+|l|**Log**/report the general system status.|
+|v|Report firmware **version**.|

@@ -19,27 +19,42 @@ Configuration& Configuration::GetInstance() {
 
 void Configuration::BeginHardware() const {
   // Initialise the serial port.
-  MTSPIN_SERIAL.begin(kBaudRate);
-
-  // Wait until a serial connection is made.
-  // This is mainly for the arduino due, other boards do this automatically.
-  while (!MTSPIN_SERIAL);
+  MTSPIN_SERIAL.begin(kBaudRate_);
 
   // Initialise logging.
-  Log.begin(kDefaultLogLevel, &MTSPIN_SERIAL);
+  Log.begin(log_level_, &MTSPIN_SERIAL);
 
   // Initialise the input pins.
-  pinMode(kDirectionButtonPin, INPUT);
-  pinMode(kAngleButtonPin, INPUT);
-  pinMode(kSpeedButtonPin, INPUT);
+  pinMode(kDirectionButtonPin_, INPUT);
+  pinMode(kAngleButtonPin_, INPUT);
+  pinMode(kSpeedButtonPin_, INPUT);
 
   // Initialise the output pins.
-  pinMode(kPulPin, OUTPUT);
-  pinMode(kDirPin, OUTPUT);
-  pinMode(kEnaPin, OUTPUT);
+  pinMode(kPulPin_, OUTPUT);
+  pinMode(kDirPin_, OUTPUT);
+  pinMode(kEnaPin_, OUTPUT);
 
   // Delay for the startup time.
-  delay(kStartupTime_ms);
+  delay(kStartupTime_ms_);
+}
+
+void Configuration::ToggleLogs() {
+  // Toggle log messages.
+  if (log_level_ == LOG_LEVEL_SILENT) {
+    log_level_ = LOG_LEVEL_VERBOSE;
+  }
+  else {
+    Log.noticeln(F("Log messages disabled."));
+    log_level_ = LOG_LEVEL_SILENT;
+  }
+
+  Log.begin(log_level_, &MTSPIN_SERIAL);
+  if (log_level_ == LOG_LEVEL_VERBOSE) Log.noticeln(F("Log messages enabled."));
+}
+
+void Configuration::ReportFirmwareVersion() {
+  String version = kName + String(kMajor) + "." + String(kMinor) + "." + String(kPatch) + kSuffix;
+  MTSPIN_SERIAL.println(version);
 }
 
 Configuration::Configuration() {}

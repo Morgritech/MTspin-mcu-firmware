@@ -1,2 +1,3 @@
-MT-arduino-momentary-button
+MT-arduino-momentary-button@3.0.0
+MT-arduino-stepper-driver@2.0.0
 ArduinoLog@1.1.1

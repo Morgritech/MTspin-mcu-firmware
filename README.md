@@ -30,11 +30,17 @@ This project doesn't impose any specific build system, however the preferred met
 
 ### External libraries
 
-The following libraries (available via the [Arduino library manager](https://www.arduino.cc/reference/en/libraries/)) are used within the project:
+The following libraries (available via the [Arduino library manager](https://www.arduino.cc/reference/en/libraries)) are used within the project:
 
 - [MT-arduino-momentary-button](https://github.com/Morgritech/MT-arduino-momentary-button)
 - [MT-arduino-stepper-driver](https://github.com/Morgritech/MT-arduino-stepper-driver)
-- [Arduino-Log](https://github.com/thijse/Arduino-Log/)
+- [Arduino-Log](https://github.com/thijse/Arduino-Log)
+
+### UML class diagram
+
+The image below shows a high level overview of the system:
+
+![UML class diagram](docs\uml-class-diagram-overview.png)
 
 ## Setup and build
 
@@ -90,7 +96,7 @@ Replace COM3 in the command with the desired serial port.
 
 **Setup a Linux device ready to build the project.**
 
-In order for Arduino tools to access the ports (e.g., for upload the programme to a board), your username/log-in name must be added to the dialout group:
+In order for Arduino tools to access the ports (e.g., to upload the programme to a board), your username/log-in name must be added to the dialout group:
 
 ``` shell
 sudo usermod -a G dialout username

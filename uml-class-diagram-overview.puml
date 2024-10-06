@@ -1,4 +1,4 @@
-@startuml uml class diagram - overview
+@startuml
 title UML Class Diagram - High Level System Overview
 
 package MTspin-mcu-firmware {

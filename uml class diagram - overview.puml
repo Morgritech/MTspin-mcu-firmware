@@ -21,6 +21,11 @@ package MTspin-mcu-firmware {
   }
 }
 
+package ArduinoLog {
+  class Logging {
+  }
+}
+
 package MT-arduino-momentary-button {
   class MomentaryButton {
   }
@@ -32,9 +37,13 @@ package MT-arduino-stepper-driver {
 }
 
 ArduinoSketch "1" o--"0..*" ControlSystem : Has
+ArduinoSketch <.. Logging
+
+Configuration <.. Logging
 
 ControlSystem "1" o-- "1" Configuration : Has
 ControlSystem "1" o-- "0..*" MomentaryButton : Has
 ControlSystem "1" o-- "0..*" StepperDriver : Has
+ControlSystem <.. Logging
 
 @enduml

@@ -10,6 +10,7 @@ jobs:
     env:
       # Environment variables
       BUILD_DIR: build
+      SKETCH_NAME: src
 
     steps:
       - name: Checkout repository
@@ -21,13 +22,10 @@ jobs:
           sudo bash -x scripts/setup-build-linux.sh -deps
       - name: Build/compile the project
         run: sudo bash -x scripts/setup-build-linux.sh -build
-      - name: List files in workspace
-        run: |
-          ls ${{ github.workspace }}/${{ env.BUILD_DIR }}
-      #- name: Upload compiled binaries
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: binaries
-      #    path: |
-      #      ${{ github.workspace }}/${{ env.BUILD_DIR }}/*.bin
-      #      retention-days: 7
+      - name: Upload compiled binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: |
+            ${{ github.workspace }}/${{ env.BUILD_DIR }}/**/${{ env.SKETCH_NAME }}*
+            retention-days: 7

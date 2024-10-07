@@ -26,5 +26,5 @@ jobs:
         with:
           name: binaries
           path: |
-            ${{ env.BUILD_DIR }}/*.bin
+            ${{ github.workspace }}/${{ env.BUILD_DIR }}/*.bin
             retention-days: 7

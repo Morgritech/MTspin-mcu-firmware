@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  static-check:
+  build-project:
     name: Build project
     runs-on: ubuntu-latest
 

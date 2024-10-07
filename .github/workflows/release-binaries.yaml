@@ -1,0 +1,14 @@
+name: Release binaries
+on:
+  release:
+    types: [published]
+
+jobs:
+  call-workflow-to-generate-binaries:
+    name: Call workflow to generate binaries
+    uses: ./.github/workflows/generate-binaries.yaml
+
+  release-binaries:
+    name: Release binaries
+    runs-on: ubuntu-latest
+

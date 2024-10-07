@@ -40,7 +40,7 @@ The following libraries (available via the [Arduino library manager](https://www
 
 The image below shows a high level overview of the system:
 
-![UML class diagram](docs\uml-class-diagram-overview.png)
+![UML class diagram](docs/uml-class-diagram-overview.png)
 
 ## Setup and build
 
@@ -165,7 +165,7 @@ For Linux:
 
 ## System control and logging/status reporting
 
-The project provides a means of controlling the system, and interrogating the status of the system via serial messages once the programme is uploaded to the Arduino board. The following messages are implemented:
+The project provides a means of controlling the system and interrogating the status of the system via serial messages once, the programme is uploaded to the Arduino board. The following messages are implemented:
 
 |Message|Action|
 |:----:|----|

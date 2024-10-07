@@ -21,10 +21,13 @@ jobs:
           sudo bash -x scripts/setup-build-linux.sh -deps
       - name: Build/compile the project
         run: sudo bash -x scripts/setup-build-linux.sh -build
-      - name: Upload compiled binaries
-        uses: actions/upload-artifact@v4
-        with:
-          name: binaries
-          path: |
-            ${{ github.workspace }}/${{ env.BUILD_DIR }}/*.bin
-            retention-days: 7
+      - name: List files in workspace
+        run: |
+          ls ${{ github.workspace }}
+      #- name: Upload compiled binaries
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: binaries
+      #    path: |
+      #      ${{ github.workspace }}/${{ env.BUILD_DIR }}/*.bin
+      #      retention-days: 7

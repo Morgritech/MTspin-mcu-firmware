@@ -7,13 +7,11 @@ jobs:
   generate-binaries:
     name: Generate binaries
     runs-on: ubuntu-latest
-
     env:
       # Environment variables
       BUILD_DIR: build
       SKETCH_NAME: src
       ARTIFACT_NAME: binaries
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

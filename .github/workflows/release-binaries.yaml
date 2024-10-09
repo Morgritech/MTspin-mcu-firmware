@@ -21,25 +21,25 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: ${{ env.ARTIFACT_NAME }}
-    - name: Verify artifact download (Debugging)
-      run: ls -R
+#    - name: Verify artifact download (Debugging)
+#      run: ls -R
     - name: Archive binaries
       uses: thedoctor0/zip-release@master
       with:
         filename: ${{ env.ARTIFACT_NAME }}.zip
-    - name: Verify artifact archive (Debugging)
-      run: ls -R        
+#    - name: Verify artifact archive (Debugging)
+#      run: ls -R        
     - name: Get release URL
       id: get-release
       uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#    - name: Upload binaries as release assets
-#      uses: actions/upload-release-asset@v1.0.2
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.get-release.outputs.upload_url }}
-#        asset_path: ./${{ env.ARTIFACT_NAME }}.zip
-#        asset_name: ./${{ env.ARTIFACT_NAME }}.zip
-#        asset_content_type: application/zip
+    - name: Upload binaries as release assets
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.get-release.outputs.upload_url }}
+        asset_path: ./${{ env.ARTIFACT_NAME }}.zip
+        asset_name: ${{ env.ARTIFACT_NAME }}.zip
+        asset_content_type: application/zip

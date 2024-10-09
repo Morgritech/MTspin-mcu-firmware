@@ -40,7 +40,7 @@ The following libraries (available via the [Arduino library manager](https://www
 
 The image below shows a high level overview of the system:
 
-![UML class diagram](docs\uml-class-diagram-overview.png)
+![UML class diagram](docs/uml-class-diagram-overview.png)
 
 ## Setup and build
 
@@ -54,6 +54,8 @@ You work without an IDE by making use of the provided setup/build scripts and/or
 > Running the setup/build scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device.
 
 ### Setup and build scripts for Windows
+
+Open a Command Prompt (CMD) terminal, navigate to the project directory, and run the commands in the following sections.
 
 **Setup a Windows device ready to build the project.**
 
@@ -93,6 +95,8 @@ scripts\setup-build-windows.cmd -build --port COM3 --upload
 Replace COM3 in the command with the desired serial port.
 
 ### Setup and build scripts for Linux
+
+Open a terminal, navigate to the project directory, and run the commands in the following sections.
 
 **Setup a Linux device ready to build the project.**
 
@@ -154,7 +158,7 @@ If you did not add arduino-cli to your devices environment path, the full path m
 For windows:
 
 ``` shell
-C:\Program Files\arduino-cli <commands>
+"%ProgramFiles%\Arduino CLI\arduino-cli" <commands>
 ```
 
 For Linux:
@@ -165,7 +169,7 @@ For Linux:
 
 ## System control and logging/status reporting
 
-The project provides a means of controlling the system, and interrogating the status of the system via serial messages once the programme is uploaded to the Arduino board. The following messages are implemented:
+The project provides a means of controlling the system and interrogating the status of the system via serial messages once, the programme is uploaded to the Arduino board. The following messages are implemented:
 
 |Message|Action|
 |:----:|----|

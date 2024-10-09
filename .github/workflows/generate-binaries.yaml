@@ -1,16 +1,17 @@
 name: Generate binaries
 on: 
   workflow_dispatch:
+  workflow_call:
 
 jobs:
-  build:
+  generate-binaries:
     name: Generate binaries
     runs-on: ubuntu-latest
-
     env:
       # Environment variables
       BUILD_DIR: build
-
+      SKETCH_NAME: src
+      ARTIFACT_NAME: binaries
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,7 +25,7 @@ jobs:
       - name: Upload compiled binaries
         uses: actions/upload-artifact@v4
         with:
-          name: binaries
+          name: ${{ env.ARTIFACT_NAME }}
           path: |
-            ${{ env.BUILD_DIR }}/*.bin
+            ${{ github.workspace }}/${{ env.BUILD_DIR }}/*/${{ env.SKETCH_NAME }}*
             retention-days: 7

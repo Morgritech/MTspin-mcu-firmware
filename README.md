@@ -55,6 +55,8 @@ You work without an IDE by making use of the provided setup/build scripts and/or
 
 ### Setup and build scripts for Windows
 
+Open a Command Prompt (CMD) terminal, navigate to the project directory, and run the commands in the following sections.
+
 **Setup a Windows device ready to build the project.**
 
 Install arduino-cli:
@@ -93,6 +95,8 @@ scripts\setup-build-windows.cmd -build --port COM3 --upload
 Replace COM3 in the command with the desired serial port.
 
 ### Setup and build scripts for Linux
+
+Open a terminal, navigate to the project directory, and run the commands in the following sections.
 
 **Setup a Linux device ready to build the project.**
 
@@ -154,7 +158,7 @@ If you did not add arduino-cli to your devices environment path, the full path m
 For windows:
 
 ``` shell
-C:\Program Files\arduino-cli <commands>
+"%ProgramFiles%\Arduino CLI\arduino-cli" <commands>
 ```
 
 For Linux:

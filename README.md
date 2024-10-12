@@ -6,6 +6,8 @@
 
 Microcontroller firmware for MTspin; a motorised rotating display stand.
 
+![MTspin demo](images/mtspin%20demo%20426%20x%20240%20gif.gif)
+
 ## Introduction
 
 ### Microcontroller
@@ -48,10 +50,10 @@ As with any other Arduino project, you can simply download the project and open 
 
 OR
 
-You work without an IDE by making use of the provided setup/build scripts and/or Arduino CLI. You can run the setup/build scripts to automatically install the required libraries, and build/compile/upload the project as described in the following sections.
+You can work without an IDE by making use of the provided setup/build scripts and/or Arduino CLI. You can run the setup/build scripts to automatically install the required libraries, and build/compile/upload the project as described in the following sections. This method will build the project for all boards defined in [arduino-boards.txt](arduino-boards.txt).
 
 > [!NOTE]
-> Running the setup/build scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device.
+> Running the setup/build scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device. Cores are extracted from the required boards defined in [arduino-boards.txt](arduino-boards.txt) and required libraries are defined in [arduino-libs.txt](arduino-libs.txt).
 
 ### Setup and build scripts for Windows
 
@@ -169,7 +171,7 @@ For Linux:
 
 ## System control and logging/status reporting
 
-The project provides a means of controlling the system and interrogating the status of the system via serial messages once, the programme is uploaded to the Arduino board. The following messages are implemented:
+The project provides a means of controlling the system and interrogating the status of the system via serial messages, once the programme is uploaded to the Arduino board. The following messages are implemented:
 
 |Message|Action|
 |:----:|----|

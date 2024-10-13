@@ -14,7 +14,7 @@ jobs:
     env:
       # Environment variables
       ARTIFACT_NAME: binaries
-      ASSET_PREFIX: ${{ github.repository }}-${{ github.event.release.tag_name }}
+      ASSET_PREFIX: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}
     needs: generate-binaries
     steps:
     - name: Download binaries

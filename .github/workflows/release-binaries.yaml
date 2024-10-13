@@ -2,7 +2,6 @@ name: Release binaries
 on:
   release:
     types: [published]
-  workflow_dispatch:
 
 jobs:
   generate-binaries:
@@ -28,20 +27,14 @@ jobs:
       uses: thedoctor0/zip-release@master
       with:
         filename: ${{ env.ARTIFACT_NAME }}.zip
+#    - name: Verify artifact archive (Debugging)
+#      run: ls -R
     - name: Upload binaries as release assets
-      uses: softprops/action-gh-release@v1
+      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        files: ./${{ env.ARTIFACT_NAME }}.zip
-        #    - name: Verify artifact archive (Debugging)
-#      run: ls -R
-#    - name: Upload binaries as release assets
-#      uses: actions/upload-release-asset@v1.0.2
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ github.event.release.upload_url }}
-#        asset_path: ./${{ env.ARTIFACT_NAME }}.zip
-#        asset_name: ${{ env.ARTIFACT_NAME }}.zip
-#        asset_content_type: application/zip
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./${{ env.ARTIFACT_NAME }}.zip
+        asset_name: ${{ github.repository }}-${{ github.event.release.tag_name }}-${{ env.ARTIFACT_NAME }}.zip
+        asset_content_type: application/zip

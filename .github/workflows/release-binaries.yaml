@@ -32,7 +32,7 @@ jobs:
 #      run: ls -R
     - name: Get release URL
       id: get-release
-      uses: jossef/action-latest-release-info@v1.2.2
+      uses: pozetroninc/github-action-get-latest-release@master
       #      uses: bruceadams/get-release@v1.3.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

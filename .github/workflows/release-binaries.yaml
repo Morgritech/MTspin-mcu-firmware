@@ -9,7 +9,7 @@ jobs:
     uses: ./.github/workflows/generate-binaries.yaml
 
   release-binaries:
-    permissions: write-all
+#    permissions: write-all
     name: Release binaries
     runs-on: ubuntu-latest
     env:

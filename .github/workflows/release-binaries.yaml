@@ -29,19 +29,21 @@ jobs:
       with:
         filename: ${{ env.ARTIFACT_NAME }}.zip
 #    - name: Verify artifact archive (Debugging)
-#      run: ls -R        
-#    - name: Get release URL
-#      id: get-release
-#      uses: bruceadams/get-release@v1.3.2
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      run: ls -R
+    - name: Get release URL
+      id: get-release
+      uses: jossef/action-latest-release-info@v1.2.2
+      #      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload binaries as release assets
       uses: actions/upload-release-asset@v1
 #      uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ github.event.release.upload_url }}
+        upload_url: ${{ steps.get-release.outputs.upload_url }}
+#        upload_url: ${{ github.event.release.upload_url }}
 #        upload_url: ${{ steps.get-release.outputs.upload_url }}
         asset_path: ./${{ env.ARTIFACT_NAME }}.zip
         asset_name: ${{ env.ARTIFACT_NAME }}.zip

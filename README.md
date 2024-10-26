@@ -42,7 +42,7 @@ The following libraries (available via the [Arduino library manager](https://www
 
 The image below shows a high level overview of the system:
 
-![UML class diagram](docs/uml-class-diagram-overview.png)
+![UML class diagram](images/uml-class-diagram-overview.png)
 
 ## Setup and build
 

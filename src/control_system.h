@@ -31,7 +31,7 @@ class ControlSystem {
   void Begin() const;
 
   /// @brief Check inputs and trigger outputs/actions.
-  void CheckAndProcess(); ///< This must be called periodically.
+  void CheckAndProcess(); ///< This must be called repeatedly.
 
  private:
 

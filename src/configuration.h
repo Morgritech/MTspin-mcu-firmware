@@ -107,10 +107,6 @@ class Configuration {
   // Other properties.
   const uint16_t kStartupTime_ms_ = 1000; ///< Minimum startup/boot time in milliseconds (ms); based on the stepper driver.
 
-  // Debug helpers and logger properties (for debugging and system reporting).
-  int log_level_ =  LOG_LEVEL_SILENT; ///< The log level.
-  //int log_level_ = LOG_LEVEL_VERBOSE; ///< The log level.
-
  private:
 
   /// @brief Private constructor so objects cannot be manually instantiated. 
@@ -118,6 +114,10 @@ class Configuration {
 
   /// @brief Private destructor so objects cannot be manually instantiated. 
   ~Configuration();
+
+  // Debug helpers and logger properties (for debugging and system reporting).
+  int log_level_ =  LOG_LEVEL_SILENT; ///< The log level.
+  //int log_level_ = LOG_LEVEL_VERBOSE; ///< The log level.
 };
 
 } // namespace mtspin

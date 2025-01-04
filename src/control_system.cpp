@@ -101,10 +101,6 @@ void ControlSystem::CheckAndProcess() {
           Log.noticeln(F("Control mode: continuous"));
         }
 
-        // Cycle power to motor to help prevent stalling when reversing direction. 
-        //stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
-        //delay(5000);
-        //stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kEnabled);
         motion_type_ = mt::StepperDriver::MotionType::kStopAndReset;
         break;
       }

@@ -28,7 +28,7 @@ class ControlSystem {
   ~ControlSystem();
 
   /// @brief Initialise the hardware (Serial port, logging, pins, etc.).
-  void Begin() const;
+  void Begin();
 
   /// @brief Check inputs and trigger outputs/actions.
   void CheckAndProcess(); ///< This must be called repeatedly.
@@ -42,15 +42,31 @@ class ControlSystem {
   Configuration& configuration_ = Configuration::GetInstance();
 
   // Buttons to control the motor.
-  mt::MomentaryButton direction_button_; ///< Button to control motor direction.
-  mt::MomentaryButton angle_button_; ///< Button to control motor rotation angles.
-  mt::MomentaryButton speed_button_; ///< Button to control motor speed.
+  mt::MomentaryButton direction_button_{configuration_.kDirectionButtonPin_,
+                        configuration_.kUnpressedPinState_,
+                        configuration_.kDebouncePeriod_ms_,
+                        configuration_.kShortPressPeriod_ms_,
+                        configuration_.kLongPressPeriod_ms_}; ///< Button to control motor direction.
+  mt::MomentaryButton angle_button_{configuration_.kAngleButtonPin_,
+                    configuration_.kUnpressedPinState_,
+                    configuration_.kDebouncePeriod_ms_,
+                    configuration_.kShortPressPeriod_ms_,
+                    configuration_.kLongPressPeriod_ms_}; ///< Button to control motor rotation angles.
+  mt::MomentaryButton speed_button_{configuration_.kSpeedButtonPin_,
+                    configuration_.kUnpressedPinState_,
+                    configuration_.kDebouncePeriod_ms_,
+                    configuration_.kShortPressPeriod_ms_,
+                    configuration_.kLongPressPeriod_ms_}; ///< Button to control motor speed.
 
   // Stepper motor driver.
-  mt::StepperDriver stepper_driver_; ///< Stepper motor driver to control the stepper motor.
+  mt::StepperDriver stepper_driver_{configuration_.kPulPin_,
+                      configuration_.kDirPin_,
+                      configuration_.kEnaPin_,
+                      configuration_.kMicrostepMode_,
+                      configuration_.kFullStepAngle_degrees_,
+                      configuration_.kGearRatio_}; ///< Stepper motor driver to control the stepper motor.
 
   // Control flags and indicator variables.
-  bool initial_entry_ = true; ///< Flag to determine if this is the first entry into the control system.
   Configuration::ControlMode control_mode_ = configuration_.kDefaultControlMode_; ///< Variable to keep track of the control system mode.
   Configuration::ControlAction control_action_ = Configuration::ControlAction::kIdle; ///< Variable to keep track of the control actions from button presses/serial messages.
   mt::StepperDriver::MotionDirection motion_direction_ = configuration_.kDefaultMotionDirection_; ///< Variable to keep track of the motion direction (for continuous operation).

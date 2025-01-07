@@ -44,16 +44,24 @@ void Configuration::ToggleLogs() {
     log_level_ = LOG_LEVEL_VERBOSE;
   }
   else {
-    Log.noticeln(F("Log messages disabled."));
+    Log.noticeln(F("Log messages disabled"));
     log_level_ = LOG_LEVEL_SILENT;
   }
 
   Log.begin(log_level_, &MTSPIN_SERIAL);
-  if (log_level_ == LOG_LEVEL_VERBOSE) Log.noticeln(F("Log messages enabled."));
+  if (log_level_ == LOG_LEVEL_VERBOSE) Log.noticeln(F("Log messages enabled"));
 }
 
 void Configuration::ReportFirmwareVersion() {
-  String version = kName + String(kMajor) + "." + String(kMinor) + "." + String(kPatch) + kSuffix;
+  String version = kName;
+  version += F("-");
+  version += String(kMajor);
+  version += F(".");
+  version += String(kMinor);
+  version += F(".");
+  version += String(kPatch);
+  if (strlen(kSuffix) > 0) version += F("-");
+  version += kSuffix;
   MTSPIN_SERIAL.println(version);
 }
 

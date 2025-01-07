@@ -18,8 +18,8 @@ jobs:
         uses: arduino/compile-sketches@v1
         with:
           libraries: |
-            - name: MT-arduino-momentary-button@3.0.0
-            - name: MT-arduino-stepper-driver@2.0.0
+            - name: MT-arduino-momentary-button@3.0.1
+            - name: MT-arduino-stepper-driver@3.1.1
             - name: ArduinoLog@1.1.1
           sketch-paths: |
             - ./

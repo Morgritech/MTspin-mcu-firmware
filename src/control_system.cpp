@@ -17,28 +17,12 @@
 
 namespace mtspin {
 
-ControlSystem::ControlSystem()
-    : direction_button_(configuration_.kDirectionButtonPin_,
-                        configuration_.kUnpressedPinState_,
-                        configuration_.kDebouncePeriod_ms_,
-                        configuration_.kShortPressPeriod_ms_,
-                        configuration_.kLongPressPeriod_ms_),
-      angle_button_(configuration_.kAngleButtonPin_,
-                    configuration_.kUnpressedPinState_,
-                    configuration_.kDebouncePeriod_ms_,
-                    configuration_.kShortPressPeriod_ms_,
-                    configuration_.kLongPressPeriod_ms_),
-      speed_button_(configuration_.kSpeedButtonPin_,
-                    configuration_.kUnpressedPinState_,
-                    configuration_.kDebouncePeriod_ms_,
-                    configuration_.kShortPressPeriod_ms_,
-                    configuration_.kLongPressPeriod_ms_),
-      stepper_driver_(configuration_.kPulPin_,
-                      configuration_.kDirPin_,
-                      configuration_.kEnaPin_,
-                      configuration_.kMicrostepMode_,
-                      configuration_.kFullStepAngle_degrees_,
-                      configuration_.kGearRatio_) {
+ControlSystem::ControlSystem() {}
+
+ControlSystem::~ControlSystem() {}
+
+void ControlSystem::Begin() {
+  configuration_.BeginHardware();
   direction_button_.set_long_press_option(configuration_.kLongPressOption_);
   angle_button_.set_long_press_option(configuration_.kLongPressOption_);
   speed_button_.set_long_press_option(configuration_.kLongPressOption_);
@@ -46,61 +30,47 @@ ControlSystem::ControlSystem()
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us_);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us_);
   stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
-                             mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+                           mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s_,
                                   mt::StepperDriver::AccelerationUnits::kMicrostepsPerSecondPerSecond);
   stepper_driver_.set_acceleration_algorithm(configuration_.kAccelerationAlgorithm_);
-  // Save power when idle.
-  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
-}
-
-ControlSystem::~ControlSystem() {}
-
-void ControlSystem::Begin() const {
-  configuration_.BeginHardware();
+  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled); // Save power when idle.
+  LogGeneralStatus(); // Log initial status of control system.
 }
 
 void ControlSystem::CheckAndProcess() {
-
-  // Log initial status of control system.
-  if (initial_entry_ == true) {
-    initial_entry_ = false;
-    LogGeneralStatus();
-  }
 
   // Check for button presses.
   mt::MomentaryButton::PressType direction_button_press_type = direction_button_.DetectPressType();
   mt::MomentaryButton::PressType angle_button_press_type = angle_button_.DetectPressType();
   mt::MomentaryButton::PressType speed_button_press_type = speed_button_.DetectPressType();
 
-  // Process button presses.
+  // Process button presses, and serial input; one character at a time.
   if (direction_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
     control_action_ = Configuration::ControlAction::kToggleDirection;
-    Log.noticeln(F("Direction button short press."));
+    Log.noticeln(F("Direction button short press"));
   }
-
-  if (angle_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+  else if (angle_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
     control_action_ = Configuration::ControlAction::kCycleAngle;
-    Log.noticeln(F("Angle button short press."));
+    Log.noticeln(F("Angle button short press"));
   }
-
-  if (speed_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+  else if (speed_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
     control_action_ = Configuration::ControlAction::kCycleSpeed;
-    Log.noticeln(F("Speed button short press."));
+    Log.noticeln(F("Speed button short press"));
   }
-
-  if (direction_button_press_type == mt::MomentaryButton::PressType::kLongPress 
-      || angle_button_press_type == mt::MomentaryButton::PressType::kLongPress 
-      || speed_button_press_type == mt::MomentaryButton::PressType::kLongPress) {
+  else if (direction_button_press_type == mt::MomentaryButton::PressType::kLongPress 
+           || angle_button_press_type == mt::MomentaryButton::PressType::kLongPress 
+           || speed_button_press_type == mt::MomentaryButton::PressType::kLongPress) {
     control_action_ = Configuration::ControlAction::kToggleMotion;
-    Log.noticeln(F("Button long press."));
+    Log.noticeln(F("Button long press"));
   }
-
-  // Check for serial messages, one character at a time.
-  if (Serial.available() > 0) {
-    char serial_message = Serial.read();
-    control_action_ = static_cast<Configuration::ControlAction>(serial_message);
-    Log.noticeln(F("Message received: %c"), serial_message);
+  else if (Serial.available() > 0) {
+    char serial_input = MTSPIN_SERIAL.read();
+    control_action_ = static_cast<Configuration::ControlAction>(serial_input);
+    Log.noticeln(F("Serial input: %c"), serial_input);
+  }
+  else {
+    control_action_ = Configuration::ControlAction::kIdle;
   }
 
   // Process control actions.
@@ -130,10 +100,6 @@ void ControlSystem::CheckAndProcess() {
           Log.noticeln(F("Control mode: continuous"));
         }
 
-        // Cycle power to motor to help prevent stalling when reversing direction. 
-        //stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
-        //delay(5000);
-        //stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kEnabled);
         motion_type_ = mt::StepperDriver::MotionType::kStopAndReset;
         break;
       }
@@ -183,7 +149,7 @@ void ControlSystem::CheckAndProcess() {
         }
         
         stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
-                            mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+                                 mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
         Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_index_]);
         break;
       }
@@ -193,23 +159,16 @@ void ControlSystem::CheckAndProcess() {
       if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kDisabled) {
         // Allow movement.
         stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kEnabled); // Restore power to allow motion.
-        // Not really needed since enabling power will achieve the same states in the move functions.
-        //motion_type_ = mt::StepperDriver::MotionType::kRelative;
-        //motion_direction_ = previous_motion_direction_;
-        Log.noticeln(F("Motion status: Started."));     
+        Log.noticeln(F("Motion status: started"));     
       }
       else {
         // Disallow movement.
         stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled); // Save power when idle.
-        // Not really needed since disabling power will achieve the same states in the move functions.
-        //motion_type_ = mt::StepperDriver::MotionType::kStopAndReset;
-        //previous_motion_direction_ = motion_direction_;
-        //motion_direction_ = mt::StepperDriver::MotionDirection::kNeutral;
         speed_index_ = configuration_.kDefaultSpeedIndex_;
         stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
-                            mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);        
+                                 mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);        
         LogGeneralStatus();
-        Log.noticeln(F("Motion status: Stopped."));       
+        Log.noticeln(F("Motion status: stopped"));       
       }
       
       break;
@@ -234,13 +193,10 @@ void ControlSystem::CheckAndProcess() {
       break;
     }
     default: {
-      Log.errorln(F("Invalid control action."));
+      Log.errorln(F("Invalid control action"));
       break;
     }
   }
-
-  // Reset control action.
-  control_action_ = Configuration::ControlAction::kIdle;
 
   switch (control_mode_) {
     case Configuration::ControlMode::kContinuous: {      
@@ -263,7 +219,8 @@ void ControlSystem::CheckAndProcess() {
     }
     case Configuration::ControlMode::kOscillate: {
       mt::StepperDriver::MotionStatus motion_status = stepper_driver_.MoveByAngle(
-                                                      sweep_direction_ * configuration_.kSweepAngles_degrees_[sweep_angle_index_],
+                                                      sweep_direction_ *
+                                                      configuration_.kSweepAngles_degrees_[sweep_angle_index_],
                                                       mt::StepperDriver::AngleUnits::kDegrees, motion_type_);
       if (motion_status == mt::StepperDriver::MotionStatus::kIdle) {
         // Motion completed OR stop and reset issued.
@@ -272,7 +229,7 @@ void ControlSystem::CheckAndProcess() {
           motion_type_ = mt::StepperDriver::MotionType::kRelative;
         }
         else if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kEnabled) {
-
+          // Change sweep direction.
           if (motion_direction_ == mt::StepperDriver::MotionDirection::kPositive) {
             motion_direction_ = mt::StepperDriver::MotionDirection::kNegative; 
           }

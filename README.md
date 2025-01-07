@@ -68,7 +68,8 @@ scripts\setup-build-windows.cmd -cli
 ```
 
 Install arduino-cli and add it to the Windows environment path:
-> [!NOTE] This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
+> [!NOTE]
+> This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
 
 ``` shell
 scripts\setup-build-windows.cmd -cli --path
@@ -117,7 +118,8 @@ scripts/setup-build-linux.sh -cli
 ```
 
 Install arduino-cli and add it to the Windows environment path:
-> [!NOTE] This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
+> [!NOTE]
+> This only updates the path in the current user session and does not persist if the session is closed. You will need to re-run the command for a new session.
 
 ``` shell
 source scripts/setup-build-linux.sh -cli --path

@@ -70,7 +70,6 @@ class ControlSystem {
   Configuration::ControlMode control_mode_ = configuration_.kDefaultControlMode_; ///< Variable to keep track of the control system mode.
   Configuration::ControlAction control_action_ = Configuration::ControlAction::kIdle; ///< Variable to keep track of the control actions from button presses/serial messages.
   mt::StepperDriver::MotionDirection motion_direction_ = configuration_.kDefaultMotionDirection_; ///< Variable to keep track of the motion direction (for continuous operation).
-  //mt::StepperDriver::MotionDirection previous_motion_direction_ = configuration_.kDefaultMotionDirection_; // Variable to keep track of the previously set motion direction.
   mt::StepperDriver::MotionType motion_type_ = mt::StepperDriver::MotionType::kRelative; ///< Variable to keep track of the motion type (for oscillation).
   float sweep_direction_ = static_cast<float>(motion_direction_); ///< Variable to keep track of the sweep direction.
   uint8_t sweep_angle_index_ = configuration_.kDefaultSweepAngleIndex_; ///< Index to keep track of the sweep angle set from the lookup table.

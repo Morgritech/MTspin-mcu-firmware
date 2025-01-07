@@ -34,8 +34,7 @@ void ControlSystem::Begin() {
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s_,
                                   mt::StepperDriver::AccelerationUnits::kMicrostepsPerSecondPerSecond);
   stepper_driver_.set_acceleration_algorithm(configuration_.kAccelerationAlgorithm_);
-  // Save power when idle.
-  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled);
+  stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled); // Save power when idle.
   LogGeneralStatus(); // Log initial status of control system.
 }
 
@@ -160,18 +159,11 @@ void ControlSystem::CheckAndProcess() {
       if (stepper_driver_.power_state() == mt::StepperDriver::PowerState::kDisabled) {
         // Allow movement.
         stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kEnabled); // Restore power to allow motion.
-        // Not really needed since enabling power will achieve the same states in the move functions.
-        //motion_type_ = mt::StepperDriver::MotionType::kRelative;
-        //motion_direction_ = previous_motion_direction_;
         Log.noticeln(F("Motion status: started"));     
       }
       else {
         // Disallow movement.
         stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled); // Save power when idle.
-        // Not really needed since disabling power will achieve the same states in the move functions.
-        //motion_type_ = mt::StepperDriver::MotionType::kStopAndReset;
-        //previous_motion_direction_ = motion_direction_;
-        //motion_direction_ = mt::StepperDriver::MotionDirection::kNeutral;
         speed_index_ = configuration_.kDefaultSpeedIndex_;
         stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
                                  mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);        

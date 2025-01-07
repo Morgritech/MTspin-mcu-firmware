@@ -28,7 +28,7 @@ This project doesn't impose any specific build system, however the preferred met
 
 ### Continuous integration/delivery (CI/CD)
 
-[GitHub Actions](https://docs.github.com/en/actions) is used as the CI/CD platform, and the workflow also makes use of the Linux setup script.
+[GitHub Actions](https://docs.github.com/en/actions) is used as the CI/CD platform, and the workflow also makes use of the [Linux setup script](scripts/setup-build-linux.sh).
 
 ### External libraries
 
@@ -50,7 +50,7 @@ As with any other Arduino project, you can simply download the project and open 
 
 OR
 
-You can work without an IDE by making use of the provided setup/build scripts and/or Arduino CLI. You can run the setup/build scripts to automatically install the required libraries, and build/compile/upload the project as described in the following sections. This method will build the project for all boards defined in [arduino-boards.txt](arduino-boards.txt).
+You can work without an IDE by making use of the provided [setup/build scripts](scripts) and/or Arduino CLI. You can run the setup/build scripts to automatically install the required libraries, and build/compile/upload the project as described in the following sections. This method will build the project for all boards defined in [arduino-boards.txt](arduino-boards.txt).
 
 > [!NOTE]
 > Running the setup/build scripts will install arduino-cli and other dependencies (Arduino cores and libraries) on your device. Cores are extracted from the required boards defined in [arduino-boards.txt](arduino-boards.txt) and required libraries are defined in [arduino-libs.txt](arduino-libs.txt).

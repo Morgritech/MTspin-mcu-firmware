@@ -6,8 +6,7 @@
 /// @file control_system.h
 /// @brief Class that links sensor inputs (buttons, serial, etc.) to actuator outputs (steppers, etc.).
 
-#ifndef CONTROL_SYSTEM_H_
-#define CONTROL_SYSTEM_H_
+#pragma once
 
 #include <Arduino.h>
 #include <momentary_button.h>
@@ -78,5 +77,3 @@ class ControlSystem {
 };
 
 } // namespace mtspin
-
-#endif // CONTROL_SYSTEM_H_

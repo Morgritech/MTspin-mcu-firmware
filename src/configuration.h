@@ -6,8 +6,7 @@
 /// @file configuration.h
 /// @brief Class to setup common configuration settings, including serial port and pin definitions, etc.
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#pragma once
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
@@ -121,5 +120,3 @@ class Configuration {
 };
 
 } // namespace mtspin
-
-#endif // CONFIGURATION_H_

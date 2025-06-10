@@ -39,32 +39,31 @@ void ControlSystem::Begin() {
 }
 
 void ControlSystem::CheckAndProcess() {
+  // Check and process button presses, and serial input; one character at a time.
+  using PressType = mt::MomentaryButton::PressType;
 
-  // Check for button presses.
-  mt::MomentaryButton::PressType direction_button_press_type = direction_button_.DetectPressType();
-  mt::MomentaryButton::PressType angle_button_press_type = angle_button_.DetectPressType();
-  mt::MomentaryButton::PressType speed_button_press_type = speed_button_.DetectPressType();
-
-  // Process button presses, and serial input; one character at a time.
-  if (direction_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+  if (PressType direction_button_press_type = direction_button_.DetectPressType();
+      direction_button_press_type == PressType::kShortPress) {
     control_action_ = Configuration::ControlAction::kToggleDirection;
     Log.noticeln(F("Direction button short press"));
   }
-  else if (angle_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+  else if (PressType angle_button_press_type = angle_button_.DetectPressType();
+           angle_button_press_type == PressType::kShortPress) {
     control_action_ = Configuration::ControlAction::kCycleAngle;
     Log.noticeln(F("Angle button short press"));
   }
-  else if (speed_button_press_type == mt::MomentaryButton::PressType::kShortPress) {
+  else if (PressType speed_button_press_type = speed_button_.DetectPressType();
+           speed_button_press_type == PressType::kShortPress) {
     control_action_ = Configuration::ControlAction::kCycleSpeed;
     Log.noticeln(F("Speed button short press"));
   }
-  else if (direction_button_press_type == mt::MomentaryButton::PressType::kLongPress 
-           || angle_button_press_type == mt::MomentaryButton::PressType::kLongPress 
-           || speed_button_press_type == mt::MomentaryButton::PressType::kLongPress) {
+  else if (direction_button_press_type == PressType::kLongPress 
+           || angle_button_press_type == PressType::kLongPress 
+           || speed_button_press_type == PressType::kLongPress) {
     control_action_ = Configuration::ControlAction::kToggleMotion;
     Log.noticeln(F("Button long press"));
   }
-  else if (Serial.available() > 0) {
+  else if (MTSPIN_SERIAL.available() > 0) {
     char serial_input = MTSPIN_SERIAL.read();
     control_action_ = static_cast<Configuration::ControlAction>(serial_input);
     Log.noticeln(F("Serial input: %c"), serial_input);

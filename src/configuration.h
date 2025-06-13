@@ -6,8 +6,7 @@
 /// @file configuration.h
 /// @brief Class to setup common configuration settings, including serial port and pin definitions, etc.
 
-#ifndef CONFIGURATION_H_
-#define CONFIGURATION_H_
+#pragma once
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
@@ -28,13 +27,13 @@ class Configuration {
  public:
 
   /// @brief Enum of control system modes.
-  enum class ControlMode {
+  enum class ControlMode : uint8_t {
     kContinuous = 1,
     kOscillate,
   };
 
   /// @brief Enum of control actions.
-  enum class ControlAction {
+  enum class ControlAction : uint8_t {
     kToggleDirection = 'd',
     kCycleAngle = 'a',
     kCycleSpeed = 's',
@@ -80,7 +79,7 @@ class Configuration {
 
   // Button properties.
   const mt::MomentaryButton::PinState kUnpressedPinState_ = mt::MomentaryButton::PinState::kLow; ///< Button unpressed pin states.
-  const uint16_t kDebouncePeriod_ms_ = 20; ///< Button debounce periods (ms).
+  const uint16_t kDebouncePeriod_ms_ = 70; ///< Button debounce periods (ms).
   const uint16_t kShortPressPeriod_ms_ = 500; ///< Button short press periods (ms).
   const uint16_t kLongPressPeriod_ms_ = 1000; ///< Button long press periods (ms).
   const mt::MomentaryButton::LongPressOption kLongPressOption_ = mt::MomentaryButton::LongPressOption::kDetectWhileHolding; ///< Button long press options.
@@ -95,10 +94,10 @@ class Configuration {
   const float kDirDelay_us_ = 5.0F; ///< Minimum delay (us) for the stepper driver Dir pin.
   const float kEnaDelay_us_ = 5.0F; ///< Minimum delay (us) for the stepper driver Ena pin.
   const mt::StepperDriver::MotionDirection kDefaultMotionDirection_ = mt::StepperDriver::MotionDirection::kPositive; ///< Initial/default motion direction (Clockwise (CW)).
-  static const uint8_t kSizeOfSweepAngles_ = 4; ///< No. of sweep angles in the lookup table.
+  static constexpr uint8_t kSizeOfSweepAngles_ = 4; ///< No. of sweep angles in the lookup table.
   const float kSweepAngles_degrees_[kSizeOfSweepAngles_] = {45.0F, 90.0F, 180.0F, 360.0F}; ///< Lookup table for sweep angles (degrees) during oscillation.
   const uint8_t kDefaultSweepAngleIndex_ = 0; ///< Index of initial/default sweep angle.
-  static const uint8_t kSizeOfSpeeds_ = 4; ///< No. of speeds in the lookup table.
+  static constexpr uint8_t kSizeOfSpeeds_ = 4; ///< No. of speeds in the lookup table.
   const float kSpeeds_RPM_[kSizeOfSpeeds_] = {7.0F, 10.0F, 13.0F, 16.0F}; ///< Lookup table for rotation speeds (RPM).
   const uint8_t kDefaultSpeedIndex_ = 0; ///< Index of initial/default speed.
   const float kAcceleration_microsteps_per_s_per_s_ = 6000.0; //8000.0; ///< Acceleration (microsteps per second-squared).
@@ -121,5 +120,3 @@ class Configuration {
 };
 
 } // namespace mtspin
-
-#endif // CONFIGURATION_H_

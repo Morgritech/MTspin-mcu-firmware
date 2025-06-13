@@ -79,7 +79,7 @@ class Configuration {
 
   // Button properties.
   const mt::MomentaryButton::PinState kUnpressedPinState_ = mt::MomentaryButton::PinState::kLow; ///< Button unpressed pin states.
-  const uint16_t kDebouncePeriod_ms_ = 20; ///< Button debounce periods (ms).
+  const uint16_t kDebouncePeriod_ms_ = 70; ///< Button debounce periods (ms).
   const uint16_t kShortPressPeriod_ms_ = 500; ///< Button short press periods (ms).
   const uint16_t kLongPressPeriod_ms_ = 1000; ///< Button long press periods (ms).
   const mt::MomentaryButton::LongPressOption kLongPressOption_ = mt::MomentaryButton::LongPressOption::kDetectWhileHolding; ///< Button long press options.

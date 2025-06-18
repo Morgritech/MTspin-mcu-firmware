@@ -36,14 +36,14 @@ package MT-arduino-stepper-driver {
   }
 }
 
-ArduinoSketch "1" o--"0..*" ControlSystem : Has
+ArduinoSketch "1" *--"1" ControlSystem : Has
 ArduinoSketch <.. Logging
 
 Configuration <.. Logging
 
-ControlSystem "1" o-- "1" Configuration : Has
-ControlSystem "1" o-- "0..*" MomentaryButton : Has
-ControlSystem "1" o-- "0..*" StepperDriver : Has
+ControlSystem "1" *-- "1" Configuration : Has
+ControlSystem "1" *-- "3" MomentaryButton : Has
+ControlSystem "1" *-- "1" StepperDriver : Has
 ControlSystem <.. Logging
 
 @enduml

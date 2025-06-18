@@ -181,6 +181,7 @@ The project provides a means of controlling the system and interrogating the sta
 |a|Cycle through motion **angles**.|
 |s|Cycle through motion **speeds**.|
 |m|Toggle **motion** ON/OFF.|
+|t|Toggle **turbo** ON/OFF.|
 |r|Toggle log **reporting** ON/OFF.|
 |l|**Log**/report the general system status.|
 |v|Report firmware **version**.|

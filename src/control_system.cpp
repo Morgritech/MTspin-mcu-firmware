@@ -29,7 +29,7 @@ void ControlSystem::Begin() {
   stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us_);
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us_);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us_);
-  stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
+  stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_row_][speed_index_],
                            mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s_,
                                   mt::StepperDriver::AccelerationUnits::kMicrostepsPerSecondPerSecond);
@@ -58,10 +58,13 @@ void ControlSystem::CheckAndProcess() {
     Log.noticeln(F("Speed button short press"));
   }
   else if (direction_button_press_type == PressType::kLongPress 
-           || angle_button_press_type == PressType::kLongPress 
-           || speed_button_press_type == PressType::kLongPress) {
+           || angle_button_press_type == PressType::kLongPress) {
     control_action_ = Configuration::ControlAction::kToggleMotion;
-    Log.noticeln(F("Button long press"));
+    Log.noticeln(F("Direction or angle button long press"));
+  }
+  else if (speed_button_press_type == PressType::kLongPress) {
+    control_action_ = Configuration::ControlAction::kToggleTurbo;
+    Log.noticeln(F("Speed button long press"));
   }
   else if (MTSPIN_SERIAL.available() > 0) {
     char serial_input = MTSPIN_SERIAL.read();
@@ -147,9 +150,9 @@ void ControlSystem::CheckAndProcess() {
           speed_index_++;
         }
         
-        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
+        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_row_][speed_index_],
                                  mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
-        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_index_]);
+        Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_row_][speed_index_]);
         break;
       }
     }
@@ -163,13 +166,23 @@ void ControlSystem::CheckAndProcess() {
       else {
         // Disallow movement.
         stepper_driver_.set_power_state(mt::StepperDriver::PowerState::kDisabled); // Save power when idle.
+        speed_row_ = configuration_.kDefaultSpeedRow_;
         speed_index_ = configuration_.kDefaultSpeedIndex_;
-        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_index_],
-                                 mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);        
+        stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_row_][speed_index_],
+                                 mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
         LogGeneralStatus();
         Log.noticeln(F("Motion status: stopped"));       
       }
       
+      break;
+    }
+    case Configuration::ControlAction::kToggleTurbo: {
+      // Toggle between (0) normal and (1) turbo (faster speeds) state.
+      speed_row_ = speed_row_ == 0 ? 1 : 0;
+      speed_index_ = configuration_.kDefaultSpeedIndex_;
+      stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_row_][speed_index_],
+                               mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
+      Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_row_][speed_index_]);
       break;
     }
     case Configuration::ControlAction::kToggleLogReport: {
@@ -262,7 +275,7 @@ void ControlSystem::LogGeneralStatus() const {
   }
   
   Log.noticeln(F("Sweep angle (degrees): %F"), configuration_.kSweepAngles_degrees_[sweep_angle_index_]);
-  Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_index_]);
+  Log.noticeln(F("Speed (RPM): %F"), configuration_.kSpeeds_RPM_[speed_row_][speed_index_]);
 }
 
 } // namespace mtspin

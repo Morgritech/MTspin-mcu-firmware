@@ -38,6 +38,7 @@ class Configuration {
     kCycleAngle = 'a',
     kCycleSpeed = 's',
     kToggleMotion = 'm',
+    kToggleTurbo = 't',
     kToggleLogReport = 'r',
     kLogGeneralStatus = 'l',
     kReportFirmwareVersion = 'v',
@@ -98,8 +99,12 @@ class Configuration {
   const float kSweepAngles_degrees_[kSizeOfSweepAngles_] = {45.0F, 90.0F, 180.0F, 360.0F}; ///< Lookup table for sweep angles (degrees) during oscillation.
   const uint8_t kDefaultSweepAngleIndex_ = 0; ///< Index of initial/default sweep angle.
   static constexpr uint8_t kSizeOfSpeeds_ = 4; ///< No. of speeds in the lookup table.
-  const float kSpeeds_RPM_[kSizeOfSpeeds_] = {7.0F, 10.0F, 13.0F, 16.0F}; ///< Lookup table for rotation speeds (RPM).
-  const uint8_t kDefaultSpeedIndex_ = 0; ///< Index of initial/default speed.
+  /// @brief Lookup table for rotation speeds (RPM).
+  const float kSpeeds_RPM_[2][kSizeOfSpeeds_] = {{7.0F,  10.5F, 14.0F, 21.0F},  // Row 0: Normal speeds: S, 1.5S, 2S, 3S.
+                                                 {35.0F, 42.0F, 56.0F, 77.0F}}; // Row 1: Turbo speeds: 5S, 6S, 8S, 11S.
+  //                                        Index: 0       1      2      3
+  const uint8_t kDefaultSpeedRow_ = 0; // Row of initial/default speed state.
+  const uint8_t kDefaultSpeedIndex_ = 0; // Index of initial/default speed.
   const float kAcceleration_microsteps_per_s_per_s_ = 6000.0; //8000.0; ///< Acceleration (microsteps per second-squared).
   const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm_ = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24; ///< Acceleration algorithm.
 

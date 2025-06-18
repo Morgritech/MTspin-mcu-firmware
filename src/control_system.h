@@ -73,6 +73,7 @@ class ControlSystem {
   float sweep_direction_ = static_cast<float>(motion_direction_); ///< Variable to keep track of the sweep direction.
   uint8_t sweep_angle_index_ = configuration_.kDefaultSweepAngleIndex_; ///< Index to keep track of the sweep angle set from the lookup table.
   uint8_t speed_index_ = configuration_.kDefaultSpeedIndex_; ///< Index to keep track of the motor speed set from the lookup table.
+  uint8_t speed_row_ = configuration_.kDefaultSpeedRow_; ///< Row to keep track of the motor speed state set from the lookup table.
   mt::StepperDriver::MotionStatus motion_status_ = mt::StepperDriver::MotionStatus::kIdle; ///< Variable to keep track of the motion status.
 };
 

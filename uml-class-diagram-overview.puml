@@ -41,7 +41,7 @@ ArduinoSketch <.. Logging
 
 Configuration <.. Logging
 
-ControlSystem "1" *-- "1" Configuration : Has
+ControlSystem "1" o-- "1" Configuration : Has
 ControlSystem "1" *-- "3" MomentaryButton : Has
 ControlSystem "1" *-- "1" StepperDriver : Has
 ControlSystem <.. Logging

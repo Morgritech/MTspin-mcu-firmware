@@ -95,10 +95,10 @@ class Configuration {
   const float kDirDelay_us_ = 5.0F; ///< Minimum delay (us) for the stepper driver Dir pin.
   const float kEnaDelay_us_ = 5.0F; ///< Minimum delay (us) for the stepper driver Ena pin.
   const mt::StepperDriver::MotionDirection kDefaultMotionDirection_ = mt::StepperDriver::MotionDirection::kPositive; ///< Initial/default motion direction (Clockwise (CW)).
-  static constexpr uint8_t kSizeOfSweepAngles_ = 4; ///< No. of sweep angles in the lookup table.
+  inline static constexpr uint8_t kSizeOfSweepAngles_ = 4; ///< No. of sweep angles in the lookup table.
   const float kSweepAngles_degrees_[kSizeOfSweepAngles_] = {45.0F, 90.0F, 180.0F, 360.0F}; ///< Lookup table for sweep angles (degrees) during oscillation.
   const uint8_t kDefaultSweepAngleIndex_ = 0; ///< Index of initial/default sweep angle.
-  static constexpr uint8_t kSizeOfSpeeds_ = 4; ///< No. of speeds in the lookup table.
+  inline static constexpr uint8_t kSizeOfSpeeds_ = 4; ///< No. of speeds in the lookup table.
   /// @brief Lookup table for rotation speeds (RPM).
   const float kSpeeds_RPM_[2][kSizeOfSpeeds_] = {{7.0F,  10.5F, 14.0F, 21.0F},  // Row 0: Normal speeds: S, 1.5S, 2S, 3S.
                                                  {35.0F, 42.0F, 56.0F, 77.0F}}; // Row 1: Turbo speeds: 5S, 6S, 8S, 11S.

@@ -35,7 +35,7 @@ void Configuration::BeginHardware() const {
   pinMode(kEnaPin_, OUTPUT);
 
   // Delay for the startup time.
-  delay(kStartupTime_ms_);
+  delay(kStartupDelay_ms_);
 }
 
 void Configuration::ToggleLogs() {

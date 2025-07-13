@@ -109,7 +109,7 @@ class Configuration {
   const mt::StepperDriver::AccelerationAlgorithm kAccelerationAlgorithm_ = mt::StepperDriver::AccelerationAlgorithm::kMorgridge24; ///< Acceleration algorithm.
 
   // Other properties.
-  const uint16_t kStartupTime_ms_ = 1000; ///< Minimum startup/boot time in milliseconds (ms); based on the stepper driver.
+  const uint16_t kStartupDelay_ms_ = 1000; ///< Minimum startup/boot delay in milliseconds (ms); based on the stepper driver.
 
  private:
 

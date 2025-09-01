@@ -65,12 +65,12 @@ class Configuration {
   void ReportFirmwareVersion();
 
   // GPIO pins.
-  const uint8_t kDirectionButtonPin_ = 2; ///< Input pin for the button controlling motor direction.
-  const uint8_t kAngleButtonPin_ = 3; ///< Input pin for the button controlling motor angle.
-  const uint8_t kSpeedButtonPin_ = 4; ///< Input pin for the button controlling motor speed.
-  const uint8_t kPulPin_ = 11; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
-  const uint8_t kDirPin_ = 12; ///< Output pin for the stepper driver DIR/CW (direction) interface.
-  const uint8_t kEnaPin_ = 13; ///< Output pin for the stepper driver ENA/EN (enable) interface.
+  const uint8_t kDirectionButtonPin_ = 9; ///< Input pin for the button controlling motor direction.
+  const uint8_t kAngleButtonPin_ = 10; ///< Input pin for the button controlling motor angle.
+  const uint8_t kSpeedButtonPin_ = 11; ///< Input pin for the button controlling motor speed.
+  const uint8_t kPulPin_ = 4; ///< Output pin for the stepper driver PUL/STP/CLK (pulse/step) interface.
+  const uint8_t kDirPin_ = 7; ///< Output pin for the stepper driver DIR/CW (direction) interface.
+  const uint8_t kEnaPin_ = 8; ///< Output pin for the stepper driver ENA/EN (enable) interface.
 
   // Control system properties.
   const ControlMode kDefaultControlMode_ = ControlMode::kContinuous; ///< The default/initial control mode. 

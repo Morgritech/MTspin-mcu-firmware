@@ -77,7 +77,7 @@ class Configuration {
 
   // Serial properties.
   const int kBaudRate_ = 9600; ///< The serial communication speed.
-
+ 
   // Button properties.
   const mt::MomentaryButton::PinState kUnpressedPinState_ = mt::MomentaryButton::PinState::kLow; ///< Button unpressed pin states.
   const uint16_t kDebouncePeriod_ms_ = 70; ///< Button debounce periods (ms).
@@ -90,11 +90,13 @@ class Configuration {
   const float kGearRatio_ = 1.0F; ///< The system/stepper motor gear ratio.
 
   // Stepper driver properties.
-  const uint16_t kMicrostepMode_ = 32; ///< Stepper driver microstep mode.
+  const uint16_t kMicrostepMode_ = 8; ///< Stepper driver microstep mode.
   const float kPulDelay_us_ = 1.0; ///< Minimum delay (us) for the stepper driver PUL pin.
   const float kDirDelay_us_ = 5.0F; ///< Minimum delay (us) for the stepper driver Dir pin.
   const float kEnaDelay_us_ = 5.0F; ///< Minimum delay (us) for the stepper driver Ena pin.
-  const mt::StepperDriver::MotionDirection kDefaultMotionDirection_ = mt::StepperDriver::MotionDirection::kPositive; ///< Initial/default motion direction (Clockwise (CW)).
+  const mt::StepperDriver::PinState kEnergisedPinState_ = mt::StepperDriver::PinState::kLow; ///< The stepper driver ENA/EN pin state when the motor is energised/enabled.
+  const mt::StepperDriver::PinState kPositiveDirectionPinState = mt::StepperDriver::PinState::kLow; ///< The stepper driver DIR pin state for positive (Clockwise (CW)) motion.
+  const mt::StepperDriver::MotionDirection kDefaultMotionDirection_ = mt::StepperDriver::MotionDirection::kPositive; ///< Initial/default motion direction (CW).
   inline static constexpr uint8_t kSizeOfSweepAngles_ = 4; ///< No. of sweep angles in the lookup table.
   const float kSweepAngles_degrees_[kSizeOfSweepAngles_] = {45.0F, 90.0F, 180.0F, 360.0F}; ///< Lookup table for sweep angles (degrees) during oscillation.
   const uint8_t kDefaultSweepAngleIndex_ = 0; ///< Index of initial/default sweep angle.

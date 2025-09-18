@@ -102,8 +102,8 @@ class Configuration {
   const uint8_t kDefaultSweepAngleIndex_ = 0; ///< Index of initial/default sweep angle.
   inline static constexpr uint8_t kSizeOfSpeeds_ = 4; ///< No. of speeds in the lookup table.
   /// @brief Lookup table for rotation speeds (RPM).
-  const float kSpeeds_RPM_[2][kSizeOfSpeeds_] = {{7.0F,  10.5F, 14.0F, 21.0F},  // Row 0: Normal speeds: S, 1.5S, 2S, 3S.
-                                                 {35.0F, 42.0F, 56.0F, 77.0F}}; // Row 1: Turbo speeds: 5S, 6S, 8S, 11S.
+  const float kSpeeds_RPM_[2][kSizeOfSpeeds_] = {{5.0F,  10.0F, 15.0F, 20.0F},  // Row 0: Normal speeds: S, 2S, 3S, 4S.
+                                                 {35.0F, 50.0F, 65.0F, 80.0F}}; // Row 1: Turbo speeds: 7S, 10S, 13S, 16S.
   //                                        Index: 0       1      2      3
   const uint8_t kDefaultSpeedRow_ = 0; // Row of initial/default speed state.
   const uint8_t kDefaultSpeedIndex_ = 0; // Index of initial/default speed.

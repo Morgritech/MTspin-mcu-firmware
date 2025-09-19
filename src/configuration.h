@@ -13,8 +13,6 @@
 #include <momentary_button.h>
 #include <stepper_driver.h>
 
-#include "version.h"
-
 /// @brief Macro to define Serial port.
 #ifndef MTSPIN_SERIAL
 #define MTSPIN_SERIAL Serial // "Serial" for programming port, "SerialUSB" for native port (Due and Zero only).

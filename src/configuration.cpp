@@ -10,6 +10,8 @@
 
 #include <ArduinoLog.h>
 
+#include "version.h"
+
 namespace mtspin {
 
 Configuration& Configuration::GetInstance() {

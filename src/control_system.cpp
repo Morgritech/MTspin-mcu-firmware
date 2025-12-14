@@ -29,6 +29,8 @@ void ControlSystem::Begin() {
   stepper_driver_.set_pul_delay_us(configuration_.kPulDelay_us_);
   stepper_driver_.set_dir_delay_us(configuration_.kDirDelay_us_);
   stepper_driver_.set_ena_delay_us(configuration_.kEnaDelay_us_);
+  stepper_driver_.set_ena_pin_enabled_state(configuration_.kEnergisedPinState_);
+  stepper_driver_.set_dir_pin_positive_direction_state(configuration_.kPositiveDirectionPinState);
   stepper_driver_.SetSpeed(configuration_.kSpeeds_RPM_[speed_row_][speed_index_],
                            mt::StepperDriver::SpeedUnits::kRevolutionsPerMinute);
   stepper_driver_.SetAcceleration(configuration_.kAcceleration_microsteps_per_s_per_s_,

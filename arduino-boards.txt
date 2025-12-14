@@ -1,1 +1,2 @@
+arduino:renesas_uno:minima
 arduino:avr:uno

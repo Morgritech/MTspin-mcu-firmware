@@ -37,7 +37,6 @@ package MT-arduino-stepper-driver {
 }
 
 ArduinoSketch "1" *--"1" ControlSystem : Has
-ArduinoSketch <.. Logging
 
 Configuration <.. Logging
 

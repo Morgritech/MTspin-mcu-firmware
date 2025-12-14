@@ -12,7 +12,8 @@ Microcontroller firmware for MTspin; a motorised rotating display stand.
 
 ### Microcontroller
 
-Arduino UNO is the primary target for this project.
+Arduino UNO R4 Minima is the primary target for this project.
+It is also fully compatible with Arduino UNO R3.
 
 ### Programming languages and frameworks
 

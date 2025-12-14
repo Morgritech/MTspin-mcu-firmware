@@ -10,6 +10,8 @@
 
 #include <ArduinoLog.h>
 
+#include "version.h"
+
 namespace mtspin {
 
 Configuration& Configuration::GetInstance() {
@@ -17,12 +19,12 @@ Configuration& Configuration::GetInstance() {
   return instance;
 }
 
-void Configuration::BeginHardware() const {
+void Configuration::BeginHardware() {
   // Initialise the serial port.
   MTSPIN_SERIAL.begin(kBaudRate_);
 
-  // Initialise logging.
-  Log.begin(log_level_, &MTSPIN_SERIAL);
+  // Enable (LOG_LEVEL_VERBOSE) logging for all initial setup messages.
+  ToggleLogs(); // Assumes default set in configuration.h is LOG_LEVEL_SILENT.
 
   // Initialise the input pins.
   pinMode(kDirectionButtonPin_, INPUT);
@@ -35,7 +37,12 @@ void Configuration::BeginHardware() const {
   pinMode(kEnaPin_, OUTPUT);
 
   // Delay for the startup time.
-  delay(kStartupTime_ms_);
+  delay(kStartupDelay_ms_);
+
+  Log.noticeln(F("...Setup complete...\n"));
+
+  // Disable logging.
+  ToggleLogs();  
 }
 
 void Configuration::ToggleLogs() {

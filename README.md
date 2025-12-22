@@ -6,7 +6,7 @@
 
 Microcontroller firmware for MTspin; a motorised rotating display stand.
 
-![MTspin demo]()
+![MTspin demo](images/mtspin%20demo%20426%20x%20240%20gif.gif)
 
 ## Introduction
 
